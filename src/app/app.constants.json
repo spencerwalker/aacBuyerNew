@@ -1,10 +1,11 @@
 {
-  "appname": "Angular Buyer",
-  "scope": "FullAccess",
-  "clientid": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
-  "buyerid": "XXXX",
-  "catalogid": "XXXX",
+  "appname": "AAC Buyer BH Test",
+  "scope": "AddressAdmin AddressReader ApprovalRuleAdmin ApprovalRuleReader BuyerAdmin BuyerUserAdmin BuyerUserReader CategoryAdmin CategoryReader CostCenterAdmin CostCenterReader CreditCardAdmin CreditCardReader DevCenterWebHookAdmin FullAccess InventoryAdmin MeAddressAdmin MeAdmin MeCreditCardAdmin MeXpAdmin OrderAdmin OrderReader OverrideShipping OverrideTax OverrideUnitPrice PermissionAdmin PriceScheduleAdmin PriceScheduleReader ProductAdmin ProductAssignmentAdmin ProductReader PromotionAdmin PromotionReader SetSecurityProfile SpendingAccountAdmin SpendingAccountReader UnsubmittedOrderReader UserGroupAdmin UserGroupReader BuyerReader",
+  "clientid": "E8891F1E-4AB3-4CBE-A1C9-69413EB7E645",
+  "buyerid": "AACBuyer",
+  "catalogid": "MainCatalog",
   "environment": "prod",
   "defaultstate": "home",
-  "anonymous": false
+  "anonymous": false,
+  "bootswatchtheme": null
 }
