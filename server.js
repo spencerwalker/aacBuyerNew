@@ -6,6 +6,18 @@ var express = require('express'),
     app = express(),
     port = process.env.PORT || 451;
 
+const crypto = require('crypto');
+
+//Used to check auto-login param security
+app.use('/checklogin/:t/:ts', function (req, res, next) {
+  var hashResult = validateTimeHash(req.params.t, req.params.ts);
+  res.send(hashResult);
+});
+
+app.get("/communityUrl", function(request, response) {
+  response.json(process.env.COMMUNITY_URL);
+});
+
 switch(env) {
     case 'production':
         console.log('*** PROD ***');
@@ -22,6 +34,8 @@ switch(env) {
         app.use(express.static(config.root + config.build.replace('.', '')));
         // Host unchanged html files
         app.use(express.static(config.root + config.src.replace('.', '') + 'app/'));
+	app.use(express.static(config.root));
+    	app.use(express.static(config.root + config.components.dir));
         app.get('/*', function(req, res) {
             res.sendFile(config.root + config.build.replace('.', '') + 'index.html');
         });
@@ -30,3 +44,16 @@ switch(env) {
 
 app.listen(port);
 console.log('Listening on port ' + port + '...');
+
+function validateTimeHash(t, ts) {
+  if (!t || !ts) {
+    return false;
+  }
+
+  var secret = process.env.HASH_SECRET;
+  var hash = crypto.createHmac('sha256', secret)
+                 .update(t)
+                 .digest('hex');
+
+  return ts == hash;
+}
