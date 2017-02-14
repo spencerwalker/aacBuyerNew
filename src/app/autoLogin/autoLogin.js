@@ -38,13 +38,14 @@ function AutoLoginController($state, $stateParams, $exceptionHandler, OrderCloud
     vm.submit = function() {
         OrderCloud.BuyerID.Set(buyerid);
         OrderCloud.Auth.SetToken(vm.token);
-        if(vm.catid){
+        /*if(vm.catid){
         	console.log('Inside if Submit');
-          $state.go('catalog.category', {'categoryid':vm.catid});
-        } else {
+          $state.go('categoryBrowse', {'categoryid':vm.catid});
+        }*/
+        //else {
         	console.log('Inside else Submit');
-          $state.go('catalog');
-        }
+          $state.go('categoryBrowse');
+        //}
     };
 
     var loginTest = function(response) {
