@@ -1,4 +1,3 @@
-
 angular.module('orderCloud')
     .config(AutoLoginConfig)
     .factory('AutoLoginService', AutoLoginService)
@@ -32,7 +31,6 @@ function AutoLoginController($state, $stateParams, $exceptionHandler, OrderCloud
     vm.timestamp = $stateParams.timestamp;
     vm.encryptstamp = $stateParams.encryptstamp;
     vm.catid = $stateParams.catid;
-    var categoryid = process.env.CATEGORY_ID;
     console.log('vm.token' + vm.token);
     console.log('vm.catid' + vm.catid);
     vm.form = 'login';
@@ -45,7 +43,7 @@ function AutoLoginController($state, $stateParams, $exceptionHandler, OrderCloud
         }*/
         //else {
         	console.log('Inside else Submit');
-          $state.go('categoryBrowse',{'categoryID': categoryid});
+          $state.go('categoryBrowse',{'categoryID': 'MainCatalog'});
         //}
     };
 
