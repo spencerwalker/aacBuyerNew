@@ -51,9 +51,11 @@ function validateTimeHash(t, ts) {
   }
 
   var secret = process.env.HASH_SECRET;
+  console.log('*** secret ***' + secret);
   var hash = crypto.createHmac('sha256', secret)
                  .update(t)
                  .digest('hex');
-
+  console.log('*** ts ***' + ts);
+  console.log('*** hash ***' + hash);
   return ts == hash;
 }
