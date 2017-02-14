@@ -8,7 +8,7 @@ function AutoLoginConfig($stateProvider) {
     $stateProvider
         .state('autoLogin', {
             url: '/autoLogin/:token/:catid/:timestamp/:encryptstamp',
-            //templateUrl: 'autoLogin/templates/autoLogin.tpl.html',
+            templateUrl: 'autoLogin/templates/autoLogin.tpl.html',
             controller: 'AutoLoginCtrl',
             controllerAs: 'autoLogin'
         })
