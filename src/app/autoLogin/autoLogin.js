@@ -32,6 +32,7 @@ function AutoLoginController($state, $stateParams, $exceptionHandler, OrderCloud
     vm.timestamp = $stateParams.timestamp;
     vm.encryptstamp = $stateParams.encryptstamp;
     vm.catid = $stateParams.catid;
+    var categoryid = process.env.CATEGORY_ID;
     console.log('vm.token' + vm.token);
     console.log('vm.catid' + vm.catid);
     vm.form = 'login';

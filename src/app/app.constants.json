@@ -7,6 +7,5 @@
   "environment": "prod",
   "defaultstate": "home",
   "anonymous": false,
-  "bootswatchtheme": null,
-  "categoryid":"MainCatalog"
+  "bootswatchtheme": null
 }
