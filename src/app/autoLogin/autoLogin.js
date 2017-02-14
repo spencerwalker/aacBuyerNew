@@ -49,7 +49,7 @@ function AutoLoginController($state, $stateParams, $exceptionHandler, OrderCloud
         vm.submit();
       }
     }
-
+    console.log('Inside Checklogin block');
     var OneMinuteAgo = new Date().getTime() - 60000;
     if(vm.token && vm.timestamp > OneMinuteAgo){
       $http.get('/checklogin/' + vm.timestamp + '/' + vm.encryptstamp).then(loginTest);
