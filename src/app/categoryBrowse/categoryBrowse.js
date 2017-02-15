@@ -7,7 +7,8 @@ function CategoryBrowseConfig($stateProvider, catalogid){
     $stateProvider
         .state('categoryBrowse', {
             parent:'base',
-            url:'/browse/categories?categoryID?productPage?categoryPage?pageSize?sortBy?filters',
+            //url:'/browse/categories?categoryID?productPage?categoryPage?pageSize?sortBy?filters',
+            url:'/catalog',
             templateUrl:'categoryBrowse/templates/categoryBrowse.tpl.html',
             controller:'CategoryBrowseCtrl',
             controllerAs:'categoryBrowse',
