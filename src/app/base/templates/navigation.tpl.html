@@ -3,7 +3,12 @@
     <div class="c-topnav__group--left">
       <!--BRAND-->
       <div class="c-topnav__item c-topnav__brand">
-        <a ui-sref="home">
+        <!-- <a ui-sref="home">
+          {{application.name}}
+        </a> -->
+        <a href="{{base.storeUrl}}"
+                   ng-click="application.logout();"
+                   class="exitstore">
           {{application.name}}
         </a>
       </div>
