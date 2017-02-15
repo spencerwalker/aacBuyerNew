@@ -3,9 +3,12 @@
     <div class="c-topnav__group--left">
       <!--BRAND-->
       <div class="c-topnav__item c-topnav__brand">
-        <a ui-sref="home">
-          {{application.name}}
-        </a>
+        <!-- <a ui-sref="home">
+          {{application.name}} "BH Dev Team Comments"
+        </a> -->
+        <a href="{{base.storeUrl}}"
+                   ng-click="base.logout();"
+                   class="exitstore">{{application.name}}</a>
       </div>
       <!--PRODUCT / CATEGORY BROWSE-->
       <div class="c-topnav__item c-topnav__browse">

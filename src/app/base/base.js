@@ -4,53 +4,118 @@ angular.module('orderCloud')
     .factory('NewOrder', NewOrderService)
 ;
 
-function BaseConfig($stateProvider) {
-    $stateProvider.state('base', {
+function BaseConfig($stateProvider, $injector) {
+    var baseViews = {
+        '': {
+            templateUrl: 'base/templates/base.tpl.html',
+            controller: 'BaseCtrl',
+            controllerAs: 'base'
+        }
+    };
+
+    if ($injector.has('base')) {
+        var baseConfig = $injector.get('base');
+
+        //conditional base left
+        baseConfig.left ? baseViews['left@base'] = {
+            'templateUrl': 'base/templates/base.left.tpl.html'
+        } : angular.noop();
+
+        //conditional base right
+        baseConfig.right ? baseViews['right@base'] = {
+            'templateUrl': 'base/templates/base.right.tpl.html'
+        } : angular.noop();
+
+        //conditional base top
+        baseConfig.top ? baseViews['top@base'] = {
+            'templateUrl': 'base/templates/base.top.tpl.html'
+        } : angular.noop();
+
+        //conditional base bottom
+        baseConfig.bottom ? baseViews['bottom@base'] = {
+            'templateUrl': 'base/templates/base.bottom.tpl.html'
+        } : angular.noop();
+    }
+
+    var baseState = {
         url: '',
         abstract: true,
-        views: {
-            '': {
-                templateUrl: 'base/templates/base.tpl.html',
-                controller: 'BaseCtrl',
-                controllerAs: 'base'
-            },
-            'nav@base': {
-                'templateUrl': 'base/templates/navigation.tpl.html'
-            }
-        },
+        views: baseViews,
         resolve: {
-            CurrentUser: function($q, $state, OrderCloud, buyerid) {
-                return OrderCloud.Me.Get()
+            CurrentUser: function($q, $state, OrderCloud, buyerid, anonymous) {
+                var dfd = $q.defer();
+                OrderCloud.Me.Get()
                     .then(function(data) {
-                        OrderCloud.BuyerID.Set(buyerid);
-                        return data;
+                        dfd.resolve(data);
                     })
-            },
-            ExistingOrder: function($q, OrderCloud, CurrentUser) {
-                return OrderCloud.Me.ListOutgoingOrders(null, 1, 1, null, "!DateCreated", {Status:"Unsubmitted"})
-                    .then(function(data) {
-                        return data.Items[0];
+                    .catch(function(){
+                        if (anonymous) {
+                            if (!OrderCloud.Auth.ReadToken()) {
+                                OrderCloud.Auth.GetToken('')
+                                    .then(function(data) {
+                                        OrderCloud.Auth.SetToken(data['access_token']);
+                                    })
+                                    .finally(function() {
+                                        OrderCloud.BuyerID.Set(buyerid);
+                                        dfd.resolve({});
+                                    });
+                            }
+                        } else {
+                            OrderCloud.Auth.RemoveToken();
+                            OrderCloud.Auth.RemoveImpersonationToken();
+                            OrderCloud.BuyerID.Set(null);
+                            $state.go('login');
+                            dfd.resolve();
+                        }
                     });
-            },
-            CurrentOrder: function(ExistingOrder, NewOrder, CurrentUser) {
-                if (!ExistingOrder) {
-                    return NewOrder.Create({});
-                } else {
-                    return ExistingOrder;
-                }
+                return dfd.promise;
             },
             AnonymousUser: function($q, OrderCloud, CurrentUser) {
                 CurrentUser.Anonymous = angular.isDefined(JSON.parse(atob(OrderCloud.Auth.ReadToken().split('.')[1])).orderid);
+            },
+            ComponentList: function($state, $q, Underscore, CurrentUser) {
+                var deferred = $q.defer();
+                var nonSpecific = ['Buyers', 'Products', 'Specs', 'Price Schedules', 'Admin Users', 'Product Facets'];
+                var components = {
+                    nonSpecific: [],
+                    buyerSpecific: []
+                };
+                angular.forEach($state.get(), function(state) {
+                    if (!state.data || !state.data.componentName) return;
+                    if (nonSpecific.indexOf(state.data.componentName) > -1) {
+                        if (Underscore.findWhere(components.nonSpecific, {Display: state.data.componentName}) == undefined) {
+                            components.nonSpecific.push({
+                                Display: state.data.componentName,
+                                StateRef: state.name
+                            });
+                        }
+                    } else {
+                        if (Underscore.findWhere(components.buyerSpecific, {Display: state.data.componentName}) == undefined) {
+                            components.buyerSpecific.push({
+                                Display: state.data.componentName,
+                                StateRef: state.name
+                            });
+                        }
+                    }
+                });
+                deferred.resolve(components);
+                return deferred.promise;
             }
         }
-    });
+    };
+
+    $stateProvider.state('base', baseState);
 }
 
-function BaseController($rootScope, $state, ProductSearch, CurrentUser, CurrentOrder, OrderCloud) {
+function BaseController($rootScope, $state, ProductSearch, CurrentUser, CurrentOrder, LoginService, OrderCloud) {
     var vm = this;
     vm.currentUser = CurrentUser;
     vm.currentOrder = CurrentOrder;
 
+	vm.logout = function() {
+    LoginService.Logout();
+	};
+	
     vm.mobileSearch = function() {
         ProductSearch.Open()
             .then(function(data) {
@@ -72,6 +137,7 @@ function BaseController($rootScope, $state, ProductSearch, CurrentUser, CurrentO
             });
     });
 }
+
 
 function NewOrderService($q, OrderCloud) {
     var service = {
