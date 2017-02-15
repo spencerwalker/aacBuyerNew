@@ -9,7 +9,7 @@
       </div>
       <!--PRODUCT / CATEGORY BROWSE-->
       <div class="c-topnav__item c-topnav__browse">
-        <a ui-sref="productBrowse.products({page:'', favorites:'', sortBy:'', categoryid:''})"><i class="fa fa-th"></i> <span class="hidden-xs hidden-sm">Browse</span></a>
+        <a ui-sref="categoryBrowse({page:'', favorites:'', sortBy:'', categoryid:''})"><i class="fa fa-th"></i> <span class="hidden-xs hidden-sm">Home</span></a>
       </div>
       <!--MOBILE PRODUCT SEARCH-->
       <div class="c-topnav__item c-topnav__search hidden-lg hidden-md">
@@ -33,8 +33,8 @@
           <li ui-sref-active="active"><a ui-sref="myPayments">Payment Methods</a></li>
           <li ui-sref-active="active"><a ui-sref="favoriteProducts">Favorite Products</a></li>
           <li ui-sref-active="active"><a ui-sref="myOrders">Order History</a></li>
-          <li class="divider"></li>
-          <li><a ng-click="application.logout()">Log out</a></li>
+          <!-- <li class="divider"></li> -->
+         <!-- <li><a ng-click="application.logout()">Log out</a></li> --> 
         </ul>
       </div>
     </div>
