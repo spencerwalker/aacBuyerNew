@@ -3,14 +3,14 @@
     <div class="c-topnav__group--left">
       <!--BRAND-->
       <div id="BASE_TOP" class="c-topnav__item c-topnav__brand">
-        <!-- <a ui-sref="home">
-          {{application.name}}
-        </a> -->
         <a href="{{base.storeUrl}}"
                    ng-click="application.logout();"
                    class="exitstore">
           {{application.name}}
         </a>
+      </div>
+      <div class="c-topnav__item c-topnav__account">
+      	<span>{{base.currentUser.FirstName + ' ' + base.currentUser.LastName}}</span>
       </div>
       <!--PRODUCT / CATEGORY BROWSE-->
       <div class="c-topnav__item c-topnav__browse">
