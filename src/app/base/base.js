@@ -52,6 +52,25 @@ function BaseController($rootScope, $state, $http, ProductSearch, CurrentUser, C
     vm.currentOrder = CurrentOrder;
     vm.storeUrl = "";
     
+    vm.getAvailableBalance = function() {
+        vm.availableFunds = 0;
+  			OrderCloud.Me.Get().then(function(result) {
+  				var userId = result.ID;
+
+  				OrderCloud.SpendingAccounts.ListAssignments(null, userId, null, null,
+  					  null, null).then(function(accountsResult) {
+  					var accountAssignments = accountsResult.Items;
+
+  					angular.forEach(accountAssignments, function(a) {
+  						OrderCloud.SpendingAccounts.Get(a.SpendingAccountID).then(
+  						    function(aResult) {
+  							vm.availableFunds += aResult.Balance;
+  						});
+  					});
+  				});
+  			});
+  		}
+    
     vm.logout = function() {
         LoginService.Logout();
     };
