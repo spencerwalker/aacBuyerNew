@@ -8,10 +8,10 @@
                    class="exitstore">
           {{application.name}}
         </a>
-      </div>
       <div class="c-topnav__item c-topnav__account">
       	<span>{{base.currentUser.FirstName + ' ' + base.currentUser.LastName}}</span>
       </div>
+      </div>     
       <!--PRODUCT / CATEGORY BROWSE-->
       <div class="c-topnav__item c-topnav__browse">
         <a ui-sref="categoryBrowse({page:'', favorites:'', sortBy:'', categoryid:''})"><i class="fa fa-th"></i> <span class="hidden-xs hidden-sm">Home</span></a>
