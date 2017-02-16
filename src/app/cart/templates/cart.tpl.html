@@ -25,12 +25,12 @@
 						}"></ng-pluralize>
                     </p>
                     <h4>Subtotal: <span class="pull-right">{{base.currentOrder.Subtotal | currency}}</span></h4>
-                    <hr>
+            <!--    <hr>
                     <oc-add-promotion order="base.currentOrder"></oc-add-promotion>
                     <h5 ng-repeat="promotion in cart.promotions" class="text-danger">
                         {{promotion.Code}}
                         <a href="" ng-click="cart.removePromotion(base.currentOrder, this)">remove</a>
-                        <span class="pull-right">- {{promotion.Amount | currency}}</span></h5>
+                        <span class="pull-right">- {{promotion.Amount | currency}}</span></h5>  -->
                 </div>
                 <div class="panel-footer">
                     <button ng-if="cart.lineItems.Items.length > 0" type="button" ui-sref="checkout.shipping" class="btn btn-block btn-primary" ng-disabled="OrderLineItemForm.$invalid">Proceed to Checkout</button>
