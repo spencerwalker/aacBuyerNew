@@ -2,13 +2,13 @@
   <div class="c-topnav">
     <div class="c-topnav__group--left">
       <!--BRAND-->
-      <div class="c-topnav__item c-topnav__brand">
+      <div id="BASE_TOP" class="c-topnav__item c-topnav__brand">
         <!-- <a ui-sref="home">
           {{application.name}}
         </a> -->
-        <a id="BASE_TOP" href="{{base.storeUrl}}"
+        <a href="{{base.storeUrl}}"
                    ng-click="application.logout();"
-                   class="exitstore"><img class="aac-logo" src="compile/assets/images/images/aac-logo.png"/>
+                   class="exitstore">
           {{application.name}}
         </a>
       </div>
