@@ -1,4 +1,4 @@
-<div id="navigation" class="container">
+<div class="container">
   <div class="c-topnav">
     <div class="c-topnav__group--left">
       <!--BRAND-->
@@ -10,7 +10,7 @@
         </a>
       <div class="c-topnav__item c-topnav__account">
       	<span>{{base.currentUser.FirstName + ' ' + base.currentUser.LastName}}</span>
-        <div>{{base.availableFunds | currency:'$':2}}</div>	
+        <div class="availableFunds">{{base.availableFunds | currency:'$':2}}</div>	
       </div>
       </div>     
       <!--PRODUCT / CATEGORY BROWSE-->
