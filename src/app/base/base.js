@@ -46,10 +46,16 @@ function BaseConfig($stateProvider) {
     });
 }
 
-function BaseController($rootScope, $state, ProductSearch, CurrentUser, CurrentOrder, OrderCloud) {
+function BaseController($rootScope, $state, $http, ProductSearch, CurrentUser, CurrentOrder, LoginService, OrderCloud) {
     var vm = this;
     vm.currentUser = CurrentUser;
     vm.currentOrder = CurrentOrder;
+    vm.storeUrl = "";
+    
+    vm.logout = function() {
+        LoginService.Logout();
+    };
+
 
     vm.mobileSearch = function() {
         ProductSearch.Open()
@@ -71,6 +77,10 @@ function BaseController($rootScope, $state, ProductSearch, CurrentUser, CurrentO
                 vm.currentOrder = data;
             });
     });
+    
+    $http.get("/communityUrl").then(function(response) {
+        vm.storeUrl = response.data;
+      });
 }
 
 function NewOrderService($q, OrderCloud) {
