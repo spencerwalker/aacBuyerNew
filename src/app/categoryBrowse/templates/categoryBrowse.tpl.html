@@ -27,6 +27,7 @@
     <!-- Product List -->
     <div ng-if="categoryBrowse.productList.Items.length">
     	<h3 class="page-header">{{categoryBrowse.productList.Items.length > 1 ? 'Products' : 'Product'}}</h3>
+    	<a href="" ng-click="history.back()">All Categories</a>
         <b class="pull-right">{{categoryBrowse.getNumberOfResults('productList')}}</b>
         <b class="pull-left" style="font-size:36px">{{categoryBrowse.productList.Items.length > 1 ? 'Products' : 'Product'}}</b><br><br><br>
         <div class="row l-product-grid">
