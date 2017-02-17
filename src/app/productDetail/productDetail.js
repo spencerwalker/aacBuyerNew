@@ -19,14 +19,10 @@ function ProductConfig($stateProvider) {
         });
 }
 
-function ProductDetailController($exceptionHandler,$scope, Product, CurrentOrder, ocLineItems, toastr) {
+function ProductDetailController($exceptionHandler, Product, CurrentOrder, ocLineItems, toastr) {
     var vm = this;
     vm.item = Product;
     vm.finalPriceBreak = null;
-    
-    vm.Back = function() { 
-        window.history.back();
-    };
 
     vm.addToCart = function() {
         ocLineItems.AddItem(CurrentOrder, vm.item)

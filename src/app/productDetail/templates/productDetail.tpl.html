@@ -47,7 +47,8 @@
                 <button type="submit" class="btn btn-block btn-success">Add to Cart  <span ng-if="productDetail.item.Quantity"  class="badge badge-success">{{productDetail.findPrice(productDetail.item.Quantity) | currency}}</span></button>
             </fieldset>
             <fieldset class="form-group">
-            	<button class="btn btn-xs btn-danger" type="button" ng-click="Back()">Cancel </button>
+           <!-- <button class="btn btn-xs btn-danger" type="button" ng-click="Back()">Cancel </button> -->
+           		<button type="button" onclick="history.back()">Cancel </button>
             </fieldset>
         </div>
     </div>
