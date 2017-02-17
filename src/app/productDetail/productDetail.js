@@ -43,8 +43,4 @@ function ProductDetailController($exceptionHandler, Product, CurrentOrder, ocLin
         return vm.finalPriceBreak.Price * qty;
     };
     
-    vm.cancel = function goBack() {
-        window.history.back();
-    };
-    
 }
