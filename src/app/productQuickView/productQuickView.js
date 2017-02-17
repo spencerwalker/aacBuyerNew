@@ -62,8 +62,4 @@ function ProductQuickViewController(toastr, $uibModalInstance, SelectedProduct, 
 
 		return finalPriceBreak.Price * qty;
 	};
-
-	vm.cancel = function() {
-		$uibModalInstance.dismiss();
-	};
 }
