@@ -19,7 +19,6 @@ function ProductConfig($stateProvider) {
         });
 }
 
-
 function ProductDetailController($exceptionHandler, Product, CurrentOrder, ocLineItems, toastr) {
     var vm = this;
     vm.item = Product;
@@ -43,5 +42,9 @@ function ProductDetailController($exceptionHandler, Product, CurrentOrder, ocLin
 
         return vm.finalPriceBreak.Price * qty;
     };
+    
+    vm.cancel = function goBack() {
+        window.history.back();
+    };
+    
 }
-
