@@ -30,7 +30,6 @@
         <b class="pull-right">{{categoryBrowse.getNumberOfResults('productList')}}</b>
         <b class="pull-left" style="font-size:36px">{{categoryBrowse.productList.Items.length > 1 ? 'Products' : 'Product'}}</b><br><br><br>
         <div class="row l-product-grid">
-        <div class="row l-product-grid">
             <div class="col-sm-6 col-md-4 col-lg-3 l-product-grid__item"
                  ng-repeat="product in categoryBrowse.productList.Items"
                  ng-include="'common/templates/card.product.tpl.html'">
