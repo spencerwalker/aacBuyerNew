@@ -47,19 +47,21 @@ function BaseConfig($stateProvider) {
 }
 
 function BaseController($rootScope, $state, $http, ProductSearch, CurrentUser, CurrentOrder, LoginService, OrderCloud) {
+	cosole.log('Inside Base Controller');
     var vm = this;
     vm.currentUser = CurrentUser;
     vm.currentOrder = CurrentOrder;
     vm.storeUrl = "";
     vm.getAvailableBalance = function() {
     	vm.availableFunds = 0;
+    	console.log('vm.availableFunds1' + vm.availableFunds);
   			OrderCloud.Me.Get().then(function(result) {
   				var userId = result.ID;
-
+  				console.log('vm.availableFunds2' + vm.availableFunds);
   				OrderCloud.SpendingAccounts.ListAssignments(null, userId, null, null,
   					  null, null).then(function(accountsResult) {
   					var accountAssignments = accountsResult.Items;
-
+  					console.log('vm.availableFunds3' + vm.availableFunds);
   					angular.forEach(accountAssignments, function(a) {
   						OrderCloud.SpendingAccounts.Get(a.SpendingAccountID).then(
   						    function(aResult) {
