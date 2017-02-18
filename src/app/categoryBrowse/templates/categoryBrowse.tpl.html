@@ -1,7 +1,10 @@
 <article>
     <!-- Category List -->
     <div ng-if="categoryBrowse.categoryList.Items.length">
-        <h3 class="page-header">{{categoryBrowse.selectedCategory.Name || 'Categories' }}</h3>
+    	<div>
+        <h3 class="page-header">{{categoryBrowse.selectedCategory.Name || 'Categories' }}
+        <a class="pull-right" style="font-size:23px" href="" onclick="history.back()">All Vendors</a></h3>
+        </div>
         <b class="pull-right">{{categoryBrowse.getNumberOfResults('categoryList')}}</b>
         <b class="pull-left" style="font-size:36px" ng-if="categoryBrowse.selectedCategory.Name != null && categoryBrowse.selectedCategory.Name != 'Main Catalog' && categoryBrowse.selectedCategory.Name != 'Categories'">
         Product Categories</b><br><br><br>
@@ -31,7 +34,7 @@
     <div ng-if="categoryBrowse.productList.Items.length">
     	<div>
   		<h3 class="page-header">{{categoryBrowse.productList.Items.length > 1 ? 'Products' : 'Product'}}
-  		<a class="pull-right" href="" onclick="history.back()">All Categories</a></h3>
+  		<a class="pull-right" style="font-size:23px" href="" onclick="history.back()">All Categories</a></h3>
   		</div>
    		 <!--    <h3 class="c-category-card__title">{{category.Name || category.ID}}</h3>  -->
         <b class="pull-right">{{categoryBrowse.getNumberOfResults('productList')}}</b>
