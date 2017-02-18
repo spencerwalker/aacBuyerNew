@@ -51,9 +51,8 @@ function BaseController($rootScope, $state, $http, ProductSearch, CurrentUser, C
     vm.currentUser = CurrentUser;
     vm.currentOrder = CurrentOrder;
     vm.storeUrl = "";
-    
     vm.getAvailableBalance = function() {
-        vm.availableFunds = 0;
+    	vm.availableFunds = 0;
   			OrderCloud.Me.Get().then(function(result) {
   				var userId = result.ID;
 
@@ -69,6 +68,7 @@ function BaseController($rootScope, $state, $http, ProductSearch, CurrentUser, C
   					});
   				});
   			});
+  			console.log('vm.availableFunds' + vm.availableFunds);
   		}
     
     vm.logout = function() {
