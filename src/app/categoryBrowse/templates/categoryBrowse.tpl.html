@@ -3,10 +3,9 @@
     <div ng-if="categoryBrowse.categoryList.Items.length">
         <h3 class="page-header">{{categoryBrowse.selectedCategory.Name || 'Categories' }}</h3>
         <b class="pull-right">{{categoryBrowse.getNumberOfResults('categoryList')}}</b>
+        <b class="pull-left" style="font-size:36px">{{category.ID}}</b><br><br><br>
     </div>
-    <div ng-if="category.ID"> Product Categories </div>
-        
-       <!--   <b ng-if="category.Name != null" class="pull-left" style="font-size:36px">Product Categories</b><br><br><br>-->
+    
         <div class="row l-category-grid">
             <div class="col-sm-6 col-md-3 col-lg-2 l-category-grid__item" ng-repeat="category in categoryBrowse.categoryList.Items">
                 <div class="thumbnail c-category-card" ng-click="categoryBrowse.updateCategoryList(category.ID)">
