@@ -29,8 +29,8 @@
     </uib-pagination>
     <!-- Product List -->
     <div ng-if="categoryBrowse.productList.Items.length">
-   <h3 class="page-header">{{categoryBrowse.productList.Items.length > 1 ? 'Products' : 'Product'}}</h3>  
-   		<!--  <h3 class="page-header">{{category.Name || category.ID}}</h3>-->
+   <!--   <h3 class="page-header">{{categoryBrowse.productList.Items.length > 1 ? 'Products' : 'Product'}}</h3>  -->
+   		  <h3 class="c-category-card__title">{{category.Name || category.ID}}</h3>
         <b class="pull-right">{{categoryBrowse.getNumberOfResults('productList')}}</b>
         <b class="pull-left" style="font-size:36px">{{categoryBrowse.productList.Items.length > 1 ? 'Products' : 'Product'}}</b><br><br><br>
         <div class="row l-product-grid">
