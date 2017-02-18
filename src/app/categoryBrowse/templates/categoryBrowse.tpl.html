@@ -3,7 +3,7 @@
     <div ng-if="categoryBrowse.categoryList.Items.length">
     	<div>
         <h3 class="page-header">{{categoryBrowse.selectedCategory.Name || 'Categories' }}
-        <a class="pull-right" style="font-size:23px" href="" onclick="history.back()">All Vendors</a></h3>
+        <a class="pull-right" style="font-size:23px" href="" onclick="history.back()" ng-if="categoryBrowse.selectedCategory.Name != null && categoryBrowse.selectedCategory.Name != 'Main Catalog' && categoryBrowse.selectedCategory.Name != 'Categories'">All Vendors</a></h3>
         </div>
         <b class="pull-right">{{categoryBrowse.getNumberOfResults('categoryList')}}</b>
         <b class="pull-left" style="font-size:36px" ng-if="categoryBrowse.selectedCategory.Name != null && categoryBrowse.selectedCategory.Name != 'Main Catalog' && categoryBrowse.selectedCategory.Name != 'Categories'">
