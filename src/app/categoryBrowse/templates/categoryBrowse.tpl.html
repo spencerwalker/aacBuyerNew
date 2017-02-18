@@ -3,7 +3,7 @@
     <div ng-if="categoryBrowse.categoryList.Items.length">
         <h3 class="page-header">{{categoryBrowse.selectedCategory.Name || 'Categories' }}</h3>
         <b class="pull-right">{{categoryBrowse.getNumberOfResults('categoryList')}}</b>
-        <b class="pull-left" style="font-size:36px">{{category.ID}}</b><br><br><br>
+        <b class="pull-left" style="font-size:36px">{{category.$resolve.$stateParams.categoryid}}</b><br><br><br>
     </div>
     
         <div class="row l-category-grid">
