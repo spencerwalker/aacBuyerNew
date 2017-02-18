@@ -47,7 +47,7 @@ function BaseConfig($stateProvider) {
 }
 
 function BaseController($rootScope, $state, $http, ProductSearch, CurrentUser, CurrentOrder, LoginService, OrderCloud) {
-	cosole.log('Inside Base Controller');
+	console.log('Inside Base Controller');
     var vm = this;
     vm.currentUser = CurrentUser;
     vm.currentOrder = CurrentOrder;
