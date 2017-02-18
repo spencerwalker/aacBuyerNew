@@ -52,6 +52,7 @@ function BaseController($rootScope, $state, $http, ProductSearch, CurrentUser, C
     vm.currentUser = CurrentUser;
     vm.currentOrder = CurrentOrder;
     vm.storeUrl = "";
+    console.log('OrderCloud.SpendingAccounts' + OrderCloud.SpendingAccounts.Balance);
     vm.getAvailableBalance = function() {
     	vm.availableFunds = 0;
     	console.log('vm.availableFunds1' + vm.availableFunds);
