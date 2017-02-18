@@ -28,6 +28,8 @@
       <div class="c-topnav__item c-topnav__cart">
         <a ui-sref="cart"><i class="fa fa-shopping-cart c-topnav__cart-icon"></i> <span class="sr-only">Shopping Cart</span> <span class="badge c-topnav__cart-count" ng-bind="base.currentOrder.LineItemCount"></span></a>
       </div>
+      <div class="c-topnav__item c-topnav__account">{{base.availableFunds}}
+      </div>
       <!--ACCOUNT-->
       <div class="c-topnav__item c-topnav__account" uib-dropdown ng-if="!base.currentUser.Anonymous">
         <a uib-dropdown-toggle role="button"><i class="fa fa-user"></i> <span class="hidden-xs hidden-sm">{{base.currentUser.FirstName + ' ' + base.currentUser.LastName}}</span> <span class="caret hidden-xs"></span></a>
