@@ -12,7 +12,7 @@
                 <div class="thumbnail c-category-card" ng-click="categoryBrowse.updateCategoryList(category.ID)">
                     <img class="img-responsive c-category-card__img" ng-src="{{category.xp.image.URL || 'http://placehold.it/300x300?text=' + category.Name}}">
                     <div class="caption c-category-card__body">
-                        <h3 class="c-category-card__title">{{category.Name || category.ID}}</h3>
+                        <h3 class="c-category-card__title" style="font-size:20px">{{category.Name || category.ID}}</h3>
                         <!-- <p class="c-category-card__descrip" ng-if="category.Name">{{category.ID}}</p>  -->
                     </div>
                 </div>
@@ -29,8 +29,8 @@
     </uib-pagination>
     <!-- Product List -->
     <div ng-if="categoryBrowse.productList.Items.length">
-   <!-- <h3 class="page-header">{{categoryBrowse.productList.Items.length > 1 ? 'Products' : 'Product'}}</h3>  -->
-   		<h3 class="page-header">{{category.Name || category.ID}}</h3>
+   <h3 class="page-header">{{categoryBrowse.productList.Items.length > 1 ? 'Products' : 'Product'}}</h3>  
+   		<!--  <h3 class="page-header">{{category.Name || category.ID}}</h3>-->
         <b class="pull-right">{{categoryBrowse.getNumberOfResults('productList')}}</b>
         <b class="pull-left" style="font-size:36px">{{categoryBrowse.productList.Items.length > 1 ? 'Products' : 'Product'}}</b><br><br><br>
         <div class="row l-product-grid">
