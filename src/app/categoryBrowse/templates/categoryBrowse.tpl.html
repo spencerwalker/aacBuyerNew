@@ -3,6 +3,7 @@
     <div ng-if="categoryBrowse.categoryList.Items.length">
         <h3 class="page-header">{{categoryBrowse.selectedCategory.Name || 'Categories' }}</h3>
         <b class="pull-right">{{categoryBrowse.getNumberOfResults('categoryList')}}</b>
+        {{category.ID}}
         <div ng-if="category.ID != null && category.ID != 'Main Catalog'" >
         	<b class="pull-left" style="font-size:36px">Product Categories</b><br><br><br>
         </div>
