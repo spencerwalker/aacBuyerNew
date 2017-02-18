@@ -10,9 +10,9 @@
         <div class="row l-category-grid">
             <div class="col-sm-6 col-md-3 col-lg-2 l-category-grid__item" ng-repeat="category in categoryBrowse.categoryList.Items">
                 <div class="thumbnail c-category-card" ng-click="categoryBrowse.updateCategoryList(category.ID)">
-                    <img class="img-responsive c-category-card__img" ng-src="{{category.xp.image.URL || 'http://placehold.it/300x300?text=' + category.Name}}">
+                    <!--  <img class="img-responsive c-category-card__img" ng-src="{{category.xp.image.URL || 'http://placehold.it/300x300?text=' + category.Name}}">-->
                     <div class="caption c-category-card__body">
-                        <h3 class="c-category-card__title" style="font-size:20px">{{category.Name || category.ID}}</h3>
+                        <h3 class="c-category-card__title" style="font-size:18px">{{category.Name || category.ID}}</h3>
                         <!-- <p class="c-category-card__descrip" ng-if="category.Name">{{category.ID}}</p>  -->
                     </div>
                 </div>
