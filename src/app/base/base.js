@@ -52,17 +52,17 @@ function BaseController($rootScope, $state, $http, ProductSearch, CurrentUser, C
     vm.currentUser = CurrentUser;
     vm.currentOrder = CurrentOrder;
     vm.storeUrl = "";
-    console.log('OrderCloud.SpendingAccounts' + OrderCloud.SpendingAccounts);
+    
     vm.getAvailableBalance = function() {
     	vm.availableFunds = 0;
-    	console.log('vm.availableFunds1' + vm.availableFunds);
+    	
   			OrderCloud.Me.Get().then(function(result) {
   				var userId = result.ID;
-  				console.log('vm.availableFunds2' + vm.availableFunds);
+  				
   				OrderCloud.SpendingAccounts.ListAssignments(null, userId, null, null,
   					  null, null).then(function(accountsResult) {
   					var accountAssignments = accountsResult.Items;
-  					console.log('vm.availableFunds3' + vm.availableFunds);
+  					
   					angular.forEach(accountAssignments, function(a) {
   						OrderCloud.SpendingAccounts.Get(a.SpendingAccountID).then(
   						    function(aResult) {
@@ -71,7 +71,7 @@ function BaseController($rootScope, $state, $http, ProductSearch, CurrentUser, C
   					});
   				});
   			});
-  			console.log('vm.availableFunds' + vm.availableFunds);
+  			
   		}
     
     vm.logout = function() {
