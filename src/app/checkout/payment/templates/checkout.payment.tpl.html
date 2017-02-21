@@ -31,7 +31,7 @@
                 <div class="panel-body">
                      <h4>Donation Account: <span ng-if = "base.availableFunds - base.currentOrder.Subtotal > 0" > ({{base.availableFunds - base.currentOrder.Subtotal | currency}}  left) </span><span ng-if = "base.availableFunds - base.currentOrder.Subtotal <= 0" > ({{0 | currency}} left) </span><b class="pull-right text-primary">{{base.currentOrder.Subtotal | currency}}</b></h4>
                     <hr>
-                    <h4>Balance Due: <b class="pull-right text-primary">{{base.currentOrder.Total | currency}}</b></h4>
+                    <h4>Balance Due: <b class="pull-right text-primary"><span ng-if = "base.availableFunds - base.currentOrder.Subtotal > 0" > ({{0 | currency}} left)  </span><span ng-if = "base.availableFunds - base.currentOrder.Subtotal <= 0" > ({{base.currentOrder.Subtotal - base.availableFunds | currency}}  left) </span></b></h4>
                 </div>
             </div>
         </div>
