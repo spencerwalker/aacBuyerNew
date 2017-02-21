@@ -33,7 +33,6 @@
         <a uib-dropdown-toggle role="button"><i class="fa fa-user"></i> <span class="hidden-xs hidden-sm">{{base.currentUser.FirstName + ' ' + base.currentUser.LastName}}</span> <span class="caret hidden-xs"></span></a>
         <ul class="dropdown-menu-right" uib-dropdown-menu>
           <li ui-sref-active="active"><a ui-sref="account">My Account</a></li>
-          <li ui-sref-active="active">{{base.availableFunds | currency:'$':2}}</li>
           <li class="divider"></li>
           <li ui-sref-active="active"><a ui-sref="myAddresses">Personal Addresses</a></li>
           <li ui-sref-active="active"><a ui-sref="myPayments">Payment Methods</a></li>
