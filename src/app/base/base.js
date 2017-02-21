@@ -59,12 +59,12 @@ function BaseController($rootScope, $state, $http, ProductSearch, CurrentUser, C
   			OrderCloud.Me.Get().then(function(result) {
   				var userId = result.ID;
   				
-  				OrderCloud.payment.directives.ListAssignments(null, userId, null, null,
+  				OrderCloud.SpendingAccounts.ListAssignments(null, userId, null, null,
   					  null, null).then(function(accountsResult) {
   					var accountAssignments = accountsResult.Items;
   					
   					angular.forEach(accountAssignments, function(a) {
-  						OrderCloud.payment.directives.Get(a.SpendingAccountID).then(
+  						OrderCloud.SpendingAccounts.Get(a.SpendingAccountID).then(
   						    function(aResult) {
   							vm.availableFunds += aResult.Balance;
   						});
