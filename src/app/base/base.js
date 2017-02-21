@@ -78,7 +78,8 @@ function BaseController($rootScope, $state, $http, ProductSearch, CurrentUser, C
         LoginService.Logout();
     };
 
-
+    vm.getAvailableBalance();
+    
     vm.mobileSearch = function() {
         ProductSearch.Open()
             .then(function(data) {
