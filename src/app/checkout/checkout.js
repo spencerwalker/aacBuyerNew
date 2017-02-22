@@ -6,7 +6,8 @@ angular.module('orderCloud')
     .constant('CheckoutConfig', {
         ShippingRates: true,
         TaxRates: false,
-        AvailablePaymentMethods: ['PurchaseOrder', 'CreditCard', 'SpendingAccount']
+       // AvailablePaymentMethods: ['PurchaseOrder', 'CreditCard', 'SpendingAccount']
+        AvailablePaymentMethods: [ 'CreditCard', 'SpendingAccount']
     })
 ;
 
