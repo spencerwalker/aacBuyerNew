@@ -114,7 +114,7 @@
 
 						<p ng-if="payment.Type == 'CreditCard'">
 							<i style="font-size:1.3em;" class="fa {{payment.Details.CardType | faCreditCard}} pull-left"></i>
-							<span class="text-muted">XXXX-XXXX-XXXX-</span>{{payment.Details.PartialAccountNumber}}
+							<span class="text-muted">XXXX-XXXX-XXXX-</span>{{payment.Details.PartialAccountNumber}}<br>{{payment.Details.CardholderName}}
 						</p>
 
 						<p ng-if="payment.Type == 'SpendingAccount'"> 
