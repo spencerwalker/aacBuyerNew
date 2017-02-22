@@ -7,7 +7,7 @@ angular.module('orderCloud')
         ShippingRates: true,
         TaxRates: false,
        // AvailablePaymentMethods: ['PurchaseOrder', 'CreditCard', 'SpendingAccount']
-        AvailablePaymentMethods: [ 'CreditCard', 'SpendingAccount']
+        AvailablePaymentMethods: [ 'SpendingAccount', 'CreditCard']
     })
 ;
 
