@@ -1,8 +1,8 @@
 angular.module('orderCloud')
 
 	//Single Purchase Order Payment
-	.directive('ocPaymentPo', OCPaymentPurchaseOrder)
-	.controller('PaymentPurchaseOrderCtrl', PaymentPurchaseOrderController)
+	//.directive('ocPaymentPo', OCPaymentPurchaseOrder)
+	//.controller('PaymentPurchaseOrderCtrl', PaymentPurchaseOrderController)
 
 	//Single Spending Account Payment
 	.directive('ocPaymentSa', OCPaymentSpendingAccount)
@@ -22,7 +22,7 @@ angular.module('orderCloud')
 ;
 
 
-function OCPaymentPurchaseOrder() {
+/*function OCPaymentPurchaseOrder() {
 	return {
 		restrict:'E',
 		scope: {
@@ -75,7 +75,7 @@ function PaymentPurchaseOrderController($scope, $rootScope, toastr, OrderCloud, 
 				$exceptionHandler(ex);
 			});
 	}
-}
+}*/
 
 function OCPaymentSpendingAccount() {
 	return {
