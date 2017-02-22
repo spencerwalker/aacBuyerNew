@@ -5,7 +5,7 @@
 			<div ng-class="{'col-xs-10 col-sm-11': payments.Items.length > 1, 'col-xs-12': payments.Items.length == 1}">
 				<fieldset class="form-group">
 					<label for="paymentAmount">Amount</label>
-					<input id="paymentAmount" name="{{'paymentAmount' + $index}}" class="form-control" type="number" ng-model="{{base.currentOrder.Subtotal - base.availableFunds | currency}}" ng-max="payment.MaxAmount" ng-model-options="{allowInvalid:true, debounce: 1200}" ng-change="updatePaymentAmount(this)" readonly="readonly" required>
+					<input id="paymentAmount" name="{{'paymentAmount' + $index}}" class="form-control" type="number" ng-model="payment.Amount" ng-max="payment.MaxAmount" ng-model-options="{allowInvalid:true, debounce: 1200}" ng-change="updatePaymentAmount(this)" required>
 				</fieldset>
 				<oc-payment order="order" payment="payment" methods="methods" payment-index="$index" exclude-options="excludeOptions"></oc-payment>
 			</div>
