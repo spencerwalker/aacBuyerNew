@@ -1,8 +1,8 @@
 angular.module('orderCloud')
 
 	//Single Purchase Order Payment
-	.directive('ocPaymentPo', OCPaymentPurchaseOrder)
-	.controller('PaymentPurchaseOrderCtrl', PaymentPurchaseOrderController)
+	/*.directive('ocPaymentPo', OCPaymentPurchaseOrder)
+	.controller('PaymentPurchaseOrderCtrl', PaymentPurchaseOrderController)*/
 
 	//Single Spending Account Payment
 	.directive('ocPaymentSa', OCPaymentSpendingAccount)
@@ -22,7 +22,7 @@ angular.module('orderCloud')
 ;
 
 
-function OCPaymentPurchaseOrder() {
+/*function OCPaymentPurchaseOrder() {
 	return {
 		restrict:'E',
 		scope: {
@@ -32,9 +32,9 @@ function OCPaymentPurchaseOrder() {
 		templateUrl: 'checkout/payment/directives/templates/purchaseOrder.tpl.html',
 		controller: 'PaymentPurchaseOrderCtrl'
 	}
-}
+}*/
 
-function PaymentPurchaseOrderController($scope, $rootScope, toastr, OrderCloud, $exceptionHandler) {
+/*function PaymentPurchaseOrderController($scope, $rootScope, toastr, OrderCloud, $exceptionHandler) {
 	if (!$scope.payment) {
 		OrderCloud.Payments.List($scope.order.ID)
 			.then(function(data) {
@@ -75,7 +75,7 @@ function PaymentPurchaseOrderController($scope, $rootScope, toastr, OrderCloud, 
 				$exceptionHandler(ex);
 			});
 	}
-}
+}*/
 
 function OCPaymentSpendingAccount() {
 	return {
