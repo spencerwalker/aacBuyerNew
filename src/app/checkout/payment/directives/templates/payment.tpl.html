@@ -4,9 +4,9 @@
 		<label for="payment_method">Payment Method</label>
 		<select id="payment_method" class="form-control" ng-model="payment.Type" ng-options="method as (method | humanize) for method in methods" required></select>
 	</fieldset>
-	<div ng-if="payment.Type == 'PurchaseOrder'">
+<!-- <div ng-if="payment.Type == 'PurchaseOrder'">
 		<oc-payment-po order="order" payment="payment"></oc-payment-po>
-	</div>
+	</div> -->
 	<div ng-if="payment.Type == 'SpendingAccount'">
 		<oc-payment-sa order="order" payment="payment" exclude-options="excludeOptions.SpendingAccounts"></oc-payment-sa>
 	</div>
