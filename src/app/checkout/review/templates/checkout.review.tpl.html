@@ -117,13 +117,13 @@
 							<span class="text-muted">XXXX-XXXX-XXXX-</span>{{payment.Details.PartialAccountNumber}}
 						</p>
 
-						<p ng-if="payment.Type == 'SpendingAccount'">
-							{{payment.Details.Name}} <br>
-			<!-- 		<small><span class="text-muted">Remaining Balance:</span> {{payment.Details.Balance | currency}}</small> -->
+						<p ng-if="payment.Type == 'SpendingAccount'"> 
+			<!--			{{payment.Details.Name}} <br>
+			    		<small><span class="text-muted">Remaining Balance:</span> {{payment.Details.Balance | currency}}</small> -->
 						<small><span class="text-muted">Donation Balance:
 	                    	<span ng-if = "base.availableFunds - base.currentOrder.Subtotal > 0" > ({{base.availableFunds - base.currentOrder.Subtotal | currency}}  Available) </span>
 	                    	<span ng-if = "base.availableFunds - base.currentOrder.Subtotal <= 0" > ({{0 | currency}} Available) </span>
-                    		<b class="pull-right text-primary">{{base.currentOrder.Subtotal | currency}}</b>
+            <!--   		<b class="pull-right text-primary">{{base.currentOrder.Subtotal | currency}}</b>  -->
                     	</small>
 						</p>
 						<hr ng-if="!$last">
