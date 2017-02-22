@@ -113,7 +113,6 @@
 						<p ng-if="payment.xp.PONumber"><b>PO#:</b> {{payment.xp.PONumber}}</p>
 
 						<p ng-if="payment.Type == 'CreditCard'">
-							<b>{{creditCard.CardholderName}}</b><b1>{{payment.Details.Name}}</b1><b2>{{payment.Details.CardName}}</b2><b3>{{payment.CardName}}</b3>
 							<i style="font-size:1.3em;" class="fa {{payment.Details.CardType | faCreditCard}} pull-left"></i>
 							<span class="text-muted">XXXX-XXXX-XXXX-</span>{{payment.Details.PartialAccountNumber}}
 						</p>
