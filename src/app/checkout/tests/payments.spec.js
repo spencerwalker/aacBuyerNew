@@ -12,7 +12,7 @@ describe('Payment Directives', function() {
 		rootScope = $rootScope;
 	}));
 
-	/*describe('Controller: PaymentPurchaseOrderCtrl', function() {
+	describe('Controller: PaymentPurchaseOrderCtrl', function() {
 		var paymentPOCtrl,
 			order = {ID:'ORDER_ID'},
 			payment = {ID:'PAYMENT_ID', Type:'OtherPaymentType'},
@@ -113,7 +113,7 @@ describe('Payment Directives', function() {
 				expect(rootScope.$broadcast).toHaveBeenCalledWith('OC:PaymentsUpdated');
 			})
 		})
-	});*/
+	});
 
 	describe('Controller: PaymentSpendingAccountCtrl', function() {
 		var paymentPOCtrl,
