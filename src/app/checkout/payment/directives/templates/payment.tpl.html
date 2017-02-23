@@ -11,6 +11,6 @@
 		<oc-payment-sa order="order" payment="payment" exclude-options="excludeOptions.SpendingAccounts"></oc-payment-sa>
 	</div>
 	<div ng-if="payment.Type == 'CreditCard'">
-		<oc-payment-cc order="order" payment="payment" exclude-options="excludeOptions.CreditCards"></oc-payment-cc>
+		<oc-payment-cc ng-show="base.currentOrder.Subtotal - base.availableFunds > 0" order="order" payment="payment" exclude-options="excludeOptions.CreditCards"></oc-payment-cc>
 	</div>
 </div>
