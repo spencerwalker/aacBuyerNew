@@ -3,6 +3,7 @@
         <label for="itemQuantity" ng-if="label">{{label}}</label>
         <input id="itemQuantity"
                name="itemQuantity"
+               min="0"
                type="number"
                ng-required="true"
                ng-if="!item.StandardPriceSchedule.RestrictedQuantity"
@@ -27,6 +28,7 @@
         <input id="itemQuantity"
                name="itemQuantity"
                type="number"
+               min="0"
                ng-required="true"
                ng-if="!item.Product.StandardPriceSchedule.RestrictedQuantity"
                class="form-control text-center"
