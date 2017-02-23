@@ -30,7 +30,7 @@
       </div>
       <!--ACCOUNT-->
       <div class="c-topnav__item c-topnav__account" uib-dropdown ng-if="!base.currentUser.Anonymous">
-        <a uib-dropdown-toggle role="button"><i class="fa fa-user"></i> <span class="hidden-xs hidden-sm">{{base.currentUser.FirstName + ' ' + base.currentUser.LastName}}</span><br><span class="badge">{{base.availableFunds | currency:'$':2}}</span> <span class="caret hidden-xs"></span></a>
+        <a uib-dropdown-toggle role="button"><i class="fa fa-user"></i> <span class="hidden-xs hidden-sm">{{base.currentUser.FirstName + ' ' + base.currentUser.LastName}}</span><span class="badge">   {{base.availableFunds | currency:'$':2}}</span> <span class="caret hidden-xs"></span></a>
         <ul class="dropdown-menu-right" uib-dropdown-menu>
           <li ui-sref-active="active"><a ui-sref="account">My Account</a></li>
           <li class="divider"></li>
