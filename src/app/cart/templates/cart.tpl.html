@@ -45,7 +45,7 @@
                         Items in Your Cart
                     </h3>
                 </div><br>
-                <form name="OrderLineItemForm" Width="700px">
+                <form name="OrderLineItemForm" >
                 <div class="row  hidden-xs c-line-item__header">
                     <div class="col-xs-3 col-sm-2"></div>
                     <div class="col-xs-9 col-sm-10">
@@ -63,9 +63,9 @@
                     </div>
                     <div class="col-xs-12">
                         <hr>
-                    </div>
-                </div>
-                <div class="row c-line-item" ng-repeat="lineItem in cart.lineItems.Items track by $index" cg-busy="cart.lineLoading[$index]" style="margin-left: 1.5px; margin-right: 1.5px"> <hr>
+                    </div><hr>
+                </div><hr>
+                <div class="row c-line-item" ng-repeat="lineItem in cart.lineItems.Items track by $index" cg-busy="cart.lineLoading[$index]" style="margin-left: 1.5px; margin-right: 1.5px"> 
                     <div class="col-xs-3 col-sm-2">
                         <div class="thumbnail c-line-item__img">
                             <img class="img-responsive" ng-src="{{lineItem.xp.image.URL || 'http://placehold.it/100x100?text=' + lineItem.Product.Name}}"
