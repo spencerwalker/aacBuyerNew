@@ -10,7 +10,7 @@
     <hr>
     <div class="well text-center" ng-if="!cart.lineItems.Items.length">You do not have any items in your cart.</div>
     <div class="row" ng-if="cart.lineItems.Items.length">
-        <aside class="col-md-4 col-md-push-8">
+  <!--   <aside class="col-md-4 col-md-push-8">
             <div class="panel panel-default" hl-sticky anchor="top" offset-top="70" media-query="min-width: 992px" cg-busy="base.orderLoading">
                 <div class="panel-heading">
                     <h3 class="panel-title">
@@ -30,19 +30,22 @@
                     <h5 ng-repeat="promotion in cart.promotions" class="text-danger">
                         {{promotion.Code}}
                         <a href="" ng-click="cart.removePromotion(base.currentOrder, this)">remove</a>
-                        <span class="pull-right">- {{promotion.Amount | currency}}</span></h5>  -->
+                        <span class="pull-right">- {{promotion.Amount | currency}}</span></h5>  
                 </div>
                 <div class="panel-footer">
                     <button ng-if="cart.lineItems.Items.length > 0" type="button" ui-sref="checkout.shipping" class="btn btn-block btn-primary" ng-disabled="OrderLineItemForm.$invalid">Proceed to Checkout</button>
                 </div>
             </div>
-        </aside>
+        </aside>	 -->
 <aside class="col-md-8 col-md-pull-4">
           <!--  <div class="panel panel-default" hl-sticky anchor="top" offset-top="70" media-query="min-width: 992px" cg-busy="base.orderLoading">   -->
                 <div class="panel panel-default"> 
                 <div class="panel-heading">
                     <h3 class="panel-title">
-                        Items in Your Cart
+                        <ng-pluralize count="cart.lineItems.Meta.TotalCount" when="{
+							'1': '1 Item in Your Cart',
+							'other': '{} Items in Your Cart'
+						}"></ng-pluralize>
                     </h3>
                 </div><br>
                 <form name="OrderLineItemForm" >
@@ -113,6 +116,10 @@
                     </div>  -->
                 </div> <br>
             </form><hr>
+            	<h4>Subtotal:- All Orders <span class="pull-right">{{base.currentOrder.Subtotal | currency}}</span></h4>
+            	<div class="panel-footer">
+                    <button ng-if="cart.lineItems.Items.length > 0" type="button" ui-sref="checkout.shipping" class="btn btn-block btn-primary" ng-disabled="OrderLineItemForm.$invalid">Proceed to Checkout</button>
+                </div>
             </div>
 </aside>
 	
