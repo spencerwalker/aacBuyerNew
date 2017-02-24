@@ -2,12 +2,12 @@
     <div class="row">
         <div class="col-md-8">
             <div cg-busy="{promise:checkoutShipping.shippersLoading, message:'Loading Shipping Rates'}">
-                <a href="" class="pull-right" ng-click="checkoutShipping.createAddress(base.currentOrder)"><i class="fa fa-plus-circle"></i> New Address</a>
+               <!--  <a href="" class="pull-right" ng-click="checkoutShipping.createAddress(base.currentOrder)"><i class="fa fa-plus-circle"></i> New Address</a>  -->
                 <h4>Delivery Address</h4>
                 <div class="panel panel-default" ng-if="checkout.shippingAddress">
                     <div class="panel-body">
                         <div class="pull-right">
-                            <a href="" ng-click="checkoutShipping.changeShippingAddress(base.currentOrder)">Change</a>
+                         <a href="" ng-click="checkoutShipping.changeShippingAddress(base.currentOrder)">Change</a>
                         </div>
                         <p ng-bind-html="checkout.shippingAddress | address:'full'"></p>
                     </div>
