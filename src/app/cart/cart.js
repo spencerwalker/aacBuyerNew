@@ -70,7 +70,7 @@ function CartController($rootScope, $state, toastr, OrderCloud, LineItemsList, C
             .then(function() {
                 OrderCloud.Orders.Delete(order.ID)
                     .then(function(){
-                        $state.go("home",{}, {reload:'base'})
+                        $state.go("productBrowse.products",{}, {reload:'base'})
                     });
             });
     };
