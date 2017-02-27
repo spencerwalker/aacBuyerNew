@@ -102,7 +102,7 @@ function PaymentSpendingAccountController($scope, $rootScope, toastr, OrderCloud
 			.then(function(data) {
 				if (data.Items.length) {
 					OrderCloud.Payments.Patch($scope.order.ID, data.Items[0].ID, {
-						Type: 'SpendingAccount',
+						Type: 'My AdoptAClassroom.org Balance',
 						xp: {
 							PONumber:null
 						},
@@ -114,7 +114,7 @@ function PaymentSpendingAccountController($scope, $rootScope, toastr, OrderCloud
 						if (!$scope.payment.SpendingAccountID) $scope.showPaymentOptions = true;
 					});
 				} else {
-					OrderCloud.Payments.Create($scope.order.ID, {Type: 'SpendingAccount'})
+					OrderCloud.Payments.Create($scope.order.ID, {Type: 'My AdoptAClassroom.org Balance'})
 						.then(function(data) {
 							$scope.payment = data;
 							$scope.showPaymentOptions = true;

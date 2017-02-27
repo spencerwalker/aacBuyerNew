@@ -7,7 +7,7 @@ angular.module('orderCloud')
         ShippingRates: true,
         TaxRates: false,
        // AvailablePaymentMethods: ['PurchaseOrder', 'CreditCard', 'SpendingAccount']
-        AvailablePaymentMethods: [ 'SpendingAccount', 'CreditCard']
+        AvailablePaymentMethods: [ 'My AdoptAClassroom.org Balance', 'CreditCard']
     })
 ;
 
