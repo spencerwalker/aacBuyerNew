@@ -1,5 +1,5 @@
 <!--Single Credit Card Payment View-->
-<div ng-form="OCPaymentCreditCard" cg-busy="updatingCreditCardPayment">
+<div ng-disabled="base.availableFunds - base.currentOrder.Subtotal < 1" ng-form="OCPaymentCreditCard" cg-busy="updatingCreditCardPayment">
 	<label>Credit Card <!--{{checkoutPayment.creditCardDisplayLimit}}--></label>
 	<a href="" class="pull-right" ng-click="createCreditCard(this)"><i class="fa fa-plus-circle"></i> Create Credit Card</a>
 	<div class="panel panel-default" ng-repeat="creditCard in creditCards" ng-if="payment.CreditCardID == creditCard.ID || (showPaymentOptions && (!excludedCreditCards || excludedCreditCards.indexOf(creditCard.ID) == -1))">
