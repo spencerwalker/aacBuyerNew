@@ -18,7 +18,7 @@
 		</div>
 		<hr ng-if="!$last">
 	</div>
-		<div ng-disabled="base.availableFunds - base.currentOrder.Subtotal < 1" >
+		<div ng-disabled="base.availableFunds - base.currentOrder.Subtotal < 0.00" >
 		<button type="button" class="btn btn-block btn-default" ng-click="addNewPayment()" ng-if="canAddPayment">Add New Payment</button>
 		</div>	
 </div>
