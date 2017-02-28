@@ -46,6 +46,7 @@ function CartConfig($stateProvider) {
 function CartController($rootScope, $state, toastr, OrderCloud, LineItemsList, CurrentPromotions, ocConfirm) {
     var vm = this;
     vm.lineItems = LineItemsList;
+    console.log('LineItems'+vw.lineItems)
     vm.promotions = CurrentPromotions.Meta ? CurrentPromotions.Items : CurrentPromotions;
     vm.removeItem = function(order, scope) {
         vm.lineLoading = [];
