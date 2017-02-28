@@ -42,11 +42,6 @@ function CartConfig($stateProvider) {
                 CategoryList: function($stateParams, OrderCloud) {
                     var depth = 1;
                     return OrderCloud.Me.ListCategories(null, null, null, null, null, {ParentID: $stateParams.categoryid}, depth);
-                },
-                
-                ProductList: function($stateParams, OrderCloud) {
-                    return OrderCloud.Me.ListProducts(null, null, null, null, null, null, $stateParams.categoryid);
-
                 }
             }
         });
@@ -55,7 +50,6 @@ function CartConfig($stateProvider) {
 function CartController($rootScope, $state, toastr, OrderCloud, CategoryList, LineItemsList, CurrentPromotions, ocConfirm) {
     var vm = this;
     vm.categories = CategoryList;
-    vm.products = ProductList;
     vm.lineItems = LineItemsList;
     vm.promotions = CurrentPromotions.Meta ? CurrentPromotions.Items : CurrentPromotions;
     vm.removeItem = function(order, scope) {
@@ -66,10 +60,6 @@ function CartController($rootScope, $state, toastr, OrderCloud, CategoryList, Li
                 vm.lineItems.Items.splice(scope.$index, 1);
                 toastr.success('Line Item Removed');
             });
-        
-        $rootScope.$on('OC:FacetsUpdated', function(e, productList) {
-            productList ? vm.products = productList : vm.products = ProductList;
-        });
     };
 
     //TODO: missing unit tests
