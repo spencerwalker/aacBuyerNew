@@ -37,19 +37,14 @@ function CartConfig($stateProvider) {
                 },
                 CurrentPromotions: function(CurrentOrder, OrderCloud) {
                     return OrderCloud.Orders.ListPromotions(CurrentOrder.ID);
-                },
                 
-                CategoryList: function($stateParams, OrderCloud) {
-                    var depth = 1;
-                    return OrderCloud.Me.ListCategories(null, null, null, null, null, {ParentID: $stateParams.categoryid}, depth);
                 }
             }
         });
 }
 
-function CartController($rootScope, $state, toastr, OrderCloud, CategoryList, LineItemsList, CurrentPromotions, ocConfirm) {
+function CartController($rootScope, $state, toastr, OrderCloud, LineItemsList, CurrentPromotions, ocConfirm) {
     var vm = this;
-    vm.categories = CategoryList;
     vm.lineItems = LineItemsList;
     vm.promotions = CurrentPromotions.Meta ? CurrentPromotions.Items : CurrentPromotions;
     vm.removeItem = function(order, scope) {
