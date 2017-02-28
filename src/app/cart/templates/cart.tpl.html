@@ -46,7 +46,12 @@
                     </h3>
                 </div><br>
                 <form name="OrderLineItemForm" >
-                <h3>{{categoryBrowse.selectedCategory.Name || 'Categories' }}</h3>
+                <h3>{{categoryBrowse.selectedCategory.Name || 'Vendor1' }}</h3>
+                <h3>{{categoryBrowse.lineItem.selectedCategory.Name || 'Vendor2' }}</h3>
+                <h3>{{categoryBrowse || 'Vendor3' }}</h3>
+                <h3>{{lineItem.categoryBrowse.selectedCategory.Name || 'Vendor4' }}</h3>
+                <h3>{{lineItem.Category.Name || 'Vendor5' }}</h3>
+                <h3>{{lineItem.Category.ID || 'Vendor6' }}</h3>
                 <div class="row  hidden-xs c-line-item__header">
                     <div class="col-xs-3 col-sm-2"></div>
                     <div class="col-xs-9 col-sm-10">
