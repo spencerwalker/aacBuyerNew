@@ -46,7 +46,7 @@
                     </h3>
                 </div>
                <!--  <form name="OrderLineItemForm" > -->
-               	<form name="OrderLineItemForm" class="panel panel-default" ng-repeat="lineItem in cart.lineItems.Items track by $index" cg-busy="cart.lineLoading[$index]" style="margin-left: 1.5px; margin-right: 1.5px" ><br>
+               	<form name="OrderLineItemForm" class="panel panel-default" ng-repeat="lineItem in cart.lineItems.Items track by $index" cg-busy="cart.lineLoading[$index]" style="margin-left: 1.5px; margin-right: 1.5px" >
                	<div class="panel panel-default"> 
 	                <div class="panel-heading">
 		                <h4 class="panel-title">
@@ -121,7 +121,9 @@
             	    <div class="col-xs-12">
                         <hr>
                     </div>
+                    <div>
                     <h4 style="text-align:right">Subtotal:{{base.currentOrder.Subtotal | currency}}</h4>
+                    </div>
                 </div> <br>              
             </form>
             </div>
