@@ -51,7 +51,7 @@
                	<div class="panel panel-default"> 
 	                <div class="panel-heading">
 		                <h4 class="panel-title">
-		               		Vendor {{lineItem.ProductID}}
+		               		Vendor {{category.$resolve.$stateParams.categoryid}}
 		               	</h4>
 	               	</div>
                 </div> 
@@ -86,7 +86,7 @@
                             <div class="col-sm-5 col-lg-6 c-line-item__info--top">
                                 <h4 class="c-line-item__name">
                                  <!--    <a href="#">{{lineItem.Product.Name}}</a>  -->
-                                 <a><h4>{{category.$resolve.$stateParams.categoryid}}</h4></a>
+                                 <a><h4>{{lineItem.Product.categoryid}}</h4></a>
                                  {{lineItem.Product.Name}}
                                 </h4>
                                 <small class="text-muted c-line-item__id">{{lineItem.Product.Description}}</small>
