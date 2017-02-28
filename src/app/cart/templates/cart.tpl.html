@@ -45,10 +45,11 @@
                         Items in Your Cart
                     </h3>
                 </div><br>
-                <form name="OrderLineItemForm" >
-                <h4 class="panel panel-default" class="row c-line-item" ng-repeat="lineItem in cart.lineItems.Items track by $index" cg-busy="cart.lineLoading[$index]">
+               <!--  <form name="OrderLineItemForm" > -->
+               	<form name="OrderLineItemForm" class="panel panel-default" ng-repeat="lineItem in cart.lineItems.Items track by $index" cg-busy="cart.lineLoading[$index]">
+               <!-- <h4 class="panel panel-default" class="row c-line-item" ng-repeat="lineItem in cart.lineItems.Items track by $index" cg-busy="cart.lineLoading[$index]">
                 Vendor
-                </h4>
+                </h4> -->
                 <div class="row  hidden-xs c-line-item__header">
                     <div class="col-xs-3 col-sm-2"></div>
                     <div class="col-xs-9 col-sm-10">
