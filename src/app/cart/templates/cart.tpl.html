@@ -46,12 +46,6 @@
                     </h3>
                 </div><br>
                 <form name="OrderLineItemForm" >
-                <h3>{{categoryBrowse.selectedCategory.Name || 'Vendor1' }}</h3>
-                <h3>{{categoryBrowse.lineItem.selectedCategory.Name || 'Vendor2' }}</h3>
-                <h3>{{categoryBrowse || 'Vendor3' }}</h3>
-                <h3>{{lineItem.categoryBrowse.selectedCategory.Name || 'Vendor4' }}</h3>
-                <h3>{{lineItem.Category.Name || 'Vendor5' }}</h3>
-                <h3>{{lineItem.Category.ID || 'Vendor6' }}</h3>
                 <div class="row  hidden-xs c-line-item__header">
                     <div class="col-xs-3 col-sm-2"></div>
                     <div class="col-xs-9 col-sm-10">
@@ -71,7 +65,8 @@
                         <hr>
                     </div><hr>
                 </div>
-                <div class="row c-line-item" ng-repeat="lineItem in cart.lineItems.Items track by $index" cg-busy="cart.lineLoading[$index]" style="margin-left: 1.5px; margin-right: 1.5px"> 
+                <div class="row c-line-item" ng-repeat="lineItem in cart.lineItems.Items track by $index" cg-busy="cart.lineLoading[$index]" style="margin-left: 1.5px; margin-right: 1.5px">
+                <div>{{lineItem.ProductID}}</div> 
                     <div class="col-xs-3 col-sm-2">
                         <div class="thumbnail c-line-item__img">
                             <img class="img-responsive" ng-src="{{lineItem.xp.image.URL || 'http://placehold.it/100x100?text=' + lineItem.Product.Name}}"
