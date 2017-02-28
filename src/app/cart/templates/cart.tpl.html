@@ -46,10 +46,7 @@
                     </h3>
                 </div><br>
                 <form name="OrderLineItemForm" >
-	                <div>{{lineItem.ProductID}}</div>
-	                <div>{{productBrowse.products.categoryid}}</div>
-	                <div>{{lineItem.productBrowse.products.categoryid}}</div>
-	                <div>{{lineItem}}</div>
+                <h3>{{categoryBrowse.selectedCategory.Name || 'Categories' }}</h3>
                 <div class="row  hidden-xs c-line-item__header">
                     <div class="col-xs-3 col-sm-2"></div>
                     <div class="col-xs-9 col-sm-10">
