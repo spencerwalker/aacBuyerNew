@@ -1,17 +1,6 @@
 <div ng-form="OC_Checkout_Review">
 	<div class="row">
 		<div class="col-md-8">
-			<div class="row">
-				<div class="col-sm-6">
-					<h4>Shipping To</h4>
-					<div class="panel panel-default">
-						<div class="panel-body">
-							 <p ng-bind-html="checkout.shippingAddress | address:'full'"></p>
-						</div>
-					</div>
-				</div>
-				
-			</div>
 			<hr>
 			<div class="row  hidden-xs c-line-item__header">
 				<div class="col-xs-3 col-sm-2"></div>
@@ -74,6 +63,19 @@
 				</div>
 				<div class="col-xs-12">
 					<hr>
+				</div>
+			</div>
+		</div>
+		
+		<div class="col-md-4">
+			<div class="panel panel-default" hl-sticky anchor="top" offset-top="70" media-query="min-width: 992px">
+					<div class="panel-heading">
+					<h4 class="panel-title">
+					Shipping To
+					</h4>
+					</div>
+				<div class="panel-body">
+					<p ng-bind-html="checkout.shippingAddress | address:'full'"></p>
 				</div>
 			</div>
 		</div>
