@@ -8,13 +8,15 @@
 	                <h4 class="panel-title">
 	                Delivery Address</h4>
                 </div>
-	                <div class="panel panel-default" ng-if="checkout.shippingAddress">
-		                 <div class="pull-right">
-		               <!--      <a href="" ng-click="checkoutShipping.changeShippingAddress(base.currentOrder)">Change</a>  -->
-		                 </div>
-	                       	 <p ng-bind-html="checkout.shippingAddress | address:'full'"></p>
-	                </div>
+                <div class="panel panel-default" ng-if="checkout.shippingAddress">
+                    <div class="panel-body">
+             <!--   <div class="pull-right">
+                    		<a href="" ng-click="checkoutShipping.changeShippingAddress(base.currentOrder)">Change</a>  
+                     </div>-->
+                        <p ng-bind-html="checkout.shippingAddress | address:'full'"></p>
+                    </div>
                 </div>
+               </div>
                 <div class="well text-center" ng-if="!checkout.shippingAddress">
                     You currently do not have a shipping address selected. <br />
                     <a href="" ng-click="checkoutShipping.changeShippingAddress(base.currentOrder)">Select one now</a>
