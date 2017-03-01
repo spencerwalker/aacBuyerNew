@@ -88,7 +88,7 @@
                                  <!--    <a href="#">{{lineItem.Product.Name}}</a>  -->
                                  {{lineItem.Product.Name}}
                                 </h4>
-                                <h4>{{category.$resolve.$stateParams.categoryid}}</h4>
+                                <h4>{{lineItem.Product.category.$resolve.$stateParams.categoryid}}</h4>
                                 <h3 class="c-category-card__title" style="font-size:18px">{{category.Name || category.ID}}</h3>
                                 <small class="text-muted c-line-item__id">{{lineItem.Product.Description}}</small>
                          <!--   <small class="text-muted c-line-item__id">{{lineItem.ProductID}}</small>  -->
