@@ -51,7 +51,7 @@
                	<div class="panel panel-default"> 
 	                <div class="panel-heading">
 		                <h4 class="panel-title">
-							Vendor {{categoryBrowse.selectedCategory.Name || 'Categories' }} {{base.currentOrder.Id}}
+							Vendor {{categoryBrowse.selectedCategory.Name}}
 		               	</h4>
 	               	</div>
                 </div> 
@@ -88,6 +88,9 @@
                                  <!--    <a href="#">{{lineItem.Product.Name}}</a>  -->
                                  {{lineItem.Product.Name}}
                                 </h4>
+                                <small class="text-muted c-line-item__id">{{lineItem.Product.categoryBrowse.selectedCategory.Name}}</small>
+                                <small class="text-muted c-line-item__id">{{lineItem.Product.selectedCategory.Name}}</small>
+                                <small class="text-muted c-line-item__id">{{lineItem.Product.Category.Name}}</small>
                                 <small class="text-muted c-line-item__id">{{lineItem.Product.Description}}</small>
                          <!--   <small class="text-muted c-line-item__id">{{lineItem.ProductID}}</small>  -->
                                 <ul class="c-line-item__spec-list" ng-if="lineItem.Specs.length > 0">
