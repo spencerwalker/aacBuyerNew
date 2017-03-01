@@ -38,15 +38,32 @@ function CartConfig($stateProvider) {
                 CurrentPromotions: function(CurrentOrder, OrderCloud) {
                     return OrderCloud.Orders.ListPromotions(CurrentOrder.ID);
                 
+                },
+                
+                CategoryList: function($stateParams, OrderCloud) {
+                    var depth = 1;
+                    return OrderCloud.Me.ListCategories(null, null, null, null, null, {ParentID: $stateParams.categoryid}, depth);
+                },
+                ProductList: function($stateParams, OrderCloud) {
+                    return OrderCloud.Me.ListProducts(null, null, null, null, null, null, $stateParams.categoryid);
+
                 }
             }
         });
 }
 
-function CartController($rootScope, $state, toastr, OrderCloud, LineItemsList, CurrentPromotions, ocConfirm) {
+function CartController($rootScope, CategoryList, ProductList, $state, toastr, OrderCloud, LineItemsList, CurrentPromotions, ocConfirm) {
     var vm = this;
+    vm.categories = CategoryList;
+    vm.products = ProductList;
+    
     vm.lineItems = LineItemsList;
     console.log('LineItems'+vm.lineItems)
+    
+    $rootScope.$on('OC:FacetsUpdated', function(e, productList) {
+        productList ? vm.products = productList : vm.products = ProductList;
+    });
+    
     vm.promotions = CurrentPromotions.Meta ? CurrentPromotions.Items : CurrentPromotions;
     vm.removeItem = function(order, scope) {
         vm.lineLoading = [];
