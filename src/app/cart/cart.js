@@ -52,17 +52,11 @@ function CartConfig($stateProvider) {
         });
 }
 
-function CartController($rootScope, CategoryList, ProductList, $state, toastr, OrderCloud, LineItemsList, CurrentPromotions, ocConfirm) {
+function CartController($rootScope, $state, toastr, OrderCloud, LineItemsList, CurrentPromotions, ocConfirm) {
     var vm = this;
-    vm.categories = CategoryList;
-    vm.products = ProductList;
     
     vm.lineItems = LineItemsList;
     console.log('LineItems'+vm.lineItems)
-    
-    $rootScope.$on('OC:FacetsUpdated', function(e, productList) {
-        productList ? vm.products = productList : vm.products = ProductList;
-    });
     
     vm.promotions = CurrentPromotions.Meta ? CurrentPromotions.Items : CurrentPromotions;
     vm.removeItem = function(order, scope) {
