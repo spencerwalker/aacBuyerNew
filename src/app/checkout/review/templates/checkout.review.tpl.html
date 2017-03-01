@@ -1,13 +1,13 @@
 <div ng-form="OC_Checkout_Review">
 	<div class="row">
 		<div class="col-md-8">
-			<div class="panel panel-default"> 
+			<div class="panel panel-default" style="margin-left: 1.5px; margin-right: 1.5px"> 
 		        <div class="panel-heading">
                     <h3 class="panel-title">
                         Items in Your Cart
                     </h3>
                 </div>
-			<div class="row  hidden-xs c-line-item__header">
+			<div class="row  hidden-xs c-line-item__header" style="margin-left: 1.5px; margin-right: 1.5px">
 				<div class="col-xs-3 col-sm-2"></div>
 				<div class="col-xs-9 col-sm-10">
 					<div class="row">
@@ -25,7 +25,7 @@
 					<hr>
 				</div><hr>
 			</div>
-			<div class="row c-line-item" ng-repeat="lineItem in checkoutReview.lineItems.Items track by $index"  style="margin-left: 1.5px; margin-right: 1.5px" >
+			<div class="row c-line-item" ng-repeat="lineItem in checkoutReview.lineItems.Items track by $index" style="margin-left: 1.5px; margin-right: 1.5px" >
 				<div class="col-xs-3 col-sm-2">
 					<div class="thumbnail c-line-item__img">
 						<img class="img-responsive" ng-src="{{lineItem.xp.image.URL || 'http://placehold.it/100x100?text=' + lineItem.Product.Name}}"
@@ -35,10 +35,11 @@
 				<div class="col-xs-9 col-sm-10">
 					<div class="row c-line-item__info c-line-item--centered">
 						<div class="col-sm-5 col-lg-6 c-line-item__info--top">
-							<h3 class="c-line-item__name">
-								<a href="#">{{lineItem.Product.Name}}</a>
-							</h3>
-							<small class="text-muted c-line-item__id">{{lineItem.ProductID}}</small>
+							<h4 class="c-line-item__name">
+								{{lineItem.Product.Name}}
+							</h4>
+						<!-- <small class="text-muted c-line-item__id">{{lineItem.ProductID}}</small>  -->
+							<small class="text-muted c-line-item__id">{{lineItem.Product.Description}}</small>
 							<ul class="c-line-item__spec-list" ng-if="lineItem.Specs.length > 0">
 								<li class="c-line-item__spec" ng-repeat="spec in lineItem.Specs">
 									<small>{{spec.Name}}:</small>
