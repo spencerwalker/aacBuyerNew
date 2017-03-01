@@ -47,7 +47,7 @@
                 </div>
                <!--  <form name="OrderLineItemForm" > -->
                	<!-- <form name="OrderLineItemForm" class="panel panel-default" ng-repeat="lineItem in cart.lineItems.Items track by $index" cg-busy="cart.lineLoading[$index]" style="margin-left: 1.5px; margin-right: 1.5px" > -->
-               	<form name="OrderLineItemForm" class="panel panel-default" style="margin-left: 1.5px; margin-right: 1.5px" >
+               	<form name="OrderLineItemForm" class="panel panel-default" ng-repeat="categoryBrowse.selectedCategory.Name track by $index" cg-busy="cart.OrderLineItemForm[$index]" style="margin-left: 1.5px; margin-right: 1.5px" >
                	<div class="panel panel-default"> 
 	                <div class="panel-heading">
 		                <h4 class="panel-title">
@@ -74,10 +74,6 @@
                         <hr>
                     </div><hr>
                 </div>
-                    <div>
-				        <h3 class="page-header">{{categoryBrowse.selectedCategory.Name || 'Categories' }}
-				        <!-- <a class="pull-right" style="font-size:23px;color:black" href="" onclick="history.back()" ng-if="categoryBrowse.selectedCategory.Name != null && categoryBrowse.selectedCategory.Name != 'Main Catalog' && categoryBrowse.selectedCategory.Name != 'Categories'">All Vendors</a></h3>  -->
-  				 	</div>                 
                 <div class="row c-line-item" ng-repeat="lineItem in cart.lineItems.Items track by $index" cg-busy="cart.lineLoading[$index]" style="margin-left: 1.5px; margin-right: 1.5px" >
                     <div class="col-xs-3 col-sm-2">
                         <div class="thumbnail c-line-item__img">
