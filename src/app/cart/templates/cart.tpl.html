@@ -7,6 +7,10 @@
         </div>
         Shopping Cart
     </h3>
+    <div>
+        <h3 class="page-header">{{categoryBrowse.selectedCategory.Name || 'Categories' }}
+        <a class="pull-right" style="font-size:23px;color:black" href="" onclick="history.back()" ng-if="categoryBrowse.selectedCategory.Name != null && categoryBrowse.selectedCategory.Name != 'Main Catalog' && categoryBrowse.selectedCategory.Name != 'Categories'">All Vendors</a></h3>
+   </div>        
     <hr>
     <div class="well text-center" ng-if="!cart.lineItems.Items.length">You do not have any items in your cart.</div>
     <div class="row" ng-if="cart.lineItems.Items.length">
@@ -88,8 +92,6 @@
                                  <!--    <a href="#">{{lineItem.Product.Name}}</a>  -->
                                  {{lineItem.Product.Name}}
                                 </h4>
-								<a href="" ui-sref="productBrowse.products({categoryid:crumb.ID})">{{crumb.Name}}</a>
-								<a href="" ui-sref="productBrowse.products({categoryid:category.ID})">All Products{{category.ID}}</a>
                                 <small class="text-muted c-line-item__id">{{lineItem.Product.Description}}</small>
                          <!--   <small class="text-muted c-line-item__id">{{lineItem.ProductID}}</small>  -->
                                 <ul class="c-line-item__spec-list" ng-if="lineItem.Specs.length > 0">
