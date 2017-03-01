@@ -44,7 +44,8 @@ function AutoLoginController($state, $stateParams, $exceptionHandler, OrderCloud
         //else {
         	console.log('Inside else Submit');
         //  $state.go('categoryBrowse',{'categoryID': 'MainCatalog'});
-        	$state.go('productBrowse.products', {'categoryid':vm.catid});
+        	$state.go('productBrowse.products', {});
+        //	$state.go('productBrowse.products', {'categoryid':vm.catid});
         //}
     };
 
