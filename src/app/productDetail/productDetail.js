@@ -22,6 +22,8 @@ function ProductConfig($stateProvider) {
 function ProductDetailController($exceptionHandler, Product, CurrentOrder, ocLineItems, toastr) {
     var vm = this;
     vm.item = Product;
+    console.log('Product :: ', vm.item);
+    
     vm.finalPriceBreak = null;
 
     vm.addToCart = function() {
