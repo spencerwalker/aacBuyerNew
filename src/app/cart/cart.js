@@ -56,7 +56,7 @@ function CartController($rootScope, $state, toastr, OrderCloud, LineItemsList, C
     var vm = this;
     
     vm.lineItems = LineItemsList;
-    console.log('LineItems'+vm.lineItems)
+    console.log('LineItems', vm.lineItems)
     
     vm.promotions = CurrentPromotions.Meta ? CurrentPromotions.Items : CurrentPromotions;
     vm.removeItem = function(order, scope) {
