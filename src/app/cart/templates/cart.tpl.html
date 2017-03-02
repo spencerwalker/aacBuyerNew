@@ -18,12 +18,12 @@
                     </h3>
                 </div>
                 <div class="panel-body">
-                    <p><b>
+                    <p>
                         <ng-pluralize count="cart.lineItems.Meta.TotalCount" when="{
 							'1': '1 Item in Your Cart',
 							'other': '{} Items in Your Cart'
 						}"></ng-pluralize>
-                    </p></b>
+                    </p>
                     <hr>
                     <h4>Subtotal:- All Orders <span class="pull-right">{{base.currentOrder.Subtotal | currency}}</span></h4>
             <!--    <hr>
