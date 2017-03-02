@@ -39,11 +39,12 @@
    
     <div class="panel panel-default"> 
 		<div class="panel-heading">
-			<br  ng-if="myPayments.personalSpendingAccounts">
+		<!-- <br  ng-if="myPayments.personalSpendingAccounts">  -->
 			<div ng-if="myPayments.personalSpendingAccounts">
 				<h3><i class="fa fa-money"></i> Available Spending Accounts</h3>
 			</div>
 		</div>
+	</div>
         <div class="panel panel-default" ng-repeat="spendingAccount in myPayments.personalSpendingAccounts.Items">
             <div class="panel-body">
                 <div class="row">
@@ -68,7 +69,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    
     <br ng-if="myPayments.giftCards">
     <div ng-if="myPayments.giftCards">
         <h3><i class="fa fa-gift"></i> Available Gift Cards</h3>
