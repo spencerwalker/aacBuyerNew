@@ -69,11 +69,16 @@
                 </div>
             </div>
         </div>
+    <hr>
     
-    <br ng-if="myPayments.giftCards">
-    <div ng-if="myPayments.giftCards">
-        <h3><i class="fa fa-gift"></i> Available Gift Cards</h3>
-        <hr>
+    <div class="panel panel-default"> 
+		<div class="panel-heading">
+		    <!-- <br ng-if="myPayments.giftCards">  -->
+	       <div ng-if="myPayments.giftCards">
+        		<h3><i class="fa fa-gift"></i> Available Gift Cards</h3>
+           </div>
+        </div>
+    </div>
         <div class="panel panel-default" ng-repeat="giftCard in myPayments.giftCards.Items">
             <div class="panel-body">
                 <div class="row">
