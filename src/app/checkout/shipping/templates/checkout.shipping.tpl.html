@@ -48,11 +48,11 @@
                     </h3>
                 </div>
                 <div class="panel-body">
-                    <p><b>
+                    <p>
                         <ng-pluralize count="base.currentOrder.LineItemCount" when="{
 							'1': 'Checking Out With 1 Item',
 							'other': 'Checking Out With {} Items'
-						}"></ng-pluralize></b>
+						}"></ng-pluralize>
                     </p>
                     <hr>
                     <h5>Subtotal: All Orders <span class="pull-right">{{base.currentOrder.Subtotal | currency}}</span></h5>
