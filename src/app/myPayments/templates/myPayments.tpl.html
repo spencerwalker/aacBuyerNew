@@ -3,11 +3,13 @@
    	  <div class="panel panel-default"> 
 	   <div class="panel-heading">
         <!--PERSONAL CREDIT CARDS-->
-        <button class="btn btn-primary pull-right" ng-click="myPayments.createCreditCard()"><i
-                class="fa fa-plus-circle"></i> New Credit Card
-        </button>
+	        <!-- <button class="btn btn-primary pull-right" ng-click="myPayments.createCreditCard()"><i
+	                class="fa fa-plus-circle"></i> New Credit Card
+	        </button> -->
         <h3><i class="fa fa-credit-card"></i> Personal Credit Cards</h3>
-        <hr>
+      </div>
+    </div>
+  
         <div class="panel panel-default" ng-repeat="creditCard in myPayments.personalCreditCards.Items" cg-busy="myPayments.loading[$index]">
             <div class="panel-body">
                 <div class="row">
@@ -27,8 +29,7 @@
             </div>
         </div>
        </div>
-     </div>
-    </div>
+
 
     <div class="no-matches" ng-if="!myPayments.personalCreditCards">
         You have not created any personal credit cards. <br>
