@@ -34,10 +34,16 @@
         <a href="" ng-click="myPayments.createCreditCard()">Creat one now!</a>
     </div>
    </div>
-    <br  ng-if="myPayments.personalSpendingAccounts">
-    <div ng-if="myPayments.personalSpendingAccounts">
-        <h3><i class="fa fa-money"></i> Available Spending Accounts</h3>
-        <hr>
+   
+   <hr>
+   
+    <div class="panel panel-default"> 
+		<div class="panel-heading">
+			<br  ng-if="myPayments.personalSpendingAccounts">
+			<div ng-if="myPayments.personalSpendingAccounts">
+				<h3><i class="fa fa-money"></i> Available Spending Accounts</h3>
+			</div>
+		</div>
         <div class="panel panel-default" ng-repeat="spendingAccount in myPayments.personalSpendingAccounts.Items">
             <div class="panel-body">
                 <div class="row">
