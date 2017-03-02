@@ -19,10 +19,12 @@
                 </div>
                 <div class="panel-body">
                     <p>
-                        <ng-pluralize count="cart.lineItems.Meta.TotalCount" when="{
-							'1': '1 Item in Your Cart',
-							'other': '{} Items in Your Cart'
-						}"></ng-pluralize>
+                    	<b>
+	                        <ng-pluralize count="cart.lineItems.Meta.TotalCount" when="{
+								'1': '1 Item in Your Cart',
+								'other': '{} Items in Your Cart'
+							}"></ng-pluralize>
+						</b>
                     </p>
                     <hr>
                     <h4>Subtotal:- All Orders <span class="pull-right">{{base.currentOrder.Subtotal | currency}}</span></h4>
