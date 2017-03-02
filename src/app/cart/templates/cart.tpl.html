@@ -25,7 +25,7 @@
 						}"></ng-pluralize>
                     </p>
                     <h4>Subtotal:- All Orders <span class="pull-right">{{base.currentOrder.Subtotal | currency}}</span></h4>
-                     <h4 ng-if="base.currentOrder.ShippingCost" class="text-muted">Shipping: <span class="pull-right"> + {{base.currentOrder.ShippingCost | currency}}</span></h4>
+                    <h4>Shipping: <span class="pull-right"> {{base.currentOrder.ShippingCost | currency}}</span></h4>
             <!--    <hr>
                     <oc-add-promotion order="base.currentOrder"></oc-add-promotion>
                     <h5 ng-repeat="promotion in cart.promotions" class="text-danger">
