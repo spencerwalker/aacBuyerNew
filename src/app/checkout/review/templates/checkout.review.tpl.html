@@ -73,7 +73,8 @@
 			</div><br>
 		</div>
 	</div>
-		
+	
+	<div class="col-md-4">		
 		<div class="col-md-4">
 			<div class="panel panel-default" hl-sticky anchor="top" offset-top="70" media-query="min-width: 992px">
 					<div class="panel-heading">
@@ -108,12 +109,13 @@
 					</h3>
 				</div>
 				<div class="panel-body">
-					<p>
+					<p><b>
 						<ng-pluralize count="base.currentOrder.LineItemCount" when="{
 							'1': 'Checking Out With 1 Item',
 							'other': 'Checking Out With {} Items'
 						}"></ng-pluralize>
-					</p>
+					</p></b>
+					 <hr>
 					<h5>Subtotal:- All Orders <span class="pull-right">{{base.currentOrder.Subtotal | currency}}</span></h5>
 					<h5>Shipping: <span class="pull-right">{{base.currentOrder.ShippingCost | currency}}</span></h5>
 					<h5>Processing Fee: <span class="pull-right">{{base.currentOrder.TaxCost | currency}}</span></h5>
@@ -153,5 +155,6 @@
 				</div>
 			</div>
 		</div>
+	</div>
 	</div>
 </div>
