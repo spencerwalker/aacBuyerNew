@@ -73,20 +73,7 @@
 			</div><br>
 		</div>
 	</div>
-		
-		<div class="col-md-4">
-			<div class="panel panel-default" hl-sticky anchor="top" offset-top="70" media-query="min-width: 992px">
-					<div class="panel-heading">
-					<h4 class="panel-title">
-					Shipping To
-					</h4>
-					</div>
-				<div class="panel-body">
-					<p ng-bind-html="checkout.shippingAddress | address:'full'"></p>
-				</div>
-			</div>
-		</div>
-		
+	
 		<div class="col-md-4">
 			<div ng-if="checkout.billingAddress" class="panel panel-default" hl-sticky anchor="top" offset-top="70" media-query="min-width: 992px">
 					<div class="panel-heading">
@@ -100,6 +87,19 @@
 			</div>
 		</div>
 		
+		<div class="col-md-4">
+			<div class="panel panel-default" hl-sticky anchor="top" offset-top="70" media-query="min-width: 992px">
+					<div class="panel-heading">
+					<h4 class="panel-title">
+					Shipping To
+					</h4>
+					</div>
+				<div class="panel-body">
+					<p ng-bind-html="checkout.shippingAddress | address:'full'"></p>
+				</div>
+			</div>
+		</div>
+	
 		<div class="col-md-4">
 			<div class="panel panel-default" hl-sticky anchor="top" offset-top="70" media-query="min-width: 992px">
 				<div class="panel-heading">
