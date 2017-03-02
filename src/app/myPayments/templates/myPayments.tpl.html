@@ -1,5 +1,7 @@
 <article id="myPayments">
     <div >
+   	  <div class="panel panel-default"> 
+	   <div class="panel-heading">
         <!--PERSONAL CREDIT CARDS-->
         <button class="btn btn-primary pull-right" ng-click="myPayments.createCreditCard()"><i
                 class="fa fa-plus-circle"></i> New Credit Card
@@ -24,6 +26,8 @@
                 </div>
             </div>
         </div>
+       </div>
+     </div>
     </div>
 
     <div class="no-matches" ng-if="!myPayments.personalCreditCards">
