@@ -54,7 +54,7 @@ function MyOrdersConfig($stateProvider) {
                                             });
                                         return d.promise;
                                     })());
-                                } else if (payment.Type === 'SpendingAccount' && payment.SpendingAccountID) {
+                                } else if (payment.Type === 'MyAdoptAClassroom.orgBalance' && payment.SpendingAccountID) {
                                     queue.push((function() {
                                         var d = $q.defer();
                                         OrderCloud.Me.GetSpendingAccount(payment.SpendingAccountID)

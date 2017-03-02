@@ -52,7 +52,7 @@ function checkoutReviewConfig($stateProvider) {
 										return d.promise;
 									})());
 								}
-								if (payment.Type === 'SpendingAccount' && payment.SpendingAccountID) {
+								if (payment.Type === 'MyAdoptAClassroom.orgBalance' && payment.SpendingAccountID) {
 									queue.push((function() {
 										var d = $q.defer();
 										OrderCloud.Me.GetSpendingAccount(payment.SpendingAccountID)
