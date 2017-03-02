@@ -73,20 +73,6 @@
 			</div><br>
 		</div>
 	</div>
-	
-	<aside class="col-md-4 col-md-push-8">
-		<div class="col-md-4">
-			<div ng-if="checkout.billingAddress" class="panel panel-default" hl-sticky anchor="top" offset-top="70" media-query="min-width: 992px">
-					<div class="panel-heading">
-					<h4 class="panel-title">
-					Billing To
-					</h4>
-					</div>
-				<div class="panel-body">
-					<p ng-bind-html="checkout.billingAddress | address:'full'"></p>
-				</div>
-			</div>
-		</div>
 		
 		<div class="col-md-4">
 			<div class="panel panel-default" hl-sticky anchor="top" offset-top="70" media-query="min-width: 992px">
@@ -97,6 +83,19 @@
 					</div>
 				<div class="panel-body">
 					<p ng-bind-html="checkout.shippingAddress | address:'full'"></p>
+				</div>
+			</div>
+		</div>
+		
+		<div class="col-md-4">
+			<div class="panel panel-default" hl-sticky anchor="top" offset-top="70" media-query="min-width: 992px">
+					<div class="panel-heading">
+					<h4 class="panel-title">
+					Billing To
+					</h4>
+					</div>
+				<div class="panel-body">
+					<p ng-bind-html="checkout.billingAddress | address:'full'"></p>
 				</div>
 			</div>
 		</div>
@@ -155,6 +154,5 @@
 				</div>
 			</div>
 		</div>
-	</aside>
 	</div>
 </div>
