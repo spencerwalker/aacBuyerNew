@@ -29,6 +29,8 @@
                     <hr>
                     <h4>Subtotal:- All Orders <span class="pull-right">{{base.currentOrder.Subtotal | currency}}</span></h4>
                     <h4>Total - Order # <span class="pull-right">{{order.ID}}</span></h4>
+                    <div id="object-1"></div>
+                    <div id="{{ 'object-' + $index }}"></div>
             <!--    <hr>
                     <oc-add-promotion order="base.currentOrder"></oc-add-promotion>
                     <h5 ng-repeat="promotion in cart.promotions" class="text-danger">
