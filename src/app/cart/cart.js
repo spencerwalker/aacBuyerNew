@@ -52,12 +52,25 @@ function CartConfig($stateProvider) {
         });
 }
 
-function CartController($rootScope, $state, toastr, OrderCloud, LineItemsList, CurrentPromotions, ocConfirm, CategoryList) {
+function CartController($rootScope, $state, toastr, OrderCloud, LineItemsList, CurrentPromotions, ocConfirm, CategoryList, ProductList) {
     var vm = this;
+    vm.vendorLineItemsMap = [];
     
     vm.lineItems = LineItemsList;
     console.log('LineItems', vm.lineItems);
     console.log('CategoryList :: ', CategoryList);
+    console.log('Products :: ', ProductList);
+    
+    angular.forEach(vm.lineItems, function(lineItem){
+    	var productId = lineItem.Product.ProductId;
+    	var vendorName = productId.split("_")[0]; 
+    	if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
+    		vm.vendorLineItemsMap[vendorName] = [];
+    	}
+    	vm.vendorLineItemsMap[vendorName].push(lineItem);
+    });
+    
+    console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
     
     vm.promotions = CurrentPromotions.Meta ? CurrentPromotions.Items : CurrentPromotions;
     vm.removeItem = function(order, scope) {
