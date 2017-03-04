@@ -52,11 +52,12 @@ function CartConfig($stateProvider) {
         });
 }
 
-function CartController($rootScope, $state, toastr, OrderCloud, LineItemsList, CurrentPromotions, ocConfirm) {
+function CartController($rootScope, $state, toastr, OrderCloud, LineItemsList, CurrentPromotions, ocConfirm, CategoryList) {
     var vm = this;
     
     vm.lineItems = LineItemsList;
-    console.log('LineItems', vm.lineItems)
+    console.log('LineItems', vm.lineItems);
+    console.log('CategoryList :: ', CategoryList);
     
     vm.promotions = CurrentPromotions.Meta ? CurrentPromotions.Items : CurrentPromotions;
     vm.removeItem = function(order, scope) {
