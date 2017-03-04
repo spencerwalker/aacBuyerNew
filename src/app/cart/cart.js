@@ -62,7 +62,7 @@ function CartController($rootScope, $state, toastr, OrderCloud, LineItemsList, C
     console.log('Products :: ', ProductList);
     
     angular.forEach(vm.lineItems.Items, function(lineItem){
-    	var productId = lineItem.Product.ProductId;
+    	var productId = lineItem.ProductId;
     	var vendorName = productId.split("_")[0]; 
     	if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
     		vm.vendorLineItemsMap[vendorName] = [];
