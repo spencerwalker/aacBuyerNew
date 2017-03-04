@@ -52,7 +52,7 @@ function CartConfig($stateProvider) {
         });
 }
 
-function CartController($rootScope, $state, toastr, OrderCloud, LineItemsList, CurrentPromotions, ocConfirm, CategoryList, ProductList) {
+function CartController($rootScope, $scope,  $state, toastr, OrderCloud, LineItemsList, CurrentPromotions, ocConfirm, CategoryList, ProductList) {
     var vm = this;
     vm.vendorLineItemsMap = [];
     
@@ -61,6 +61,12 @@ function CartController($rootScope, $state, toastr, OrderCloud, LineItemsList, C
     console.log('CategoryList :: ', CategoryList);
     console.log('Products :: ', ProductList);
     console.log('vm.lineItems ::' , JSON.stringify(vm.lineItems));
+    
+    // watcher on vm.lineItems
+    /*$scope.$watch('vm.lineItems', function(newVal, oldVal){
+    	
+    }, true);
+    */
     
     angular.forEach(vm.lineItems.Items, function(lineItem){
     	var productId = lineItem.ProductID;
