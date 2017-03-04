@@ -46,6 +46,8 @@ function CategoryBrowseConfig($stateProvider, catalogid){
 function CategoryBrowseController($state, ocParameters, CategoryList, ProductList, Parameters, SelectedCategory) {
     var vm = this;
     vm.categoryList = CategoryList;
+    
+    console.log('vm.categoryList :: ', vm.categoryList);
     vm.productList = ProductList;
     vm.parameters = Parameters;
     vm.selectedCategory = SelectedCategory;
