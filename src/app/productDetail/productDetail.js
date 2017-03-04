@@ -14,16 +14,12 @@ function ProductConfig($stateProvider) {
             resolve: {
                 Product: function ($stateParams, OrderCloud) {
                     return OrderCloud.Me.GetProduct($stateParams.productid);
-                },
-                CategoryList: function(OrderCloud, Parameters) {
-                    if(Parameters.categoryID) { Parameters.filters ? Parameters.filters.ParentID = Parameters.categoryID : Parameters.filters = {ParentID:Parameters.categoryID}; } 
-                    return OrderCloud.Me.ListCategories(null, Parameters.categoryPage, Parameters.pageSize || 12, null, Parameters.sortBy, Parameters.filters, 1);
                 }
             }
         });
 }
 
-function ProductDetailController($exceptionHandler, Product, CurrentOrder, ocLineItems, toastr, CategoryList) {
+function ProductDetailController($exceptionHandler, Product, CurrentOrder, ocLineItems, toastr) {
     var vm = this;
     vm.item = Product;
     console.log('Product :: ', vm.item);
