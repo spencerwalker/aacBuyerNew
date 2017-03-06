@@ -53,11 +53,12 @@
                	<!-- <form name="OrderLineItemForm" class="panel panel-default" ng-repeat="lineItem in cart.lineItems.Items track by $index" cg-busy="cart.lineLoading[$index]" style="margin-left: 1.5px; margin-right: 1.5px" > -->
                	<form name="OrderLineItemForm" class="panel panel-default" style="margin-left: 1.5px; margin-right: 1.5px" >
               <!--  <div class="panel panel-default" ng-repeat="(vendor, lineItemsList) in cart.vendorLineItemsMap track by vendor" >  -->
-              <div class="panel panel-default" > 
-	                <div class="panel-heading">
-		                <h4 class="panel-title">
-							{{vendor}}
-		               	</h4>
+              		<div class="panel panel-default" > 
+			                <div class="panel-heading">
+				                <h4 class="panel-title">
+									{{vendor}}
+				               	</h4>
+			               	</div>
 	               	</div>
 		            <div class="panel-body">
 		                <div class="row  hidden-xs c-line-item__header">
@@ -133,9 +134,7 @@
                 	</div>
                 </div> <br>              
             </form>
-            </div>
-</aside>
-	
+</aside>	
       <!--  <div class="col-md-8 col-md-pull-4">
             <form name="OrderLineItemForm">
                 <div class="row  hidden-xs c-line-item__header">
