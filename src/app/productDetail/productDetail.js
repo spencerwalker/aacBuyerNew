@@ -23,7 +23,7 @@ function ProductDetailController($exceptionHandler, Product, CurrentOrder, ocLin
     var vm = this;
     vm.item = Product;
     console.log('Product :: ', vm.item);
-    console.log('CategoryList :: ', CategoryList);
+    
     vm.finalPriceBreak = null;
 
     vm.addToCart = function() {
