@@ -130,14 +130,17 @@
 				 </div>
 				<br> 
            </div>
-	        <div class="col-sm-7 col-lg-6 c-line-item__info--bottom" >
-	        	<div class="row  c-line-item--centered">
-						<h4>Subtotal:<span class="pull-right">{{base.currentOrder.Subtotal | currency}}</span></h4>
-						<h4>Total - Order # <span class="pull-right">{{order.ID}}</span></h4>	
-				</div>											
-					<div class="col-xs-12">
-					<hr>
-					</div><hr>
+           <div class="row  hidden-xs c-line-item__header">
+						 <div class="col-xs-3 col-sm-2"></div>
+								 <div class="col-xs-9 col-sm-10">
+									 <div class="row">
+										<h4>Subtotal:<span class="pull-right">{{base.currentOrder.Subtotal | currency}}</span></h4>
+										<h4>Total - Order # <span class="pull-right">{{order.ID}}</span></h4>											
+									 </div>
+								 </div>
+						<div class="col-xs-12">
+							 <hr>
+						 </div><hr>
 			</div>
        </form>
 	</aside>	
