@@ -28,7 +28,7 @@
                     </p>
                     <hr>
                     <h4>Subtotal:- All Orders <span class="pull-right">{{base.currentOrder.Subtotal | currency}}</span></h4>
-                    <h4>Total - Order # <span class="pull-right">{{order.ID}}</span></h4>
+                <!--<h4>Total - Order # <span class="pull-right">{{order.ID}}</span></h4>  -->
             <!--    <hr>
                     <oc-add-promotion order="base.currentOrder"></oc-add-promotion>
                     <h5 ng-repeat="promotion in cart.promotions" class="text-danger">
@@ -130,9 +130,9 @@
 				 </div>
 				<br> 
            </div>
-			        <div class="row text-right" style="margin-right: 150px">
-	 							<h4>Subtotal:<span class="pull-right">{{base.currentOrder.Subtotal | currency}}</span></h4>
-	 							<h4>Total - Order # <span class="pull-right">{{order.ID}}</span></h4>
+			        <div class="row text-right">
+	 							<h4 style="margin-right: 150px">Subtotal:<span class="pull-right">{{base.currentOrder.Subtotal | currency}}</span></h4>
+	 							<h4 style="margin-right: 150px">Total - Order # <span class="pull-right">{{order.ID}}</span></h4>
 						<!-- 	<div class="col-xs-12">
 							<hr>
 							</div><hr>  -->
