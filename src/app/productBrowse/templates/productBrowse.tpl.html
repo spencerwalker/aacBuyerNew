@@ -23,7 +23,8 @@
                 <div class="panel-heading">
                     <b class="panel-title">Categories</b>
                 </div>
-                <treecontrol style="overflow-y:scroll, height:400px" class="oc-tree"
+                <div style="overflow-y:scroll, height:400px">
+                <treecontrol class="oc-tree"
                              tree-model="productBrowse.treeConfig.treeData"
                              options="productBrowse.treeConfig.treeOptions"
                              selected-node="productBrowse.treeConfig.selectedNode"
@@ -31,6 +32,7 @@
                              on-selection="productBrowse.treeConfig.selectNode(node)">
                     {{node.Name}}
                 </treecontrol>
+                </div>
                 <div class="panel-heading">
                     <b class="panel-title">Refine By</b>
                 </div>
