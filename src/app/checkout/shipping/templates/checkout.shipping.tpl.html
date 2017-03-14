@@ -2,16 +2,23 @@
     <div class="row">
         <div class="col-md-8">
             <div cg-busy="{promise:checkoutShipping.shippersLoading, message:'Loading Shipping Rates'}">
-                <a href="" class="pull-right" ng-click="checkoutShipping.createAddress(base.currentOrder)"><i class="fa fa-plus-circle"></i> New Address</a>
-                <h4>Delivery Address</h4>
+               <!--  <a href="" class="pull-right" ng-click="checkoutShipping.createAddress(base.currentOrder)"><i class="fa fa-plus-circle"></i> New Address</a>  -->
+               <div class="panel panel-default"> 
+	               	<div class="panel-heading">
+			            <h4 class="panel-title">
+			            	Delivery Address
+			            </h4>
+	                </div>
+				</div>
                 <div class="panel panel-default" ng-if="checkout.shippingAddress">
                     <div class="panel-body">
-                        <div class="pull-right">
-                            <a href="" ng-click="checkoutShipping.changeShippingAddress(base.currentOrder)">Change</a>
-                        </div>
+             <!--   <div class="pull-right">
+                    		<a href="" ng-click="checkoutShipping.changeShippingAddress(base.currentOrder)">Change</a>  
+                     </div>-->
                         <p ng-bind-html="checkout.shippingAddress | address:'full'"></p>
                     </div>
                 </div>
+            
                 <div class="well text-center" ng-if="!checkout.shippingAddress">
                     You currently do not have a shipping address selected. <br />
                     <a href="" ng-click="checkoutShipping.changeShippingAddress(base.currentOrder)">Select one now</a>
@@ -42,13 +49,19 @@
                 </div>
                 <div class="panel-body">
                     <p>
-                        <ng-pluralize count="base.currentOrder.LineItemCount" when="{
-							'1': 'Checking Out With 1 Item',
-							'other': 'Checking Out With {} Items'
-						}"></ng-pluralize>
+                    	<b>
+	                        <ng-pluralize count="base.currentOrder.LineItemCount" when="{
+								'1': 'Checking Out With 1 Item',
+								'other': 'Checking Out With {} Items'
+							}"></ng-pluralize>
+						</b>
                     </p>
-                    <h5>Subtotal: <span class="pull-right">{{base.currentOrder.Subtotal | currency}}</span></h5>
-                    <h5 ng-if="base.currentOrder.ShippingCost" class="text-muted">Estimated Shipping: <span class="pull-right"> + {{base.currentOrder.ShippingCost | currency}}</span></h5>
+                    <hr>
+                    <h5>Subtotal: All Orders <span class="pull-right">{{base.currentOrder.Subtotal | currency}}</span></h5>
+                    <h5>Shipping: <span class="pull-right">{{base.currentOrder.ShippingCost | currency}}</span></h5>
+                    <h5>Processing Fee: <span class="pull-right">{{base.currentOrder.TaxCost | currency}}</span></h5>
+         <!--       <h5 ng-if="myOrderDetail.order.TaxCost">Processing Fee: <span class="pull-right"> {{myOrderDetail.order.TaxCost | currency}}</span></h5> -->
+         <!--       <h5 ng-if="base.currentOrder.ShippingCost" class="text-muted">Estimated Shipping: <span class="pull-right"> + {{base.currentOrder.ShippingCost | currency}}</span></h5>  -->
                     <hr ng-if="checkout.promotions.length">
                     <h5 ng-repeat="promotion in checkout.promotions" class="text-danger">
                         {{promotion.Code}}
