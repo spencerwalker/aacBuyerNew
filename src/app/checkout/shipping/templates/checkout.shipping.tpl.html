@@ -10,6 +10,8 @@
 			            </h4>
 	                </div>
 				</div>
+				
+				
                 <div class="panel panel-default" ng-if="checkout.shippingAddress">
                     <div class="panel-body">
              <!--   <div class="pull-right">
@@ -76,4 +78,98 @@
             </div>
         </div>
     </div>
+</div>
+
+<div class="row" ng-if="cart.lineItems.Items.length">
+		<aside class="col-md-8 col-md-pull-4">
+             <div class="panel panel-default"> 
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        Items in Your Cart
+                    </h3>
+                </div>
+              
+        <form name="OrderLineItemForm" class="panel panel-default" ng-repeat="lineItem in cart.lineItems.Items track by $index" cg-busy="cart.lineLoading[$index]" style="margin-left: 1.5px; margin-right: 1.5px" >
+              		<div class="panel panel-default" > 
+			                <div class="panel-heading">
+				                <h4 class="panel-title">
+									{{lineItem.vendorName}} :: Order #
+				               	</h4>
+			               	</div>
+	               	</div>
+					<div class="row  hidden-xs c-line-item__header">
+						 <div class="col-xs-3 col-sm-2"></div>
+								 <div class="col-xs-9 col-sm-10">
+									 <div class="row">
+										 <div class="col-sm-5 col-lg-6"><h6>Description</h6></div>
+											 <div class="col-sm-7 col-lg-6">
+												 <div class="row">
+													 <div class="col-xs-3"><h6 class="text-right">Price</h6></div>
+													 <div class="col-xs-4"><h6 class="text-center">Qty</h6></div>
+													 <div class="col-xs-3"><h6 class="text-right">Total</h6></div>
+													 <div class="col-xs-2"></div>
+												 </div>
+											 </div>
+									 </div>
+								 </div>
+						<div class="col-xs-12">
+							 <hr>
+						 </div><hr>
+					</div>
+	
+		<div class="row c-line-item" ng-repeat="lineItem in cart.lineItems.Items track by $index" cg-busy="cart.lineLoading[$index]" style="margin-left: 1.5px; margin-right: 1.5px" >
+				 <div class="col-xs-3 col-sm-2">
+					 <div class="thumbnail c-line-item__img">
+						 <img class="img-responsive" ng-src="{{lineItem.xp.image.URL || 'http://placehold.it/100x100?text=' + lineItem.Product.Name}}"
+							alt="{{lineItem.Product.xp.image.Name || 'Product Image'}}">
+					 </div>
+				 </div>
+				 <div class="col-xs-9 col-sm-10">
+					 <div class="row c-line-item__info c-line-item--centered">
+							 <div class="col-sm-5 col-lg-6 c-line-item__info--top">
+									 <h4 class="c-line-item__name">
+									 {{lineItem.Product.Name}}
+									 </h4>
+									<small class="text-muted c-line-item__id">{{lineItem.Product.Description}}</small>
+									 <ul class="c-line-item__spec-list" ng-if="lineItem.Specs.length > 0">
+										 <li class="c-line-item__spec" ng-repeat="spec in lineItem.Specs">
+											 <small>{{spec.Name}}:</small>
+											 <small>{{spec.Value}}</small>
+										 </li>
+									 </ul>
+							 </div>
+							 <div class="col-sm-7 col-lg-6 c-line-item__info--bottom">
+								 <div class="row  c-line-item--centered">
+									 <div class="col-xs-3">
+										<h4 class="c-line-item__price text-right">{{lineItem.UnitPrice | currency}}</h4>
+									 </div>
+									 <div class="col-xs-4">
+										 <div class="c-line-item__qty-input">
+											<oc-quantity-input lineitem="lineItem" order="base.currentOrder"></oc-quantity-input>
+										 </div>
+									 </div>
+									 <div class="col-xs-3">
+										<h4 class="c-line-item__total text-right">{{lineItem.LineTotal | currency}}</h4>
+									 </div>
+									 <div class="col-xs-2">
+										 <div class="c-line-item__remove text-right">
+											<button class="btn btn-xs btn-danger" type="button" ng-click="cart.removeItem(base.currentOrder, this)"><span class=""><i class="fa fa-close"></i></span></button>
+										 </div>
+									 </div>
+								 </div>
+							 </div>
+						</div>
+					</div>
+				 <div class="col-xs-12">
+				 <hr>
+				 </div>
+				<br> 
+           </div>
+			    <div class="row text-right">
+	 					<h4>Subtotal:<span style="margin-left: 150px; margin-right:50px">{{base.currentOrder.Subtotal | currency}}</span></h4>
+	 					<h4>Total - Order #<span style="margin-left: 150px; margin-right:50px">{{order.ID}}</span></h4>
+				</div>
+					<br>
+       </form>
+	</aside>	
 </div>
