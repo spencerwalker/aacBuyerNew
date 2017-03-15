@@ -71,9 +71,11 @@ function CartController($rootScope, $scope,  $state, toastr, OrderCloud, LineIte
     angular.forEach(vm.lineItems.Items, function(lineItem){
     	var productId = lineItem.ProductID;
     	var vendorName = productId.split("_")[0]; 
-    	var orderId = lineItem.ID;
+    	
+    	var number = Math.floor(1000000 + Math.random() * 9000000);
+    	
     	lineItem.vendorName = vendorName;
-    	lineItem.ID = orderId;
+    	lineItem.ID = number;
     	//if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
     		//vm.vendorLineItemsMap[vendorName] = [];
     	//}
