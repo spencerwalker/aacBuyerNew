@@ -78,7 +78,6 @@ function CartController($rootScope, $scope,  $state, toastr, OrderCloud, LineIte
 	    	 lineItem.ID = number;
 	      }  
 	    	
-	    	
     	lineItem.vendorName = vendorName;
     	
     	//if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
