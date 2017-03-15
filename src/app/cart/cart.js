@@ -72,8 +72,7 @@ function CartController($rootScope, $scope,  $state, toastr, OrderCloud, LineIte
     	var productId = lineItem.ProductID;
     	var vendorName = productId.split("_")[0]; 
     	
-    	var letters = /^[A-Za-z]+$/;  
-	    if(lineItem.ID.value.match(letters)) {  
+	    if(lineItem.ID.match("^[a-zA-Z\(\)]+$")) {  
 	      } else {
 	    	 var number = Math.floor(1000000 + Math.random() * 9000000);
 	    	 lineItem.ID = number;
