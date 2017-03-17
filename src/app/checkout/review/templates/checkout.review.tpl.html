@@ -94,13 +94,19 @@
 				</div>
 				<div class="panel-body">
 					<p>
-						<ng-pluralize count="base.currentOrder.LineItemCount" when="{
-							'1': 'Checking Out With 1 Item',
-							'other': 'Checking Out With {} Items'
-						}"></ng-pluralize>
+						<b>
+							<ng-pluralize count="base.currentOrder.LineItemCount" when="{
+								'1': 'Checking Out With 1 Item',
+								'other': 'Checking Out With {} Items'
+							}"></ng-pluralize>
+						</b>
 					</p>
-					<h5>Subtotal: <span class="pull-right">{{base.currentOrder.Subtotal | currency}}</span></h5>
-					<h5 ng-if="base.currentOrder.ShippingCost" class="text-muted">Estimated Shipping: <span class="pull-right"> + {{base.currentOrder.ShippingCost | currency}}</span></h5>
+					 <hr>
+					<h5>Subtotal:- All Orders <span class="pull-right">{{base.currentOrder.Subtotal | currency}}</span></h5>
+					<h5>Shipping: <span class="pull-right">{{base.currentOrder.ShippingCost | currency}}</span></h5>
+					<h5>Processing Fee: <span class="pull-right">{{base.currentOrder.TaxCost | currency}}</span></h5>
+		 <!--       <h5 ng-if="myOrderDetail.order.TaxCost">Processing Fee: <span class="pull-right"> {{myOrderDetail.order.TaxCost | currency}}</span></h5> -->
+		    	<!--<h5 ng-if="base.currentOrder.ShippingCost" class="text-muted">Estimated Shipping: <span class="pull-right"> + {{base.currentOrder.ShippingCost | currency}}</span></h5>  -->
 					<h5 ng-repeat="promotion in checkout.promotions" class="text-danger">
 						{{promotion.Code}}
 						<span class="pull-right">- {{promotion.Amount | currency}}</span></h5>
@@ -112,14 +118,20 @@
 
 						<p ng-if="payment.xp.PONumber"><b>PO#:</b> {{payment.xp.PONumber}}</p>
 
-						<p ng-if="payment.Type == 'CreditCard'">
-							<i style="font-size:1.3em;" class="fa {{payment.Details.CardType | faCreditCard}} pull-left"></i>
-							<span class="text-muted">XXXX-XXXX-XXXX-</span>{{payment.Details.PartialAccountNumber}}
+						<p ng-if="payment.Type == 'CreditCard'">{{payment.Details.CardholderName}}
+							<i style="font-size:1.3em;" class="fa {{payment.Details.CardType | faCreditCard}} pull-left"></i><br>
+							<span class="text-muted">XXXX-XXXX-XXXX-</span>{{payment.Details.PartialAccountNumber}}<br>
+							Expires On: {{payment.Details.ExpirationDate | date:'MM/yy'}}
 						</p>
 
-						<p ng-if="payment.Type == 'SpendingAccount'">
-							{{payment.Details.Name}} <br>
-							<small><span class="text-muted">Remaining Balance:</span> {{payment.Details.Balance | currency}}</small>
+						<p ng-if="payment.Type == 'SpendingAccount'"> 
+			<!--			{{payment.Details.Name}} <br>
+			    		<small><span class="text-muted">Remaining Balance:</span> {{payment.Details.Balance | currency}}</small> -->
+						<small><span class="text-muted">Donation Balance:
+	                    	<span ng-if = "base.availableFunds - base.currentOrder.Subtotal > 0" > ({{base.availableFunds - base.currentOrder.Subtotal | currency}}  Available) </span>
+	                    	<span ng-if = "base.availableFunds - base.currentOrder.Subtotal <= 0" > ({{0 | currency}} Available) </span>
+            <!--   		<b class="pull-right text-primary">{{base.currentOrder.Subtotal | currency}}</b>  -->
+                    	</small>
 						</p>
 						<hr ng-if="!$last">
 					</div>
