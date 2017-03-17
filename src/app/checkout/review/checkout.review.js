@@ -78,6 +78,21 @@ function checkoutReviewConfig($stateProvider) {
 
 function CheckoutReviewController(LineItemsList, OrderPaymentsDetail) {
 	var vm = this;
+	vm.vendorLineItemsMap = [];
+	
 	vm.payments = OrderPaymentsDetail;
 	vm.lineItems = LineItemsList;
+	angular.forEach(vm.lineItems.Items, function(lineItem){
+    	var productId = lineItem.ProductID;
+    	var vendorName = productId.split("_")[0]; 
+    	
+	    if(lineItem.ID.match("^[a-zA-Z\(\)]+$")) {  
+	      } else {
+	    	 var number = Math.floor(1000000 + Math.random() * 9000000);
+	    	 lineItem.ID = number;
+	      }  
+	    	
+    	lineItem.vendorName = vendorName;
+  
+    });
 }
