@@ -30,6 +30,16 @@ function checkoutReviewConfig($stateProvider) {
 						});
 					return dfd.promise;
 				},
+				
+				 CategoryList: function($stateParams, OrderCloud) {
+	                    var depth = 1;
+	                    return OrderCloud.Me.ListCategories(null, null, null, null, null, {ParentID: $stateParams.categoryid}, depth);
+	                },
+	                ProductList: function($stateParams, OrderCloud) {
+	                    return OrderCloud.Me.ListProducts(null, null, null, null, null, null, $stateParams.categoryid);
+
+	                },
+	                
 				OrderPaymentsDetail: function($q, OrderCloud, CurrentOrder, $state) {
 					return OrderCloud.Payments.List(CurrentOrder.ID)
 						.then(function(data) {
@@ -82,6 +92,12 @@ function CheckoutReviewController(LineItemsList, OrderPaymentsDetail) {
 	
 	vm.payments = OrderPaymentsDetail;
 	vm.lineItems = LineItemsList;
+	
+	console.log('LineItems', vm.lineItems);
+    console.log('CategoryList :: ', CategoryList);
+    console.log('Products :: ', ProductList);
+    console.log('vm.lineItems ::' , JSON.stringify(vm.lineItems));
+    
 	angular.forEach(vm.lineItems.Items, function(lineItem){
     	var productId = lineItem.ProductID;
     	var vendorName = productId.split("_")[0]; 
