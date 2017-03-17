@@ -30,6 +30,15 @@ function checkoutReviewConfig($stateProvider) {
 						});
 					return dfd.promise;
 				},
+				
+				 CategoryList: function($stateParams, OrderCloud) {
+	                    var depth = 1;
+	                    return OrderCloud.Me.ListCategories(null, null, null, null, null, {ParentID: $stateParams.categoryid}, depth);
+	                },
+	                ProductList: function($stateParams, OrderCloud) {
+	                    return OrderCloud.Me.ListProducts(null, null, null, null, null, null, $stateParams.categoryid);
+
+	                },
 	                
 				OrderPaymentsDetail: function($q, OrderCloud, CurrentOrder, $state) {
 					return OrderCloud.Payments.List(CurrentOrder.ID)
@@ -77,7 +86,7 @@ function checkoutReviewConfig($stateProvider) {
 		});
 }
 
-function CheckoutReviewController(LineItemsList, OrderPaymentsDetail) {
+function CheckoutReviewController(LineItemsList, OrderPaymentsDetail, CategoryList, ProductList) {
 	var vm = this;
 	vm.vendorLineItemsMap = [];
 	
