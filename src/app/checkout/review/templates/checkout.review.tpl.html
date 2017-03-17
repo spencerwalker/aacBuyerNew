@@ -1,6 +1,31 @@
 <div ng-form="OC_Checkout_Review">
 	<div class="row">
 		<div class="col-md-8">
+		<div class="col-sm-6">
+			<div class="panel panel-default" hl-sticky anchor="top" offset-top="70" media-query="min-width: 992px">
+					<div class="panel-heading">
+					<h4 class="panel-title">
+					Shipping To
+					</h4>
+					</div>
+				<div class="panel-body">
+					<p ng-bind-html="checkout.shippingAddress | address:'full'"></p>
+				</div>
+			</div>
+		</div>
+		
+		<div class="col-sm-6">
+			<div class="panel panel-default" hl-sticky anchor="top" offset-top="70" media-query="min-width: 992px">
+					<div class="panel-heading">
+					<h4 class="panel-title">
+					Billing To
+					</h4>
+					</div>
+				<div class="panel-body">
+					<p ng-bind-html="checkout.billingAddress | address:'full'"></p>
+				</div>
+			</div>
+		</div>
 			<div class="panel panel-default"> 
 		        <div class="panel-heading">
                     <h3 class="panel-title">
@@ -88,33 +113,7 @@
 			<br>
 			</form>
 		</div>
-	</div>
-	
-	<div class="col-sm-6">
-			<div class="panel panel-default" hl-sticky anchor="top" offset-top="70" media-query="min-width: 992px">
-					<div class="panel-heading">
-					<h4 class="panel-title">
-					Shipping To
-					</h4>
-					</div>
-				<div class="panel-body">
-					<p ng-bind-html="checkout.shippingAddress | address:'full'"></p>
-				</div>
-			</div>
-		</div>
-		
-		<div class="col-sm-6">
-			<div class="panel panel-default" hl-sticky anchor="top" offset-top="70" media-query="min-width: 992px">
-					<div class="panel-heading">
-					<h4 class="panel-title">
-					Billing To
-					</h4>
-					</div>
-				<div class="panel-body">
-					<p ng-bind-html="checkout.billingAddress | address:'full'"></p>
-				</div>
-			</div>
-		</div>
+	</div>	
 	
 		<div class="col-md-4 pull-right">
 			<div class="panel panel-default" hl-sticky anchor="top" offset-top="70" media-query="min-width: 992px">
