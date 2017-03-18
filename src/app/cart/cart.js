@@ -59,13 +59,14 @@ function CartController($rootScope, $scope,  $state, toastr, OrderCloud, LineIte
     vm.lineItems = LineItemsList;
     console.log('LineItems', vm.lineItems);
     console.log('CategoryList :: ', CategoryList);
-    console.log('Products :: ', ProductList);
+    console.log('Products :: ', ProductList);s
     console.log('vm.lineItems ::' , JSON.stringify(vm.lineItems));
     
     // watcher on vm.lineItems
     $scope.$watch('vm.lineItems', function(newVal, oldVal){
+    	console.log('New Val:: ', newVal);
     	vm.vendorLineItemsMap = {};
-    	angular.forEach(newVal.Items, function(lineItem){
+    	angular.forEach(vm.lineItems.Items, function(lineItem){
         	var productId = lineItem.ProductID;
         	var vendorName = productId.split("_")[0]; 
         	/*
