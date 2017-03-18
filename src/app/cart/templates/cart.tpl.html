@@ -137,7 +137,7 @@
 	        <div class="row text-right">
 				<h4>Subtotal:
 					<span style="margin-left: 150px; margin-right:50px">
-						{{base.currentOrder.Subtotal | currency}}
+						{{ vm.getSubTotal(lineItemsList) | currency }}
 					</span>
 				</h4>
 				<h4>Shipping: 
