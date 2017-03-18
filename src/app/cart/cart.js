@@ -59,7 +59,7 @@ function CartController($rootScope, $scope,  $state, toastr, OrderCloud, LineIte
     vm.lineItems = LineItemsList;
     console.log('LineItems', vm.lineItems);
     console.log('CategoryList :: ', CategoryList);
-    console.log('Products :: ', ProductList);s
+    console.log('Products :: ', ProductList);
     console.log('vm.lineItems ::' , JSON.stringify(vm.lineItems));
     
     // watcher on vm.lineItems
