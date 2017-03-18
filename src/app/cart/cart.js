@@ -121,7 +121,7 @@ function CartController($rootScope, $scope,  $state, toastr, OrderCloud, LineIte
     vm.getSubTotal = function(lineItemsList){
 		var total = 0.0;
 		angular.forEach(lineItemsList, function(lineItem){
-			total += lineItem.LineTotal;
+			total += ( lineItem.UnitPrice * lineItem.Quantity);
 		});
 		return total;
 	}
