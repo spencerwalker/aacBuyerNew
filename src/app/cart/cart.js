@@ -63,7 +63,9 @@ function CartController($rootScope, $scope,  $state, toastr, OrderCloud, LineIte
     console.log('vm.lineItems ::' , JSON.stringify(vm.lineItems));
     
     // watcher on vm.lineItems
-    $scope.$watch('vm.lineItems', function(newVal, oldVal){
+    $scope.$watch(function () {
+        	return vm.lineItems;
+    	}, function(newVal, oldVal){
     	console.log('New Val:: ', newVal);
     	vm.vendorLineItemsMap = {};
     	angular.forEach(vm.lineItems.Items, function(lineItem){
