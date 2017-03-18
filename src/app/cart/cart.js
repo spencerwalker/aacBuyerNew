@@ -117,7 +117,14 @@ function CartController($rootScope, $scope,  $state, toastr, OrderCloud, LineIte
                     });
             });
     };
-
+    
+    vm.getSubTotal = function(lineItemsList){
+		var total = 0.0;
+		angular.forEach(lineItemsList, function(lineItem){
+			total += lineItem.LineTotal;
+		});
+		return total;
+	}
     //TODO: missing unit tests
     $rootScope.$on('OC:UpdatePromotions', function(event, orderid) {
         OrderCloud.Orders.ListPromotions(orderid)
