@@ -30,9 +30,6 @@ function checkoutReviewConfig($stateProvider) {
 						});
 					return dfd.promise;
 				},
-				CurrentPromotions: function(CurrentOrder, OrderCloud) {
-            	  			return OrderCloud.Orders.ListPromotions(CurrentOrder.ID);
-            	  		},
 				
 				 CategoryList: function($stateParams, OrderCloud) {
 	                    var depth = 1;
