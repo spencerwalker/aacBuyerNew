@@ -86,7 +86,7 @@ function checkoutConfirmationConfig($stateProvider) {
 		});
 }
 
-function CheckoutConfirmationController(SubmittedOrder, OrderShipAddress, OrderPromotions, OrderBillingAddress, OrderPayments, LineItemsList) {
+function CheckoutConfirmationController(SubmittedOrder, OrderShipAddress, OrderPromotions, OrderBillingAddress, OrderPayments, LineItemsList, CategoryList, ProductList) {
 	var vm = this;
 	vm.order = SubmittedOrder;
 	vm.shippingAddress = OrderShipAddress;
