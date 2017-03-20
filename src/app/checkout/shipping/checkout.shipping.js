@@ -5,6 +5,7 @@ angular.module('orderCloud')
 function checkoutShippingConfig($stateProvider) {
     $stateProvider
         .state('checkout.shipping', {
+	    parent: 'base',
             url: '/shipping',
             templateUrl: 'checkout/shipping/templates/checkout.shipping.tpl.html',
             controller: 'CheckoutShippingCtrl',
@@ -49,7 +50,7 @@ function checkoutShippingConfig($stateProvider) {
         });
 	}
 
-function CheckoutShippingController($exceptionHandler, $rootScope, toastr, OrderCloud, MyAddressesModal, AddressSelectModal, ShippingRates, CheckoutConfig) {
+function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $state,toastr, OrderCloud, MyAddressesModal, AddressSelectModal, ShippingRates, CheckoutConfig, LineItemsList, CurrentPromotions, ocConfirm, CategoryList, ProductList) {
     var vm = this;
     vm.createAddress = createAddress;
     vm.changeShippingAddress = changeShippingAddress;
