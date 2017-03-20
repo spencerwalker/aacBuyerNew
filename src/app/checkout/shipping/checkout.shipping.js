@@ -5,7 +5,7 @@ angular.module('orderCloud')
 function checkoutShippingConfig($stateProvider) {
     $stateProvider
         .state('checkout.shipping', {
-	    parent: 'base',
+	    //parent: 'base',
             url: '/shipping',
             templateUrl: 'checkout/shipping/templates/checkout.shipping.tpl.html',
             controller: 'CheckoutShippingCtrl',
