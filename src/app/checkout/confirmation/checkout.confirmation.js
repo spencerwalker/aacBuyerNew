@@ -10,6 +10,9 @@ function checkoutConfirmationConfig($stateProvider) {
 			templateUrl: 'checkout/confirmation/templates/checkout.confirmation.tpl.html',
 			controller: 'CheckoutConfirmationCtrl',
 			controllerAs: 'checkoutConfirmation',
+			data: {
+  	          pageTitle: "Order Submitted"
+  	  		},
 			resolve: {
 				SubmittedOrder: function($stateParams, OrderCloud) {
 					return OrderCloud.Me.GetOrder($stateParams.orderid);
@@ -69,7 +72,16 @@ function checkoutConfirmationConfig($stateProvider) {
 								});
 						});
 					return dfd.promise;
-				}
+				},
+				
+				CategoryList: function($stateParams, OrderCloud) {
+    	  			var depth = 1;
+    	  			return OrderCloud.Me.ListCategories(null, null, null, null, null, {ParentID: $stateParams.categoryid}, depth);
+    	  		},
+    	  		ProductList: function($stateParams, OrderCloud) {
+    	  			return OrderCloud.Me.ListProducts(null, null, null, null, null, null, $stateParams.categoryid);
+
+    	  		}
 			}
 		});
 }
