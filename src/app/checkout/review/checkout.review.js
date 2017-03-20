@@ -86,7 +86,7 @@ function checkoutReviewConfig($stateProvider) {
 		});
 }
 
-function CheckoutReviewController($exceptionHandler,$rootScope, $scope,  $state, toastr, OrderCloud, ocConfirm, LineItemsList, CurrentPromotions, ocConfirm, OrderPaymentsDetail, CategoryList, ProductList) {
+function CheckoutReviewController($rootScope, $scope,  $state, toastr, OrderCloud, ocConfirm, LineItemsList, CurrentPromotions, ocConfirm, OrderPaymentsDetail, CategoryList, ProductList) {
 	var vm = this;
 	vm.vendorLineItemsMap = [];
 	
