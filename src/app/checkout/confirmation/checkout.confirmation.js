@@ -125,10 +125,16 @@ function CheckoutConfirmationController(SubmittedOrder, $scope, OrderShipAddress
         	}
         	vm.vendorLineItemsMap[vendorName].push(lineItem);
         });
-    }, true);
-    
-    
+    }, true);  
     
     
     console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
+    
+    vm.getSubTotal = function(lineItemsList){
+		var total = 0.0;
+		angular.forEach(lineItemsList, function(lineItem){
+			total += ( lineItem.UnitPrice * lineItem.Quantity);
+		});
+		return total;
+	}
 }
