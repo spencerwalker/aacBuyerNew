@@ -2,7 +2,7 @@ angular.module('orderCloud')
 	.config(checkoutReviewConfig)
 	.controller('CheckoutReviewCtrl', CheckoutReviewController);
 
-function checkoutReviewConfig($stateProvider) {
+function checkoutReviewConfig($stateProvider) { 
 	$stateProvider
 		.state('checkout.review', {
 			url: '/review',
