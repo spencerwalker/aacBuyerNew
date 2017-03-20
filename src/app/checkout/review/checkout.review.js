@@ -2,7 +2,7 @@ angular.module('orderCloud')
 	.config(checkoutReviewConfig)
 	.controller('CheckoutReviewCtrl', CheckoutReviewController);
 
-function checkoutReviewConfig($stateProvider) { 
+function checkoutReviewConfig($stateProvider) {
 	$stateProvider
 		.state('checkout.review', {
 			url: '/review',
@@ -86,7 +86,7 @@ function checkoutReviewConfig($stateProvider) {
 		});
 }
 
-function CheckoutReviewController($rootScope, $scope,  $state, toastr, OrderCloud, ocConfirm, LineItemsList, CurrentPromotions, ocConfirm, OrderPaymentsDetail, CategoryList, ProductList) {
+function CheckoutReviewController($rootScope, $scope,  $state, toastr, OrderCloud, ocConfirm, LineItemsList, OrderPaymentsDetail, CategoryList, ProductList) {
 	var vm = this;
 	vm.vendorLineItemsMap = [];
 	
