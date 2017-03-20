@@ -87,19 +87,15 @@ function checkoutReviewConfig($stateProvider) {
 }
 
 
-function CheckoutReviewController($rootScope, $scope,  $state, toastr, OrderCloud, ocConfirm, LineItemsList, CurrentPromotions, ocConfirm, OrderPaymentsDetail, CategoryList, ProductList) {
+function CheckoutReviewController($rootScope, $scope,  $state, toastr, OrderCloud, ocConfirm, LineItemsList, OrderPaymentsDetail, CategoryList, ProductList) {
 	var vm = this;
-	vm.vendorLineItemsMap = [];
+	vm.vendorLineItemsMap = {};
+	
 	
 	vm.payments = OrderPaymentsDetail;
 	vm.lineItems = LineItemsList;
 	
-	console.log('LineItems', vm.lineItems);
-    console.log('CategoryList :: ', CategoryList);
-    console.log('Products :: ', ProductList);
-    console.log('vm.lineItems ::' , JSON.stringify(vm.lineItems));
-    
- // watcher on vm.lineItems
+	// watcher on vm.lineItems
     $scope.$watch(function () {
         	return vm.lineItems;
     	}, function(newVal, oldVal){
