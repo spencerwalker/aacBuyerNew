@@ -31,6 +31,10 @@ function checkoutReviewConfig($stateProvider) {
 					return dfd.promise;
 				},
 				
+				CurrentPromotions: function(CurrentOrder, OrderCloud) {
+    	  			return OrderCloud.Orders.ListPromotions(CurrentOrder.ID);
+    	  		},
+				
 				 CategoryList: function($stateParams, OrderCloud) {
 	                    var depth = 1;
 	                    return OrderCloud.Me.ListCategories(null, null, null, null, null, {ParentID: $stateParams.categoryid}, depth);
@@ -87,15 +91,20 @@ function checkoutReviewConfig($stateProvider) {
 }
 
 
-function CheckoutReviewController($rootScope, $scope,  $state, toastr, OrderCloud, ocConfirm, LineItemsList, OrderPaymentsDetail, CategoryList, ProductList) {
+function CheckoutReviewController($rootScope, $scope,  $state, toastr, OrderCloud, ocConfirm, LineItemsList, OrderPaymentsDetail, CurrentPromotions, CategoryList, ProductList) {
 	var vm = this;
-	vm.vendorLineItemsMap = {};
-	
 	
 	vm.payments = OrderPaymentsDetail;
-	vm.lineItems = LineItemsList;
 	
-	// watcher on vm.lineItems
+	vm.vendorLineItemsMap = {};
+    
+    vm.lineItems = LineItemsList;
+    console.log('LineItems', vm.lineItems);
+    console.log('CategoryList :: ', CategoryList);
+    console.log('Products :: ', ProductList);
+    console.log('vm.lineItems ::' , JSON.stringify(vm.lineItems));
+    
+ // watcher on vm.lineItems
     $scope.$watch(function () {
         	return vm.lineItems;
     	}, function(newVal, oldVal){
@@ -119,4 +128,6 @@ function CheckoutReviewController($rootScope, $scope,  $state, toastr, OrderClou
         	vm.vendorLineItemsMap[vendorName].push(lineItem);
         });
     }, true);
+    
+    console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
 }
