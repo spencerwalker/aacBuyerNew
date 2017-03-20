@@ -106,7 +106,7 @@
 			<hr>
 			</div><hr>
 			</div>
-			<div class="row c-line-item" ng-repeat="lineItem in lineItemsList"  cg-busy="checkoutShipping.lineLoading[$index]" style="margin-left: 1.5px; margin-right: 1.5px" >
+			<div class="row c-line-item" ng-repeat="lineItem in lineItemsList"  cg-busy="checkoutConfirmation.lineLoading[$index]" style="margin-left: 1.5px; margin-right: 1.5px" >
 			<div class="col-xs-3 col-sm-2">
 				<div class="thumbnail c-line-item__img">
 					<img class="img-responsive" ng-src="{{lineItem.xp.image.URL || 'http://placehold.it/100x100?text=' + lineItem.Product.Name}}"
@@ -152,10 +152,10 @@
 					</div>
 				</div><br>
 				<div class="row text-right">
-								<h4>Subtotal:<span style="margin-left: 150px; margin-right:50px">{{checkoutShipping.getSubTotal(lineItemsList) | currency}}</span></h4>	 							
-	 							<h4>Shipping: <span style="margin-left: 150px; margin-right:50px">{{base.currentOrder.ShippingCost | currency}}</span></h4>
-	 							<h4>Processing Fee: <span style="margin-left: 150px; margin-right:50px">{{checkoutShipping.shippingAddress.xp.Taxcost | currency}}</span></h4>
-	 							<h4>Total - Order # <span style="margin-left: 130px; margin-right:50px"><i class="orderId">{{lineItem.ID}}</i></span></h4>
+								<h4>Subtotal:<span style="margin-left: 50px; margin-right:50px">{{checkoutConfirmation.getSubTotal(lineItemsList) | currency}}</span></h4>	 							
+	 							<h4>Shipping: <span style="margin-left: 50px; margin-right:50px">{{base.currentOrder.ShippingCost | currency}}</span></h4>
+	 							<h4>Processing Fee: <span style="margin-left: 50px; margin-right:50px">{{checkoutShipping.shippingAddress.xp.Taxcost | currency}}</span></h4>
+	 							<h4>Total - Order # <span style="margin-left: 30px; margin-right:50px"><i class="orderId">{{lineItem.ID}}</i></span></h4>
 					</div>
 					<br>
 					</form>
