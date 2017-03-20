@@ -153,7 +153,6 @@ function CheckoutReviewController($exceptionHandler, $rootScope, $scope,  $state
                 vm.promotions.splice(scope.$index, 1);
             });
     };
-
     
     vm.cancelOrder = function(order){
         ocConfirm.Confirm("Are you sure you want cancel this order?")
