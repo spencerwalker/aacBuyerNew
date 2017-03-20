@@ -23,7 +23,96 @@
 					</div>				
 				</div>
 			</div>
-			
+			<!-- BH Dev -->
+			<!-- <div class="panel panel-default"> 
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					Items in Your Cart
+				</h3>
+			</div>
+			<form name="OrderLineItemForm" class="panel panel-default" cg-busy="checkoutReview.lineLoading[$index]"
+			 ng-repeat="(vendorName, lineItemsList) in checkoutReview.vendorLineItemsMap"
+				style="margin-left: 1.5px; margin-right: 1.5px" >
+				<div class="panel panel-default" > 
+					 <div class="panel-heading">
+						<h4 class="panel-title"><b>
+						{{ vendorName}} :: Order # <i class="orderId"></i>
+	               	    </b></h4>
+					 </div>
+		        </div>
+			<div class="row  hidden-xs c-line-item__header">
+				<div class="col-xs-3 col-sm-2"></div>
+					<div class="col-xs-9 col-sm-10">
+						<div class="row">
+							<div class="col-sm-5 col-lg-6"><h6>Description</h6></div>
+								<div class="col-sm-7 col-lg-6">
+									<div class="row">
+										<div class="col-xs-3"><h6 class="text-right">Price</h6></div>
+										<div class="col-xs-4"><h6 class="text-center">Qty</h6></div>
+										<div class="col-xs-3"><h6 class="text-right">Total</h6></div>
+									</div>
+								</div>
+						</div>
+					</div>
+			<div class="col-xs-12">
+			<hr>
+			</div><hr>
+			</div>
+			<div class="row c-line-item" ng-repeat="lineItem in lineItemsList"  cg-busy="checkoutReview.lineLoading[$index]" style="margin-left: 1.5px; margin-right: 1.5px" >
+			<div class="col-xs-3 col-sm-2">
+				<div class="thumbnail c-line-item__img">
+					<img class="img-responsive" ng-src="{{lineItem.xp.image.URL || 'http://placehold.it/100x100?text=' + lineItem.Product.Name}}"
+					alt="{{lineItem.Product.xp.image.Name || 'Product Image'}}">
+				</div>
+			</div>
+		<div class="col-xs-9 col-sm-10">
+			<div class="row c-line-item__info c-line-item--centered">
+				<div class="col-sm-5 col-lg-6 c-line-item__info--top">
+					<h4 class="c-line-item__name">
+						{{lineItem.Product.Name}}
+					</h4>
+					<small class="text-muted c-line-item__id">{{lineItem.Product.Description}}</small>
+						<ul class="c-line-item__spec-list" ng-if="lineItem.Specs.length > 0">
+							<li class="c-line-item__spec" ng-repeat="spec in lineItem.Specs">
+								<small>{{spec.Name}}:</small>
+								<small>{{spec.Value}}</small>
+							</li>
+						</ul>
+				</div>
+				<div class="col-sm-7 col-lg-6 c-line-item__info--bottom">
+					<div class="row  c-line-item--centered">
+						<div class="col-xs-3">
+							<h4 class="c-line-item__price text-right">{{lineItem.UnitPrice | currency}}</h4>
+						</div>
+					<div class="col-xs-4 text-center">
+						<h4 class="c-line-item__qty-display ">
+							{{lineItem.Quantity}}
+						</h4>
+						<small class="help-block" ng-if="lineItem.Product.QuantityMultiplier > 1">
+							{{'x ' + lineItem.Product.QuantityMultiplier + (lineItem.Quantity ? (' (' + (lineItem.Quantity * lineItem.Product.QuantityMultiplier) + ')') : '')}}
+						</small>
+					</div>
+					<div class="col-xs-3">
+						<h4 class="c-line-item__total text-right">{{lineItem.LineTotal | currency}}</h4>
+					</div>
+					</div>
+				</div>
+			</div>
+		</div>
+					<div class="col-xs-12">
+						<hr>
+					</div>
+				</div><br>
+				<div class="row text-right">
+								<h4>Subtotal:<span style="margin-left: 150px; margin-right:50px">{{checkoutReview.getSubTotal(lineItemsList) | currency}}</span></h4>	 							
+	 							<h4>Shipping: <span style="margin-left: 150px; margin-right:50px">{{base.currentOrder.ShippingCost | currency}}</span></h4>
+	 							<h4>Processing Fee: <span style="margin-left: 150px; margin-right:50px">{{base.order.TaxCost | currency}}</span></h4>
+	 							<h4>Total - Order # <span style="margin-left: 130px; margin-right:50px"><i class="orderId">{{lineItem.ID}}</i></span></h4>
+					</div>
+					<br>
+					</form>
+			</div> -->
+			<!-- BH Dev-->						 
 		<div class="panel panel-default"> 
 			<div class="panel-heading">
 				<h3 class="panel-title">
