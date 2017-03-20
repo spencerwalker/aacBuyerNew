@@ -1,12 +1,25 @@
 <div ng-form="OC_Checkout_Review">
 	<div class="row">
 		<div class="col-md-8">
-			<div class="panel panel-default"> 
-		        <div class="panel-heading">
-                    <h3 class="panel-title">
-                        Items in Your Cart
-                    </h3>
-                </div><br>
+			<div class="row">
+				<div class="col-sm-6">
+					<h4>Delivery Address</h4>
+					<div class="panel panel-default">
+						<div class="panel-body">
+							<p ng-bind-html="checkout.shippingAddress | address:'full'"></p>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-6">
+					<h4>Billing Address</h4>
+					<div class="panel panel-default">
+						<div class="panel-body">
+							<p ng-bind-html="checkout.billingAddress | address:'full'"></p>
+						</div>
+					</div>
+				</div>
+			</div>
+			<hr>
 			<div class="row  hidden-xs c-line-item__header">
 				<div class="col-xs-3 col-sm-2"></div>
 				<div class="col-xs-9 col-sm-10">
@@ -14,18 +27,18 @@
 						<div class="col-sm-5 col-lg-6"><h6>Description</h6></div>
 						<div class="col-sm-7 col-lg-6">
 							<div class="row">
-								<div class="col-xs-3"><h6 class="text-right">Price</h6></div>
+								<div class="col-xs-4"><h6 class="text-right">Price</h6></div>
 								<div class="col-xs-4"><h6 class="text-center">Qty</h6></div>
-								<div class="col-xs-3"><h6 class="text-right">Total</h6></div>
+								<div class="col-xs-4"><h6 class="text-right">Total</h6></div>
 							</div>
 						</div>
 					</div>
 				</div>
 				<div class="col-xs-12">
 					<hr>
-				</div><hr>
+				</div>
 			</div>
-			<div class="row c-line-item" ng-repeat="lineItem in checkoutReview.lineItems.Items track by $index" style="margin-left: 1.5px; margin-right: 1.5px" >
+			<div class="row c-line-item" ng-repeat="lineItem in checkoutReview.lineItems.Items track by $index">
 				<div class="col-xs-3 col-sm-2">
 					<div class="thumbnail c-line-item__img">
 						<img class="img-responsive" ng-src="{{lineItem.xp.image.URL || 'http://placehold.it/100x100?text=' + lineItem.Product.Name}}"
@@ -35,11 +48,10 @@
 				<div class="col-xs-9 col-sm-10">
 					<div class="row c-line-item__info c-line-item--centered">
 						<div class="col-sm-5 col-lg-6 c-line-item__info--top">
-							<h4 class="c-line-item__name">
-								{{lineItem.Product.Name}}
-							</h4>
-						<!-- <small class="text-muted c-line-item__id">{{lineItem.ProductID}}</small>  -->
-							<small class="text-muted c-line-item__id">{{lineItem.Product.Description}}</small>
+							<h3 class="c-line-item__name">
+								<a href="#">{{lineItem.Product.Name}}</a>
+							</h3>
+							<small class="text-muted c-line-item__id">{{lineItem.ProductID}}</small>
 							<ul class="c-line-item__spec-list" ng-if="lineItem.Specs.length > 0">
 								<li class="c-line-item__spec" ng-repeat="spec in lineItem.Specs">
 									<small>{{spec.Name}}:</small>
@@ -49,7 +61,7 @@
 						</div>
 						<div class="col-sm-7 col-lg-6 c-line-item__info--bottom">
 							<div class="row  c-line-item--centered">
-								<div class="col-xs-3">
+								<div class="col-xs-4">
 									<h4 class="c-line-item__price text-right">{{lineItem.UnitPrice | currency}}</h4>
 								</div>
 								<div class="col-xs-4 text-center">
@@ -60,7 +72,7 @@
 										{{'x ' + lineItem.Product.QuantityMultiplier + (lineItem.Quantity ? (' (' + (lineItem.Quantity * lineItem.Product.QuantityMultiplier) + ')') : '')}}
 									</small>
 								</div>
-								<div class="col-xs-3">
+								<div class="col-xs-4">
 									<h4 class="c-line-item__total text-right">{{lineItem.LineTotal | currency}}</h4>
 								</div>
 							</div>
@@ -70,37 +82,10 @@
 				<div class="col-xs-12">
 					<hr>
 				</div>
-			</div><br>
-		</div>
-	</div>
-	
-	<div class="col-md-4">
-			<div class="panel panel-default" hl-sticky anchor="top" offset-top="70" media-query="min-width: 992px">
-					<div class="panel-heading">
-					<h4 class="panel-title">
-					Shipping To
-					</h4>
-					</div>
-				<div class="panel-body">
-					<p ng-bind-html="checkout.shippingAddress | address:'full'"></p>
-				</div>
 			</div>
 		</div>
 		
 		<div class="col-md-4">
-			<div class="panel panel-default" hl-sticky anchor="top" offset-top="70" media-query="min-width: 992px">
-					<div class="panel-heading">
-					<h4 class="panel-title">
-					Billing To
-					</h4>
-					</div>
-				<div class="panel-body">
-					<p ng-bind-html="checkout.billingAddress | address:'full'"></p>
-				</div>
-			</div>
-		</div>
-	
-		<div class="col-md-4 pull-right">
 			<div class="panel panel-default" hl-sticky anchor="top" offset-top="70" media-query="min-width: 992px">
 				<div class="panel-heading">
 					<h3 class="panel-title">
@@ -109,19 +94,13 @@
 				</div>
 				<div class="panel-body">
 					<p>
-						<b>
-							<ng-pluralize count="base.currentOrder.LineItemCount" when="{
-								'1': 'Checking Out With 1 Item',
-								'other': 'Checking Out With {} Items'
-							}"></ng-pluralize>
-						</b>
+						<ng-pluralize count="base.currentOrder.LineItemCount" when="{
+							'1': 'Checking Out With 1 Item',
+							'other': 'Checking Out With {} Items'
+						}"></ng-pluralize>
 					</p>
-					 <hr>
-					<h5>Subtotal:- All Orders <span class="pull-right">{{base.currentOrder.Subtotal | currency}}</span></h5>
-					<h5>Shipping: <span class="pull-right">{{base.currentOrder.ShippingCost | currency}}</span></h5>
-					<h5>Processing Fee: <span class="pull-right">{{base.currentOrder.TaxCost | currency}}</span></h5>
-		 <!--       <h5 ng-if="myOrderDetail.order.TaxCost">Processing Fee: <span class="pull-right"> {{myOrderDetail.order.TaxCost | currency}}</span></h5> -->
-		    	<!--<h5 ng-if="base.currentOrder.ShippingCost" class="text-muted">Estimated Shipping: <span class="pull-right"> + {{base.currentOrder.ShippingCost | currency}}</span></h5>  -->
+					<h5>Subtotal: <span class="pull-right">{{base.currentOrder.Subtotal | currency}}</span></h5>
+					<h5 ng-if="base.currentOrder.ShippingCost" class="text-muted">Estimated Shipping: <span class="pull-right"> + {{base.currentOrder.ShippingCost | currency}}</span></h5>
 					<h5 ng-repeat="promotion in checkout.promotions" class="text-danger">
 						{{promotion.Code}}
 						<span class="pull-right">- {{promotion.Amount | currency}}</span></h5>
@@ -133,20 +112,14 @@
 
 						<p ng-if="payment.xp.PONumber"><b>PO#:</b> {{payment.xp.PONumber}}</p>
 
-						<p ng-if="payment.Type == 'CreditCard'">{{payment.Details.CardholderName}}
-							<i style="font-size:1.3em;" class="fa {{payment.Details.CardType | faCreditCard}} pull-left"></i><br>
-							<span class="text-muted">XXXX-XXXX-XXXX-</span>{{payment.Details.PartialAccountNumber}}<br>
-							Expires On: {{payment.Details.ExpirationDate | date:'MM/yy'}}
+						<p ng-if="payment.Type == 'CreditCard'">
+							<i style="font-size:1.3em;" class="fa {{payment.Details.CardType | faCreditCard}} pull-left"></i>
+							<span class="text-muted">XXXX-XXXX-XXXX-</span>{{payment.Details.PartialAccountNumber}}
 						</p>
 
-						<p ng-if="payment.Type == 'SpendingAccount'"> 
-			<!--			{{payment.Details.Name}} <br>
-			    		<small><span class="text-muted">Remaining Balance:</span> {{payment.Details.Balance | currency}}</small> -->
-						<small><span class="text-muted">Donation Balance:
-	                    	<span ng-if = "base.availableFunds - base.currentOrder.Subtotal > 0" > ({{base.availableFunds - base.currentOrder.Subtotal | currency}}  Available) </span>
-	                    	<span ng-if = "base.availableFunds - base.currentOrder.Subtotal <= 0" > ({{0 | currency}} Available) </span>
-            <!--   		<b class="pull-right text-primary">{{base.currentOrder.Subtotal | currency}}</b>  -->
-                    	</small>
+						<p ng-if="payment.Type == 'SpendingAccount'">
+							{{payment.Details.Name}} <br>
+							<small><span class="text-muted">Remaining Balance:</span> {{payment.Details.Balance | currency}}</small>
 						</p>
 						<hr ng-if="!$last">
 					</div>
