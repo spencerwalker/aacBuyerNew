@@ -76,6 +76,7 @@ function checkoutReviewConfig($stateProvider) {
 		});
 }
 
+
 function CheckoutReviewController(LineItemsList, OrderPaymentsDetail) {
 	var vm = this;
 	vm.payments = OrderPaymentsDetail;
