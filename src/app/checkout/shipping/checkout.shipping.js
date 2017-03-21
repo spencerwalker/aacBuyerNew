@@ -65,6 +65,9 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     console.log('LineItems', vm.lineItems);
     console.log('CategoryList :: ', CategoryList);
     console.log('Products :: ', ProductList);
+    console.log('createAddress :: ', createAddress);
+    console.log('changeShippingAddress :: ', changeShippingAddress);
+    console.log('saveShipAddress :: ', saveShipAddress);
     console.log('vm.lineItems ::' , JSON.stringify(vm.lineItems));
     
  // watcher on vm.lineItems
@@ -166,7 +169,7 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
                 }
             })
     }
-
+    
     function saveShipAddress(order) {
         if (order && order.ShippingAddressID) {
             OrderCloud.Orders.Patch(order.ID, {ShippingAddressID: order.ShippingAddressID})
