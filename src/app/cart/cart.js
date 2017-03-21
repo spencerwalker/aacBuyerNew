@@ -56,6 +56,8 @@ function CartController($rootScope, $scope,  $state, toastr, OrderCloud, LineIte
     var vm = this;
     vm.vendorLineItemsMap = {};
     
+    console.log('testing');
+    
     vm.lineItems = LineItemsList;
     console.log('LineItems', vm.lineItems);
     console.log('CategoryList :: ', CategoryList);
