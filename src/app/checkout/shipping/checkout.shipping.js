@@ -99,7 +99,7 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
         	}
         	vm.vendorLineItemsMap[vendorName].push(lineItem);
         	
-        	$(vendorName).value(s);
+        	$('.' + vendorName).value(s);
         });
     }, true);
     
