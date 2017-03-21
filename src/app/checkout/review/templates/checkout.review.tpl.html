@@ -31,13 +31,13 @@
 					Items in Your Cart
 				</h3>
 			</div>
-			<form name="OrderLineItemForm" class="panel panel-default" cg-busy="checkoutShipping.lineLoading[$index]"
-			 ng-repeat="(vendorName, lineItemsList) in checkoutShipping.vendorLineItemsMap"
+			<form name="OrderLineItemForm" class="panel panel-default" cg-busy="checkoutReview.lineLoading[$index]"
+			 ng-repeat="(vendorName, lineItemsList) in checkoutReview.vendorLineItemsMap"
 				style="margin-left: 1.5px; margin-right: 1.5px" >
 				<div class="panel panel-default" > 
 					 <div class="panel-heading">
 						<h4 class="panel-title"><b>
-							{{vendorName}} :: Order # <i class="orderId"></i>
+							{{lineItem.vendorName}} :: Order # <i class="orderId">{{lineItem.ID}}</i>
 						</b></h4>
 					 </div>
 		        </div>
@@ -59,7 +59,6 @@
 			<hr>
 			</div><hr>
 			</div>
-			<span style="color:red">{{ lineItemsList }}</span>
 		<div class="row c-line-item" ng-repeat="lineItem in lineItemsList"  cg-busy="checkoutReview.lineLoading[$index]" style="margin-left: 1.5px; margin-right: 1.5px" >
 			<div class="col-xs-3 col-sm-2">
 				<div class="thumbnail c-line-item__img">
