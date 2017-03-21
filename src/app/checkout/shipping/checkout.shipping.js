@@ -76,10 +76,9 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     	angular.forEach(vm.lineItems.Items, function(lineItem){
     		    		
     		console.log(' vm.lineItems.Items = ', lineItem.ID);
-    		var s = lineItem.ID;
-    		
+    		var s = lineItem.ID;    		
     		s = s.substring(0, 7);
-    		 console.log('s = ', s);
+    		console.log('s = ', s);
     		 
         	var productId = lineItem.ProductID;
         	var vendorName = productId.split("_")[0]; 
