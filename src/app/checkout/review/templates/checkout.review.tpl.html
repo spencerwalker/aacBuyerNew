@@ -31,7 +31,6 @@
 					Items in Your Cart
 				</h3>
 			</div>
-			<span style="color:red">test- {{checkoutReview}}</span>
 			<form name="OrderLineItemForm" class="panel panel-default" cg-busy="checkoutReview.lineLoading[$index]"
 			 ng-repeat="(vendorName, lineItemsList) in checkoutReview.vendorLineItemsMap"
 				style="margin-left: 1.5px; margin-right: 1.5px" >
