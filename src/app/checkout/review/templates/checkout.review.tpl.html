@@ -33,9 +33,9 @@
 			</div>
 				<div class="panel panel-default" > 
 					 <div class="panel-heading">
-						<h4 class="panel-title">
+						<h4 class="panel-title"><b>
 							{{lineItem.vendorName}} :: Order # <i class="orderId">{{lineItem.ID}}</i>
-						</h4>
+						</b></h4>
 					 </div>
 		        </div>
 			<div class="row  hidden-xs c-line-item__header">
@@ -103,12 +103,10 @@
 					</div>
 				</div><br>
 				<div class="row text-right">
-	 							<h4>Subtotal:<span style="margin-left: 150px; margin-right:50px">{{base.currentOrder.Subtotal | currency}}</span></h4>
-	 							<h4>Shipping: <span style="margin-left: 150px; margin-right:50px">{{base.currentOrder.ShippingCost | currency}}</span></h4>
-	 							<h4>Total - Order # <span style="margin-left: 130px; margin-right:50px"><i class="orderId">{{lineItem.ID}}</i></span></h4>
-						<!-- 	<div class="col-xs-12">
-							<hr>
-							</div><hr>  -->
+	 					<h4>Subtotal:<span style="margin-left: 150px; margin-right:50px">{{checkoutShipping.getSubTotal(lineItemsList) | currency}}</span></h4>	 														
+	 					<h4>Shipping: <span style="margin-left: 150px; margin-right:50px">{{base.currentOrder.ShippingCost | currency}}</span></h4>
+	 					<h4>Processing Fee: <span style="margin-left: 150px; margin-right:50px">{{checkout.shippingAddress.xp.Taxcost | currency}}</span></h4>
+	 					<h4>Total - Order # <span style="margin-left: 130px; margin-right:50px"><i class="orderId">{{lineItem.ID}}</i></span></h4>
 					</div>
 					<br>
 			</div>
