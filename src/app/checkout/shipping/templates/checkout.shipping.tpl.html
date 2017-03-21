@@ -16,6 +16,7 @@
                     		<a href="" ng-click="checkoutShipping.changeShippingAddress(base.currentOrder)">Change</a>  
                      </div>-->
                         <p ng-bind-html="checkout.shippingAddress | address:'full'"></p>
+                        <p ng-bind-html="checkout.shippingAddress.xp.Taxcost | currency"></p>
                     </div>
                 </div>
             
