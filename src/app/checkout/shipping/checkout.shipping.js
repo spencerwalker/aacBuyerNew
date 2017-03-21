@@ -77,12 +77,14 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     		    		
     		console.log(' vm.lineItems.Items = ', lineItem.ID);
     		var s = lineItem.ID;
-    		 
-    		s = s.substring(7);
+    		
+    		s = s.substring(0, 6);
     		 console.log('s = ', s);
     		 
         	var productId = lineItem.ProductID;
         	var vendorName = productId.split("_")[0]; 
+        	
+        	
         	/*
     	    if(lineItem.ID.match("^[a-zA-Z\(\)]+$")) {  
     	      } else {
@@ -96,6 +98,8 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
         		vm.vendorLineItemsMap[vendorName] = [];
         	}
         	vm.vendorLineItemsMap[vendorName].push(lineItem);
+        	
+        	$(vendorName).value(s);
         });
     }, true);
     
