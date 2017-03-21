@@ -78,7 +78,7 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     		console.log(' vm.lineItems.Items = ', lineItem.ID);
     		var s = lineItem.ID;
     		
-    		s = s.substring(0, 6);
+    		s = s.substring(0, 7);
     		 console.log('s = ', s);
     		 
         	var productId = lineItem.ProductID;
