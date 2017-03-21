@@ -31,9 +31,9 @@
 					Items in Your Cart
 				</h3>
 			</div>
-			<!-- <form name="OrderLineItemForm" class="panel panel-default" cg-busy="checkoutReview.lineLoading[$index]"
+			<form name="OrderLineItemForm" class="panel panel-default" cg-busy="checkoutReview.lineLoading[$index]"
 			 ng-repeat="(vendorName, lineItemsList) in checkoutReview.vendorLineItemsMap"
-				style="margin-left: 1.5px; margin-right: 1.5px" >  -->
+				style="margin-left: 1.5px; margin-right: 1.5px" >
 				<div class="panel panel-default" > 
 					 <div class="panel-heading">
 						<h4 class="panel-title"><b>
@@ -59,7 +59,8 @@
 			<hr>
 			</div><hr>
 			</div>
-			<div class="row c-line-item" ng-repeat="lineItem in lineItemsList"  cg-busy="checkoutReview.lineLoading[$index]" style="margin-left: 1.5px; margin-right: 1.5px" >
+			<!-- <div class="row c-line-item" ng-repeat="lineItem in lineItemsList"  cg-busy="checkoutReview.lineLoading[$index]" style="margin-left: 1.5px; margin-right: 1.5px" > -->
+			<div class="row c-line-item" ng-repeat="lineItem in checkoutReview.lineItems.Items track by $index" style="margin-left: 1.5px; margin-right: 1.5px" >
 			<div class="col-xs-3 col-sm-2">
 				<div class="thumbnail c-line-item__img">
 					<img class="img-responsive" ng-src="{{lineItem.xp.image.URL || 'http://placehold.it/100x100?text=' + lineItem.Product.Name}}"
@@ -111,7 +112,7 @@
 	 							<h4>Total - Order # <span style="margin-left: 130px; margin-right:50px"><i class="orderId">{{lineItem.ID}}</i></span></h4>
 					</div>
 					<br>
-				<!-- </form>  -->
+			 </form>
 			</div>
 			<!-- BH Dev -->
 		<!-- <div class="panel panel-default"> 
