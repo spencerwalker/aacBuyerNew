@@ -59,19 +59,11 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-sm-6" ng-if="checkoutConfirmation.billingAddress">
-					<h5>Billing Address</h5>
-					<div class="panel panel-default">
-						<div class="panel-body">
-							<p ng-bind-html="checkoutConfirmation.billingAddress | address:'full'"></p>
-						</div>
-					</div>
-				</div>
 				<div class="col-sm-6" ng-if="!checkoutConfirmation.billingAddress">
 					<h5>Billing Address</h5>
 					<div class="panel panel-default">
 						<div class="panel-body">
-							You currently do not have a billing address. <br />
+							<p ng-bind-html="checkoutConfirmation.billingAddress | address:'full'"></p>
 						</div>
 					</div>
 				</div>
