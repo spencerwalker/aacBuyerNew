@@ -2,7 +2,6 @@
     <div class="row">
         <div class="col-md-8">
             <div cg-busy="{promise:checkoutShipping.shippersLoading, message:'Loading Shipping Rates'}">
-               <!--  <a href="" class="pull-right" ng-click="checkoutShipping.createAddress(base.currentOrder)"><i class="fa fa-plus-circle"></i> New Address</a>  -->
                <div class="panel panel-default"> 
 	               	<div class="panel-heading">
 			            <h4 class="panel-title">
@@ -12,13 +11,9 @@
 				</div>
                 <div class="panel panel-default" ng-if="checkout.shippingAddress">
                     <div class="panel-body">
-             <!--   <div class="pull-right">
-                    		<a href="" ng-click="checkoutShipping.changeShippingAddress(base.currentOrder)">Change</a>  
-                     </div>-->
                         <p ng-bind-html="checkout.shippingAddress | address:'full'"></p>
                     </div>
                 </div>
-            
                 <div class="well text-center" ng-if="!checkout.shippingAddress">
                     You currently do not have a shipping address selected. <br />
                     <a href="" ng-click="checkoutShipping.changeShippingAddress(base.currentOrder)">Select one now</a>
@@ -74,7 +69,6 @@
 			</div><hr>
 			</div>
 			<div class="row c-line-item" ng-repeat="lineItem in lineItemsList"  cg-busy="checkoutShipping.lineLoading[$index]" style="margin-left: 1.5px; margin-right: 1.5px" >
-		<!-- <div class="row c-line-item" ng-repeat="lineItem in checkoutShipping.lineItems.Items track by $index" style="margin-left: 1.5px; margin-right: 1.5px" > -->
 			<div class="col-xs-3 col-sm-2">
 				<div class="thumbnail c-line-item__img">
 					<img class="img-responsive" ng-src="{{lineItem.xp.image.URL || 'http://placehold.it/100x100?text=' + lineItem.Product.Name}}"
@@ -121,14 +115,13 @@
 				</div><br>
 				<div class="row text-right">
 								<h4>Subtotal:<span style="margin-left: 150px; margin-right:50px">{{checkoutShipping.getSubTotal(lineItemsList) | currency}}</span></h4>	 							
-	 					   <!-- <h4>Subtotal:<span style="margin-left: 150px; margin-right:50px">{{base.currentOrder.Subtotal | currency}}</span></h4> -->	 							
 	 							<h4>Shipping: <span style="margin-left: 150px; margin-right:50px">{{base.currentOrder.ShippingCost | currency}}</span></h4>
 	 							<h4>Processing Fee: 
-	 								<span style="margin-left: 150px; margin-right:50px" ng-if="checkout.shippingAddress.xp.Taxcost > 0" >{{checkout.shippingAddress.xp.Taxcost | currency}}</span>
+	 								<span style="margin-left: 150px; margin-right:50px" ng-if="checkout.shippingAddress.xp.Taxcost > 0" >{{ ((checkoutShipping.getSubTotal(lineItemsList) / checkout.shippingAddress.xp.Taxcost)*100) | currency}}</span>
+	 						   <!-- <span style="margin-left: 150px; margin-right:50px" ng-if="checkout.shippingAddress.xp.Taxcost > 0" >{{checkout.shippingAddress.xp.Taxcost | currency}}</span> -->
 	 								<span style="margin-left: 150px; margin-right:50px" ng-if="checkout.shippingAddress.xp.Taxcost == null">{{0.00 | currency}}</span>
  								</h4>
-	 				       <!-- <h4>Processing Fee: <span style="margin-left: 150px; margin-right:50px">{{base.currentOrder.TaxCost | currency}}</span></h4> -->
-	 							<h4>Total - Order # <span style="margin-left: 130px; margin-right:50px"><i class="orderId">{{lineItem.ID}}</i></span></h4>
+	 							<h4>Total - Order # <i class="orderId">{{lineItem.ID}}</i><span style="margin-left: 130px; margin-right:50px"></span></h4>
 					</div>
 					<br>
 					</form>
@@ -153,8 +146,6 @@
                     </p>
                     <hr>
                     <h5>Subtotal: All Orders <span class="pull-right">{{base.currentOrder.Subtotal | currency}}</span></h5>
-         <!--       <h5 ng-if="myOrderDetail.order.TaxCost">Processing Fee: <span class="pull-right"> {{myOrderDetail.order.TaxCost | currency}}</span></h5> -->
-         <!--       <h5 ng-if="base.currentOrder.ShippingCost" class="text-muted">Estimated Shipping: <span class="pull-right"> + {{base.currentOrder.ShippingCost | currency}}</span></h5>  -->
                     <hr ng-if="checkout.promotions.length">
                     <h5 ng-repeat="promotion in checkout.promotions" class="text-danger">
                         {{promotion.Code}}
