@@ -74,21 +74,21 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     	console.log('New Val:: ', newVal);
     	vm.vendorLineItemsMap = {};
     	angular.forEach(vm.lineItems.Items, function(lineItem){
-    		 
-	        var productId = lineItem.ProductID;
-	        var vendorName = productId.split("_")[0]; 
-        	
-        	
-        	
-    	    //if(lineItem.ID.match("^[a-zA-Z\(\)]+$")) {  
-    	      //} else {
-    	    	 var number = Math.floor(1000000 + Math.random() * 9000000);
-    	    	 lineItem.randomID = number;
-    	      //}  
+ 	        var productId = lineItem.ProductID;
+		       var vendorName = productId.split("_")[0]; 
+		/*
+	    	    if(lineItem.ID.match("^[a-zA-Z\(\)]+$")) {  
+	    	      } else {
+	    	    	 var number = Math.floor(1000000 + Math.random() * 9000000);
+	    	    	 lineItem.ID = number;
+	    	      }  
     	    	
-        	lineItem.vendorName = vendorName;
-        	
-        	if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
+	        	lineItem.vendorName = vendorName;
+
+
+
+		*/
+		if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
         		vm.vendorLineItemsMap[vendorName] = [];
         	}
         	vm.vendorLineItemsMap[vendorName].push(lineItem);
