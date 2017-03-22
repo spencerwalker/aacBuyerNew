@@ -5,10 +5,11 @@
 	</h2>
 	<div class="row">
 		<div class="col-md-5">
+		<div class="panel panel-default">
 		<div class="panel-body">
 			<h5>Order ID: <span class="pull-right">{{checkoutConfirmation.order.ID}}</span></h5>
 			<h5>Date Submitted: <span class="pull-right">{{checkoutConfirmation.order.DateSubmitted | date:'short'}}</span></h5>
-			<h5>Subtotal: <span class="pull-right">{{checkoutConfirmation.order.Subtotal | currency}}</span></h5>
+			<h5>Subtotal: All Orders <span class="pull-right">{{checkoutConfirmation.order.Subtotal | currency}}</span></h5>
 			<h5 ng-if="checkoutConfirmation.order.ShippingCost" class="text-muted">Shipping: <span class="pull-right"> + {{checkoutConfirmation.order.ShippingCost | currency}}</span></h5>
 			<h5 ng-repeat="promotion in checkoutConfirmation.promotions" class="text-danger">
 				{{promotion.Code}}
@@ -41,6 +42,7 @@
 				<hr ng-if="!$last">
 			</div>
 			<hr class="visible-xs visisble-sm">
+		</div>
 		</div>
 		</div>
 		<div class="col-md-7">
@@ -159,8 +161,12 @@
 				<div class="row text-right">
 								<h4>Subtotal:<span style="margin-left: 150px; margin-right:100px">{{checkoutConfirmation.getSubTotal(lineItemsList) | currency}}</span></h4>	 							
 	 							<h4>Shipping: <span style="margin-left: 150px; margin-right:100px">{{base.currentOrder.ShippingCost | currency}}</span></h4>
-	 							<h4>Processing Fee: <span style="margin-left: 150px; margin-right:100px">{{checkoutConfirmation.shippingAddress.xp.Taxcost | currency}}</span></h4>
-	 							<h4>Total - Order # <span style="margin-left: 130px; margin-right:100px"><i class="orderId">{{lineItem.ID}}</i></span></h4>
+	 				       <!-- <h4>Processing Fee: <span style="margin-left: 150px; margin-right:100px">{{checkoutConfirmation.shippingAddress.xp.Taxcost | currency}}</span></h4> -->
+	 				      		<h4>Processing Fee: 
+				 					<span style="margin-left: 150px; margin-right:100px" ng-if="checkoutConfirmation.shippingAddress.xp.Taxcost > 0" >{{ ((checkoutConfirmation.getSubTotal(lineItemsList) * checkoutConfirmation.shippingAddress.xp.Taxcost)/100) | currency}}</span>
+				 					<span style="margin-left: 150px; margin-right:100px" ng-if="checkoutConfirmation.shippingAddress.xp.Taxcost == null">{{0.00 | currency}}</span>
+ 								</h4>
+	 							<h4>Total - Order # <i class="orderId">{{lineItem.ID}}</i><span style="margin-left: 130px; margin-right:100px">{{checkoutConfirmation.getSubTotal(lineItemsList) + base.currentOrder.ShippingCost + ((checkoutConfirmation.getSubTotal(lineItemsList) * checkoutConfirmation.shippingAddress.xp.Taxcost)/100) | currency}}</span></h4>
 					</div>
 					<br>
 					</form>
