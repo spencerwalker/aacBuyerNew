@@ -121,7 +121,7 @@
  					</h4>
 	 				<!-- <h4>Total - Order # <i class="orderId">{{lineItem.ID}}</i><span style="margin-left: 130px; margin-right:50px">{{checkoutShipping.getSubTotal(lineItemsList) + base.currentOrder.ShippingCost + ((checkoutShipping.getSubTotal(lineItemsList) * checkout.shippingAddress.xp.Taxcost)/100) | currency}}</span></h4> -->
 	 				<h4>Total - Order # <i class="orderId">{{lineItem.ID}}</i>
-	 					<span style="margin-left: 150px; margin-right:50px">
+	 					<span style="margin-left: 150px; margin-right:50px" ng-if="checkout.shippingAddress.xp.Taxcost > 0">
 	 						{{checkoutShipping.getSubTotal(lineItemsList) 
 	 							+ base.currentOrder.ShippingCost 
 	 							+ ((checkoutShipping.getSubTotal(lineItemsList) 
