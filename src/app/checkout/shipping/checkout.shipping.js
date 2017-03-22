@@ -61,6 +61,10 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     
     vm.vendorLineItemsMap = {};
     
+    vm.vendorLineItemsMap = [];
+    
+    console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
+    
     vm.lineItems = LineItemsList;
     console.log('LineItems', vm.lineItems);
     console.log('CategoryList :: ', CategoryList);
