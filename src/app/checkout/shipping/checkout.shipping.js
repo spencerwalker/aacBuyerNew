@@ -90,9 +90,9 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
 	        	lineItem.vendorName = vendorName;*/
 		
 		if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
-        		vm.vendorLineItemsMap[vendorName] = [];
+        		vm.vendorLineItemsMap[vendorName] = {};
         	}
-        	vm.vendorLineItemsMap[vendorName].push(lineItem);
+        	vm.vendorLineItemsMap[vendorName][lineItem].push(lineItem);
         	vm.vendorLineItemsMap[vendorName].randomID = number;
         	        	
         });
