@@ -67,7 +67,7 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     console.log('Products :: ', ProductList);
     console.log('vm.lineItems ::' , JSON.stringify(vm.lineItems));
     
- // watcher on vm.lineItems
+    // watcher on vm.lineItems
     $scope.$watch(function () {
         	return vm.lineItems;
     	}, function(newVal, oldVal){
@@ -76,28 +76,27 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     	angular.forEach(vm.lineItems.Items, function(lineItem){
  	        var productId = lineItem.ProductID;
 		       var vendorName = productId.split("_")[0]; 
-		/*
-	    	    if(lineItem.ID.match("^[a-zA-Z\(\)]+$")) {  
+		       
+		     var number = Math.floor(1000000 + Math.random() * 9000000);
+  	    	 //lineItem.randomID = number;
+  	    	 lineItem.vendorName = vendorName;
+
+		       /*   if(lineItem.ID.match("^[a-zA-Z\(\)]+$")) {  
 	    	      } else {
 	    	    	 var number = Math.floor(1000000 + Math.random() * 9000000);
 	    	    	 lineItem.ID = number;
-	    	      }  
+	    	      } 
     	    	
-	        	lineItem.vendorName = vendorName;
-
-
-
-		*/
+	        	lineItem.vendorName = vendorName;*/
+		
 		if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
         		vm.vendorLineItemsMap[vendorName] = [];
         	}
         	vm.vendorLineItemsMap[vendorName].push(lineItem);
+        	vm.vendorLineItemsMap[vendorName].randomID = number;
         	        	
         });
     }, true);
-    
-    
-    
     
     console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
     
