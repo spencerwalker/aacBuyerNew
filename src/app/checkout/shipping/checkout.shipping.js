@@ -60,11 +60,7 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     vm.analyzeShipments = analyzeShipments;
     
     vm.vendorLineItemsMap = {};
-    
-    vm.vendorLineItemsMap = [];
-    
-    console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
-    
+        
     vm.lineItems = LineItemsList;
     console.log('LineItems', vm.lineItems);
     console.log('CategoryList :: ', CategoryList);
@@ -78,31 +74,25 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     	console.log('New Val:: ', newVal);
     	vm.vendorLineItemsMap = {};
     	angular.forEach(vm.lineItems.Items, function(lineItem){
-    		    		
-    		console.log(' vm.lineItems.Items = ', lineItem.ID);
-    		var s = lineItem.ID;    		
-    		s = s.substring(0, 7);
-    		console.log('s = ', s);
     		 
-        	var productId = lineItem.ProductID;
-        	var vendorName = productId.split("_")[0]; 
+	        var productId = lineItem.ProductID;
+	        var vendorName = productId.split("_")[0]; 
         	
         	
-        	/*
-    	    if(lineItem.ID.match("^[a-zA-Z\(\)]+$")) {  
-    	      } else {
+        	
+    	    //if(lineItem.ID.match("^[a-zA-Z\(\)]+$")) {  
+    	      //} else {
     	    	 var number = Math.floor(1000000 + Math.random() * 9000000);
-    	    	 lineItem.ID = number;
-    	      }  
+    	    	 lineItem.randomID = number;
+    	      //}  
     	    	
         	lineItem.vendorName = vendorName;
-        	*/
+        	
         	if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
         		vm.vendorLineItemsMap[vendorName] = [];
         	}
         	vm.vendorLineItemsMap[vendorName].push(lineItem);
-        	
-        	$('.' + vendorName).val(s);
+        	        	
         });
     }, true);
     
