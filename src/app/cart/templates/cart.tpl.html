@@ -41,13 +41,13 @@
                         Items in Your Cart
                     </h3>
                 </div>
-        <form name="OrderLineItemForm" th:id="'OrderLineItemForm' + ${vendorName.id}" class="panel panel-default" cg-busy="cart.lineLoading[$index]"
-			 ng-repeat="(vendorName, lineItemsList) in cart.vendorLineItemsMap"
+        <form name="OrderLineItemForm" class="panel panel-default" cg-busy="cart.lineLoading[$index]"
+			 ng-repeat="(vendorName, itemList) in cart.vendorLineItemsMap"
 				style="margin-left: 1.5px; margin-right: 1.5px" >
           	<div class="panel panel-default" > 
                 <div class="panel-heading">
 	                <h4 class="panel-title"><b>
-						{{ vendorName}} :: Order # <i class="orderId"></i>
+						{{vendorName}} :: Order # {{itemList.randomID}}<i ng-class="vendorName" ></i>
 	               	</b></h4>
                	</div>
           	</div>
@@ -70,7 +70,7 @@
 					 <hr>
 				 </div><hr>
 			</div>
-			<div class="row c-line-item" ng-repeat="lineItem in lineItemsList"  cg-busy="cart.lineLoading[$index]"
+			<div class="row c-line-item" ng-repeat="lineItem in itemList.lineItemsList"  cg-busy="cart.lineLoading[$index]"
 					style="margin-left: 1.5px; margin-right: 1.5px" >
 				<div class="col-xs-3 col-sm-2">
 					 <div class="thumbnail c-line-item__img">
