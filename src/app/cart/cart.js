@@ -54,6 +54,7 @@ function CartConfig($stateProvider) {
 
 function CartController($rootScope, $scope,  $state, toastr, OrderCloud, LineItemsList, CurrentPromotions, ocConfirm, CategoryList, ProductList) {
     var vm = this;
+
     vm.vendorLineItemsMap = {};
     
     console.log('testing');
@@ -84,13 +85,13 @@ function CartController($rootScope, $scope,  $state, toastr, OrderCloud, LineIte
     	    	 lineItem.ID = number;
     	      }  
     	    	
-        	lineItem.vendorName = vendorName;
-        	*/
+        	lineItem.vendorName = vendorName;*/
+
         	if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
         		vm.vendorLineItemsMap[vendorName] = {};
         	}
-        	vm.vendorLineItemsMap[vendorName].lineItem = [];
-        	vm.vendorLineItemsMap[vendorName][lineItem].push(lineItem);
+			vm.vendorLineItemsMap[vendorName].lineItem = [];
+        	vm.vendorLineItemsMap[vendorName].lineItem.push(lineItem);
         	vm.vendorLineItemsMap[vendorName].randomID = number;
         	        	
         });
