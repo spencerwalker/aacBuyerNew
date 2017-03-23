@@ -89,6 +89,7 @@ function CartController($rootScope, $scope,  $state, toastr, OrderCloud, LineIte
         	if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
         		vm.vendorLineItemsMap[vendorName] = {};
         	}
+        	vm.vendorLineItemsMap[vendorName].lineItem = [];
         	vm.vendorLineItemsMap[vendorName][lineItem].push(lineItem);
         	vm.vendorLineItemsMap[vendorName].randomID = number;
         	        	
