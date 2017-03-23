@@ -154,14 +154,14 @@
 						</b>
                     </p>
                     <hr>
-                	<h5>Subtotal: All Orders <span class="pull-right">{{base.currentOrder.Subtotal | currency}}</span></h5>
+                	<h5>Subtotal: All Orders <span class="pull-right">{{vm.total | currency}}</span></h5>
                     <hr ng-if="checkout.promotions.length">
                     <h5 ng-repeat="promotion in checkout.promotions" class="text-danger">
                         {{promotion.Code}}
                         <a href="" ng-click="checkout.removePromotion(base.currentOrder, promotion)">remove</a>
                         <span class="pull-right">- {{promotion.Amount | currency}}</span></h5>
                     <hr>
-               		<h4>Estimated Total: <b class="pull-right text-primary">{{base.currentOrder.Total | currency}}</b></h4>
+               		<h4>Estimated Total: <b class="pull-right text-primary">{{vm.total | currency}}</b></h4>
                 </div>
                 <div class="panel-footer">
                     <button type="button" class="btn btn-primary form-control" ng-disabled="!checkout.shippingAddress || checkoutShipping.shippersAreLoading || OC_Checkout_Shipping.$invalid" ui-sref="checkout.payment">Next</button>
