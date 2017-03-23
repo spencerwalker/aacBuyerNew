@@ -7,8 +7,11 @@
         <a class="top-nav-home" href="{{base.storeUrl}}"
                    ng-click="application.logout();"
                    class="exitstore">
-          <img src="http://www.slimemakerexpo.com/uploads/1/3/9/7/1397063/5375747.jpg?306" alt="{{application.name}}">
+          {{application.name}}
         </a>
+      <!-- <div class="c-topnav__item c-topnav__account">
+      	<span>{{base.currentUser.FirstName + ' ' + base.currentUser.LastName}}</span>        	
+      </div> -->
       </div>     
       <!--PRODUCT / CATEGORY BROWSE-->
       <div class="c-topnav__item c-topnav__browse">
