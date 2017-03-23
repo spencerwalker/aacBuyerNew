@@ -41,7 +41,7 @@
                         Items in Your Cart
                     </h3>
                 </div>
-        <form name="OrderLineItemForm" class="panel panel-default" cg-busy="cart.lineLoading[$index]"
+        <form name="OrderLineItemForm" th:id="'OrderLineItemForm' + ${vendorName.id}" class="panel panel-default" cg-busy="cart.lineLoading[$index]"
 			 ng-repeat="(vendorName, lineItemsList) in cart.vendorLineItemsMap"
 				style="margin-left: 1.5px; margin-right: 1.5px" >
           	<div class="panel panel-default" > 
