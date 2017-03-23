@@ -54,7 +54,6 @@ function CartConfig($stateProvider) {
 
 function CartController($rootScope, $scope,  $state, toastr, OrderCloud, LineItemsList, CurrentPromotions, ocConfirm, CategoryList, ProductList) {
     var vm = this;
-
     vm.vendorLineItemsMap = {};
     
     console.log('testing');
@@ -74,10 +73,6 @@ function CartController($rootScope, $scope,  $state, toastr, OrderCloud, LineIte
     	angular.forEach(vm.lineItems.Items, function(lineItem){
         	var productId = lineItem.ProductID;
         	var vendorName = productId.split("_")[0]; 
-        	
-        	var number = Math.floor(1000000 + Math.random() * 9000000);
-        	lineItem.vendorName = vendorName;
-        	        	
         	/*
     	    if(lineItem.ID.match("^[a-zA-Z\(\)]+$")) {  
     	      } else {
@@ -85,17 +80,16 @@ function CartController($rootScope, $scope,  $state, toastr, OrderCloud, LineIte
     	    	 lineItem.ID = number;
     	      }  
     	    	
-        	lineItem.vendorName = vendorName;*/
-
+        	lineItem.vendorName = vendorName;
+        	*/
         	if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
-        		vm.vendorLineItemsMap[vendorName] = {};
+        		vm.vendorLineItemsMap[vendorName] = [];
         	}
-			vm.vendorLineItemsMap[vendorName].lineItem = [];
-        	vm.vendorLineItemsMap[vendorName].lineItem.push(lineItem);
-        	vm.vendorLineItemsMap[vendorName].randomID = number;
-        	        	
+        	vm.vendorLineItemsMap[vendorName].push(lineItem);
         });
-    }, true);  
+    }, true);
+    
+    
     
     
     console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
