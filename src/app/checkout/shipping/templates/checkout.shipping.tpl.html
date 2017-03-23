@@ -156,9 +156,9 @@
                     <hr>
                 <!--<h5>Subtotal: All Orders <span class="pull-right">{{base.currentOrder.Subtotal | currency}}</span></h5> -->
                 	<h5>Subtotal: All Orders <span class="pull-right">
-                	{{checkoutShipping.getSubTotal(lineItemsList) 
+                		{{base.currentOrder.Subtotal 
 	 					+ base.currentOrder.ShippingCost 
-	 					+ ((checkoutShipping.getSubTotal 
+	 					+ ((base.currentOrder.Subtotal 
 	 					* checkout.shippingAddress.xp.Taxcost)/100) | currency}}</span></h5>
                     <hr ng-if="checkout.promotions.length">
                     <h5 ng-repeat="promotion in checkout.promotions" class="text-danger">
