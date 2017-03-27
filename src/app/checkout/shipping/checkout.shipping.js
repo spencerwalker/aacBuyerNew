@@ -67,7 +67,8 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     console.log('Products :: ', ProductList);
     console.log('vm.lineItems ::' , JSON.stringify(vm.lineItems));
     vm.total = 0.0; 
- // watcher on vm.lineItems
+    
+    // watcher on vm.lineItems
     $scope.$watch(function () {
         	return vm.lineItems;
     	}, function(newVal, oldVal){
@@ -99,10 +100,7 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     	vm.total = subTotal + (subTotal * vm.lineItems.Items[0].ShippingAddress.xp.Taxcost);
     	
     }, true);
-    
-    
-    
-    
+        
     console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
     
     vm.promotions = CurrentPromotions.Meta ? CurrentPromotions.Items : CurrentPromotions;
