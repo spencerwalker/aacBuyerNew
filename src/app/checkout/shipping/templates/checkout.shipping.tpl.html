@@ -125,7 +125,7 @@
 	 						{{checkoutShipping.getSubTotal(lineItemsList) 
 	 							+ base.currentOrder.ShippingCost 
 	 							+ ((checkoutShipping.getSubTotal(lineItemsList) 
-	 							* checkout.shippingAddress.xp.Taxcost)/100) | currency}}
+	 							* checkout.shippingAddress.xp.Taxcost)) | currency}}
 	 					</span>
 	 					<span style="margin-left: 150px; margin-right:50px" ng-if="!checkout.shippingAddress.xp.Taxcost">
 	 						{{checkoutShipping.getSubTotal(lineItemsList) + base.currentOrder.ShippingCost | currency}}
