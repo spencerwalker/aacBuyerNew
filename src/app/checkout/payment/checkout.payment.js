@@ -15,7 +15,7 @@ function checkoutPaymentConfig($stateProvider) {
     ;
 }
 
-function CheckoutPaymentController($exceptionHandler, $rootScope, toastr, OrderCloud, AddressSelectModal, MyAddressesModal) {
+function CheckoutPaymentController($exceptionHandler, $rootScope, $scope, toastr, OrderCloud, AddressSelectModal, MyAddressesModal) {
 	var vm = this;
     vm.createAddress = createAddress;
     vm.changeBillingAddress = changeBillingAddress;
