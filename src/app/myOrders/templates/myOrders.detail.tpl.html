@@ -12,7 +12,6 @@
     </h3>
     	</div>
     </div>
-    <hr>
     <div class="panel panel-default">
 		<div class="panel-body">    
     <div class="row">
@@ -74,13 +73,17 @@
     </div>
     </div>
     <hr>
-    <h4>
-        <ng-pluralize count="myOrderDetail.order.LineItemCount"
-                      when="{
-							'1': '1 Line Item',
-							'other': '{} Line Items'
-						}"></ng-pluralize>
-    </h4>
+	    <div class="panel panel-default">
+			<div class="panel-body">
+			    <h4>
+			        <ng-pluralize count="myOrderDetail.order.LineItemCount"
+			                      when="{
+										'1': '1 Line Item',
+										'other': '{} Line Items'
+									}"></ng-pluralize>
+			    </h4>
+	    	</div>
+	    </div>
     <hr>
     <div class="row  hidden-xs c-line-item__header">
         <div class="col-xs-3 col-sm-2"></div>
