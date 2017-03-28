@@ -74,7 +74,7 @@ function MyOrdersConfig($stateProvider) {
 
                     return deferred.promise;
                 },
-                LineItemList: function($q, $state, toastr, $stateParams, OrderCloud, ocLineItems) {
+                LineItemList: function($q, $stateParams, OrderCloud, ocLineItems) {
                     var dfd = $q.defer();
                     OrderCloud.LineItems.List($stateParams.orderid, null, 1, 100)
                         .then(function(data) {
@@ -84,16 +84,9 @@ function MyOrdersConfig($stateProvider) {
                                 });
                         });
                     return dfd.promise;
-		    },
-		    	CategoryList: function($stateParams, OrderCloud) {
-		    	var depth = 1;
-		    	return OrderCloud.Me.ListCategories(null, null, null, null, null, {ParentID: $stateParams.categoryid}, depth);
-		    },
-		    	ProductList: function($stateParams, OrderCloud) {
-		    	return OrderCloud.Me.ListProducts(null, null, null, null, null, null, $stateParams.categoryid);
-  	  	    },
+                },
                 PromotionList: function($stateParams, OrderCloud){
-                return OrderCloud.Orders.ListPromotions($stateParams.orderid);
+                    return OrderCloud.Orders.ListPromotions($stateParams.orderid);
                 }
             }
         });
