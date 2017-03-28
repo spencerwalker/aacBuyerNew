@@ -118,7 +118,8 @@
 			<hr>
 			</div><hr>
 	</div>
-	<div class="row c-line-item" ng-repeat="lineItem in lineItemsList"  cg-busy="myOrderDetail.lineLoading[$index]" style="margin-left: 1.5px; margin-right: 1.5px" >
+	<!-- <div class="row c-line-item" ng-repeat="lineItem in lineItemsList"  cg-busy="myOrderDetail.lineLoading[$index]" style="margin-left: 1.5px; margin-right: 1.5px" > -->
+	<div class="row c-line-item" ng-repeat="lineItem in myOrderDetail.list.Items track by $index">
         <div class="col-xs-3 col-sm-2">
 				<div class="thumbnail c-line-item__img">
 					<img class="img-responsive" ng-src="{{lineItem.Product.xp.image.URL || 'http://placehold.it/100x100?text=' + lineItem.Product.Name}}"
@@ -163,7 +164,7 @@
 						<hr>
 					</div>
 		</div><br>
-			<!-- <div class="row text-right">
+			 <div class="row text-right">
 				<h4>Subtotal:<span style="margin-left: 150px; margin-right:100px">{{myOrderDetail.getSubTotal(lineItemsList) | currency}}</span></h4>	 							
 				<h4>Shipping: <span style="margin-left: 150px; margin-right:100px">{{base.currentOrder.ShippingCost | currency}}</span></h4>
 				<h4>Processing Fee: 
@@ -182,7 +183,7 @@
 						+ base.currentOrder.ShippingCost | currency}}
 					</span>
 				</h4>
-			</div> -->
+			</div> 
 		<br>
     	</form>
     </div>
