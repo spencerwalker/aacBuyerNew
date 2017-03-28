@@ -229,6 +229,7 @@ function MyOrderDetailController($state, $exceptionHandler, $scope, toastr, Orde
     console.log('CategoryList :: ', CategoryList);
     console.log('Products :: ', ProductList);
     console.log('vm.lineItems ::' , JSON.stringify(vm.lineItems));
+    vm.total = 0.0;
     
     // watcher on vm.lineItems
     $scope.$watch(function () {
@@ -236,17 +237,19 @@ function MyOrderDetailController($state, $exceptionHandler, $scope, toastr, Orde
     	}, function(newVal, oldVal){
     	console.log('New Val:: ', newVal);
     	vm.vendorLineItemsMap = {};
+	var subTotal = 0.0;
     	angular.forEach(vm.lineItems.Items, function(lineItem){
         	var productId = lineItem.ProductID;
         	var vendorName = productId.split("_")[0]; 
         	
+		subTotal += lineItem.LineTotal;
         	if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
         		vm.vendorLineItemsMap[vendorName] = [];
         	}
         	vm.vendorLineItemsMap[vendorName].push(lineItem);
         });
+	vm.total = subTotal + (subTotal * vm.lineItems.Items[0].ShippingAddress.xp.Taxcost);
     }, true);  
-    
     
     console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
     
