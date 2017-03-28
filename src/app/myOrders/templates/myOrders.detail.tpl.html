@@ -11,6 +11,8 @@
     <hr>
     <div class="row">
         <div class="col-sm-7">
+	      <div class="panel panel-default">
+		   <div class="panel-body">
             <h5>Date Submitted: <span class="pull-right">{{myOrderDetail.order.DateSubmitted | date:'short'}}</span></h5>
             <h5>Subtotal: <span class="pull-right">{{myOrderDetail.order.Subtotal | currency}}</span></h5>
             <h5 ng-if="myOrderDetail.order.ShippingCost" class="text-muted">Shipping: <span class="pull-right"> + {{myOrderDetail.order.ShippingCost | currency}}</span></h5>
@@ -44,6 +46,8 @@
                     <small><span class="text-muted">Remaining Balance:</span> {{payment.Details.Balance | currency}}</small>
                 </p>
                 <hr ng-if="!$last">
+            </div>
+            </div>
             </div>
         </div>
         <div class="col-sm-5">

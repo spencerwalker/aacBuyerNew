@@ -96,7 +96,6 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
         	        	
         });
     	
-    	//vm.total = subTotal + (subTotal * vm.lineItems.Items[0].ShippingAddress.xp.Taxcost)/100;
     	vm.total = subTotal + (subTotal * vm.lineItems.Items[0].ShippingAddress.xp.Taxcost);
     	
     }, true);
