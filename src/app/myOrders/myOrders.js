@@ -26,27 +26,7 @@ function MyOrdersConfig($stateProvider) {
                     }
                     var showSubmittedOnly = angular.extend({}, Parameters.filters, {Status:'!Unsubmitted'}); 
                     return OrderCloud.Me.ListOutgoingOrders(Parameters.search, Parameters.page, Parameters.pageSize || 12, Parameters.searchOn, Parameters.sortBy, showSubmittedOnly, Parameters.from, Parameters.to);
-                },
-                
-                LineItemsList: function($q, $state, toastr, ocLineItems, SubmittedOrder, OrderCloud) {
-					var dfd = $q.defer();
-					OrderCloud.LineItems.List(SubmittedOrder.ID)
-						.then(function(data) {
-							ocLineItems.GetProductInfo(data.Items)
-								.then(function() {
-									dfd.resolve(data);
-								});
-						});
-					return dfd.promise;
-				},
-				
-				CategoryList: function($stateParams, OrderCloud) {
-    	  			var depth = 1;
-    	  			return OrderCloud.Me.ListCategories(null, null, null, null, null, {ParentID: $stateParams.categoryid}, depth);
-    	  		},
-    	  		ProductList: function($stateParams, OrderCloud) {
-    	  			return OrderCloud.Me.ListProducts(null, null, null, null, null, null, $stateParams.categoryid);
-    	  		}                
+                }                
             }
         })
         .state('myOrders.detail', {
@@ -94,7 +74,7 @@ function MyOrdersConfig($stateProvider) {
 
                     return deferred.promise;
                 },
-                LineItemList: function($q, $stateParams, OrderCloud, ocLineItems) {
+                LineItemList: function($q, $state, toastr, $stateParams, OrderCloud, ocLineItems) {
                     var dfd = $q.defer();
                     OrderCloud.LineItems.List($stateParams.orderid, null, 1, 100)
                         .then(function(data) {
@@ -104,9 +84,16 @@ function MyOrdersConfig($stateProvider) {
                                 });
                         });
                     return dfd.promise;
-                },
+		    },
+		    	CategoryList: function($stateParams, OrderCloud) {
+		    	var depth = 1;
+		    	return OrderCloud.Me.ListCategories(null, null, null, null, null, {ParentID: $stateParams.categoryid}, depth);
+		    },
+		    	ProductList: function($stateParams, OrderCloud) {
+		    	return OrderCloud.Me.ListProducts(null, null, null, null, null, null, $stateParams.categoryid);
+  	  	    },
                 PromotionList: function($stateParams, OrderCloud){
-                    return OrderCloud.Orders.ListPromotions($stateParams.orderid);
+                return OrderCloud.Orders.ListPromotions($stateParams.orderid);
                 }
             }
         });
