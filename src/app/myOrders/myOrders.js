@@ -222,14 +222,12 @@ function MyOrderDetailController($state, $exceptionHandler, $scope, toastr, Orde
     vm.canCancel = SelectedOrder.Status === 'Unsubmitted' || SelectedOrder.Status === 'AwaitingApproval';
     vm.promotionList = PromotionList.Meta ? PromotionList.Items : PromotionList;
     
-    vm.vendorLineItemsMap = {};
+vm.vendorLineItemsMap = {};
     
-    vm.lineItems = LineItemsList;
     console.log('LineItems', vm.lineItems);
     console.log('CategoryList :: ', CategoryList);
     console.log('Products :: ', ProductList);
     console.log('vm.lineItems ::' , JSON.stringify(vm.lineItems));
-    vm.total = 0.0; 
     
     // watcher on vm.lineItems
     $scope.$watch(function () {
@@ -237,24 +235,18 @@ function MyOrderDetailController($state, $exceptionHandler, $scope, toastr, Orde
     	}, function(newVal, oldVal){
     	console.log('New Val:: ', newVal);
     	vm.vendorLineItemsMap = {};
-    	var subTotal = 0.0;
     	angular.forEach(vm.lineItems.Items, function(lineItem){
- 	        
-    		var productId = lineItem.ProductID;
-		    var vendorName = productId.split("_")[0]; 
-
-		    subTotal += lineItem.LineTotal;
-		    	if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
+        	var productId = lineItem.ProductID;
+        	var vendorName = productId.split("_")[0]; 
+        	
+        	if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
         		vm.vendorLineItemsMap[vendorName] = [];
         	}
         	vm.vendorLineItemsMap[vendorName].push(lineItem);
-        	        	
         });
-    	
-    	vm.total = subTotal + (subTotal * vm.lineItems.Items[0].ShippingAddress.xp.Taxcost);
-    	
-    }, true);
-        
+    }, true);  
+    
+    
     console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
     
     vm.getSubTotal = function(lineItemsList){
@@ -262,9 +254,9 @@ function MyOrderDetailController($state, $exceptionHandler, $scope, toastr, Orde
 		angular.forEach(lineItemsList, function(lineItem){
 			total += ( lineItem.UnitPrice * lineItem.Quantity);
 		});
-	return total;
-    }
-    
+		return total;
+		}
+	 
     vm.cancelOrder = function(orderid) {
         ocConfirm.Confirm('Are you sure you want to cancel this order?')
             .then(function() {
