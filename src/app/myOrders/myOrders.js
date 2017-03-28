@@ -26,7 +26,27 @@ function MyOrdersConfig($stateProvider) {
                     }
                     var showSubmittedOnly = angular.extend({}, Parameters.filters, {Status:'!Unsubmitted'}); 
                     return OrderCloud.Me.ListOutgoingOrders(Parameters.search, Parameters.page, Parameters.pageSize || 12, Parameters.searchOn, Parameters.sortBy, showSubmittedOnly, Parameters.from, Parameters.to);
-                }
+                },
+                
+                LineItemsList: function($q, $state, toastr, ocLineItems, SubmittedOrder, OrderCloud) {
+					var dfd = $q.defer();
+					OrderCloud.LineItems.List(SubmittedOrder.ID)
+						.then(function(data) {
+							ocLineItems.GetProductInfo(data.Items)
+								.then(function() {
+									dfd.resolve(data);
+								});
+						});
+					return dfd.promise;
+				},
+				
+				CategoryList: function($stateParams, OrderCloud) {
+    	  			var depth = 1;
+    	  			return OrderCloud.Me.ListCategories(null, null, null, null, null, {ParentID: $stateParams.categoryid}, depth);
+    	  		},
+    	  		ProductList: function($stateParams, OrderCloud) {
+    	  			return OrderCloud.Me.ListProducts(null, null, null, null, null, null, $stateParams.categoryid);
+    	  		}                
             }
         })
         .state('myOrders.detail', {
@@ -180,13 +200,49 @@ function MyOrdersController($state, $ocMedia, OrderCloud, ocParameters, OrderLis
     };
 }
 
-function MyOrderDetailController($state, $exceptionHandler, toastr, OrderCloud, ocConfirm, SelectedOrder, SelectedPayments, LineItemList, PromotionList) {
+function MyOrderDetailController($state, $scope,$exceptionHandler, toastr, OrderCloud, ocConfirm, SelectedOrder, SelectedPayments, LineItemList, PromotionList, LineItemsList, CategoryList, ProductList) {
     var vm = this;
     vm.order = SelectedOrder;
     vm.list = LineItemList;
     vm.paymentList = SelectedPayments.Items;
     vm.canCancel = SelectedOrder.Status === 'Unsubmitted' || SelectedOrder.Status === 'AwaitingApproval';
     vm.promotionList = PromotionList.Meta ? PromotionList.Items : PromotionList;
+    
+    vm.lineItems = LineItemsList;
+	
+	vm.vendorLineItemsMap = {};
+    
+    console.log('LineItems', vm.lineItems);
+    console.log('CategoryList :: ', CategoryList);
+    console.log('Products :: ', ProductList);
+    console.log('vm.lineItems ::' , JSON.stringify(vm.lineItems));
+    
+    // watcher on vm.lineItems
+    $scope.$watch(function () {
+        	return vm.lineItems;
+    	}, function(newVal, oldVal){
+    	console.log('New Val:: ', newVal);
+    	vm.vendorLineItemsMap = {};
+    	angular.forEach(vm.lineItems.Items, function(lineItem){
+        	var productId = lineItem.ProductID;
+        	var vendorName = productId.split("_")[0]; 
+        	
+        	if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
+        		vm.vendorLineItemsMap[vendorName] = [];
+        	}
+        	vm.vendorLineItemsMap[vendorName].push(lineItem);
+        });
+    }, true);      
+    
+    console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
+    
+    vm.getSubTotal = function(lineItemsList){
+		var total = 0.0;
+		angular.forEach(lineItemsList, function(lineItem){
+			total += ( lineItem.UnitPrice * lineItem.Quantity);
+		});
+		return total;
+		};
     
     vm.cancelOrder = function(orderid) {
         ocConfirm.Confirm('Are you sure you want to cancel this order?')

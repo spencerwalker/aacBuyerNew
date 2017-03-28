@@ -102,7 +102,7 @@ function CheckoutConfirmationController(SubmittedOrder, $scope, OrderShipAddress
     console.log('Products :: ', ProductList);
     console.log('vm.lineItems ::' , JSON.stringify(vm.lineItems));
     
- // watcher on vm.lineItems
+    // watcher on vm.lineItems
     $scope.$watch(function () {
         	return vm.lineItems;
     	}, function(newVal, oldVal){
@@ -136,5 +136,5 @@ function CheckoutConfirmationController(SubmittedOrder, $scope, OrderShipAddress
 			total += ( lineItem.UnitPrice * lineItem.Quantity);
 		});
 		return total;
+		}
 	}
-}
