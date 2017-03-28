@@ -85,40 +85,6 @@ function MyOrdersConfig($stateProvider) {
                         });
                     return dfd.promise;
                 },
-                
-                LineItemsList: function($q, $state, toastr, OrderCloud, ocLineItems, CurrentOrder) {
-        	  		var dfd = $q.defer();
-        	  		OrderCloud.LineItems.List(CurrentOrder.ID)
-        	  		.then(function(data) {
-        	  			if (!data.Items.length) {
-        	  				dfd.resolve(data);
-        	  				}
-        	  				else {
-        	  					ocLineItems.GetProductInfo(data.Items)
-        	  					.then(function() {
-        	  						dfd.resolve(data);
-        	  					});
-        	  				}
-        	  		})
-        	  		.catch(function() {
-        	  			toastr.error('Your order does not contain any line items.', 'Error');
-        	  			dfd.reject();
-        	  		});
-        	  		return dfd.promise;
-        	  		},
-        	  		CurrentPromotions: function(CurrentOrder, OrderCloud) {
-        	  			return OrderCloud.Orders.ListPromotions(CurrentOrder.ID);
-        	  		},
-        	                
-        	  		CategoryList: function($stateParams, OrderCloud) {
-        	  			var depth = 1;
-        	  			return OrderCloud.Me.ListCategories(null, null, null, null, null, {ParentID: $stateParams.categoryid}, depth);
-        	  		},
-        	  		ProductList: function($stateParams, OrderCloud) {
-        	  			return OrderCloud.Me.ListProducts(null, null, null, null, null, null, $stateParams.categoryid);
-
-        	  		},
-        	  		
                 PromotionList: function($stateParams, OrderCloud){
                     return OrderCloud.Orders.ListPromotions($stateParams.orderid);
                 }
@@ -214,7 +180,7 @@ function MyOrdersController($state, $ocMedia, OrderCloud, ocParameters, OrderLis
     };
 }
 
-function MyOrderDetailController($state, $exceptionHandler, $scope, toastr, OrderCloud, ocConfirm, SelectedOrder, LineItemsList, SelectedPayments, LineItemList, PromotionList, CategoryList, ProductList) {
+function MyOrderDetailController($state, $exceptionHandler, toastr, OrderCloud, ocConfirm, SelectedOrder, SelectedPayments, LineItemList, PromotionList) {
     var vm = this;
     vm.order = SelectedOrder;
     vm.list = LineItemList;
@@ -222,45 +188,6 @@ function MyOrderDetailController($state, $exceptionHandler, $scope, toastr, Orde
     vm.canCancel = SelectedOrder.Status === 'Unsubmitted' || SelectedOrder.Status === 'AwaitingApproval';
     vm.promotionList = PromotionList.Meta ? PromotionList.Items : PromotionList;
     
-    vm.lineItems = LineItemsList;
-    vm.vendorLineItemsMap = {};
-    
-    console.log('LineItems', vm.lineItems);
-    console.log('CategoryList :: ', CategoryList);
-    console.log('Products :: ', ProductList);
-    console.log('vm.lineItems ::' , JSON.stringify(vm.lineItems));
-    vm.total = 0.0;
-    
-    // watcher on vm.lineItems
-    $scope.$watch(function () {
-        	return vm.lineItems;
-    	}, function(newVal, oldVal){
-    	console.log('New Val:: ', newVal);
-    	vm.vendorLineItemsMap = {};
-	var subTotal = 0.0;
-    	angular.forEach(vm.lineItems.Items, function(lineItem){
-        	var productId = lineItem.ProductID;
-        	var vendorName = productId.split("_")[0]; 
-        	
-		subTotal += lineItem.LineTotal;
-        	if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
-        		vm.vendorLineItemsMap[vendorName] = [];
-        	}
-        	vm.vendorLineItemsMap[vendorName].push(lineItem);
-        });
-	vm.total = subTotal + (subTotal * vm.lineItems.Items[0].ShippingAddress.xp.Taxcost);
-    }, true);  
-    
-    console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
-    
-    vm.getSubTotal = function(lineItemsList){
-		var total = 0.0;
-		angular.forEach(lineItemsList, function(lineItem){
-			total += ( lineItem.UnitPrice * lineItem.Quantity);
-		});
-		return total;
-		}
-	 
     vm.cancelOrder = function(orderid) {
         ocConfirm.Confirm('Are you sure you want to cancel this order?')
             .then(function() {
