@@ -91,7 +91,7 @@
 				</h3>
 			</div>
 			<form name="OrderLineItemForm" class="panel panel-default" cg-busy="myOrderDetail.lineLoading[$index]"
-			 ng-repeat="(vendorName, lineItemsList) in myOrderDetail.vendorLineItemsMap"
+			 ng-repeat="lineItem in myOrderDetail.list.Items track by $index"
 				style="margin-left: 1.5px; margin-right: 1.5px" >
 				<div class="panel panel-default" > 
 					 <div class="panel-heading">
