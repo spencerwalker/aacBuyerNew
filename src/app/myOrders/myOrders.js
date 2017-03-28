@@ -222,7 +222,8 @@ function MyOrderDetailController($state, $exceptionHandler, $scope, toastr, Orde
     vm.canCancel = SelectedOrder.Status === 'Unsubmitted' || SelectedOrder.Status === 'AwaitingApproval';
     vm.promotionList = PromotionList.Meta ? PromotionList.Items : PromotionList;
     
-vm.vendorLineItemsMap = {};
+    vm.lineItems = LineItemsList;
+    vm.vendorLineItemsMap = {};
     
     console.log('LineItems', vm.lineItems);
     console.log('CategoryList :: ', CategoryList);
