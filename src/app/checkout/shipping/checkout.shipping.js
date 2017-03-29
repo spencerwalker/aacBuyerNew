@@ -92,8 +92,6 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
         	        	
         	$('.' + vendorName).val(ID);
         	
-        	$scope.VendorID = [ID];
-        	
         });
     	
     	vm.total = subTotal + (subTotal * vm.lineItems.Items[0].ShippingAddress.xp.Taxcost);
