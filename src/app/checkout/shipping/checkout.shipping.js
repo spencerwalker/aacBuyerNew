@@ -68,7 +68,7 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     console.log('vm.lineItems ::' , JSON.stringify(vm.lineItems));
     vm.total = 0.0; 
     
-    // watcher on vm.lineItems
+ // watcher on vm.lineItems
     $scope.$watch(function () {
         	return vm.lineItems;
     	}, function(newVal, oldVal){
@@ -77,6 +77,10 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     	var subTotal = 0.0;
     	angular.forEach(vm.lineItems.Items, function(lineItem){
  	        
+		console.log(' vm.lineItems.Items = ', lineItem.ID);
+    		var s = lineItem.ID;    		
+    		s = s.substring(0, 7);
+    		console.log('s = ', s);
     		var productId = lineItem.ProductID;
 		    var vendorName = productId.split("_")[0]; 
 		    /*
@@ -94,6 +98,7 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
         	}
         	vm.vendorLineItemsMap[vendorName].push(lineItem);
         	        	
+		$('.' + vendorName).val(s);
         });
     	
     	vm.total = subTotal + (subTotal * vm.lineItems.Items[0].ShippingAddress.xp.Taxcost);
