@@ -91,6 +91,8 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
         	vm.vendorLineItemsMap[vendorName].push(lineItem);
         	        	
         	$('.' + vendorName).val(ID);
+        	
+        	return ID;
 		
         });
     	
