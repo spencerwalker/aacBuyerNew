@@ -168,17 +168,17 @@
 				<h4>Subtotal:<span style="margin-left: 150px; margin-right:100px">{{myOrderDetail.getSubTotal(lineItemsList) | currency}}</span></h4>	 							
 				<h4>Shipping: <span style="margin-left: 150px; margin-right:100px">{{base.currentOrder.ShippingCost | currency}}</span></h4>
 				<h4>Processing Fee: 
-					<span style="margin-left: 150px; margin-right:100px" ng-if="myOrderDetail.shippingAddress.xp.Taxcost > 0" >{{ ((myOrderDetail.getSubTotal(lineItemsList) * myOrderDetail.shippingAddress.xp.Taxcost)/100) | currency}}</span>
-					<span style="margin-left: 150px; margin-right:100px" ng-if="!myOrderDetail.shippingAddress.xp.Taxcost">{{0.00 | currency}}</span>
+					<span style="margin-left: 150px; margin-right:100px" ng-if="myOrderDetail.list.Items[0].ShippingAddress.xp.Taxcost > 0" >{{ ((myOrderDetail.getSubTotal(lineItemsList) * myOrderDetail.list.Items[0].ShippingAddress.xp.Taxcost)) | currency}}</span>
+					<span style="margin-left: 150px; margin-right:100px" ng-if="!myOrderDetail.list.Items[0].ShippingAddress.xp.Taxcost">{{0.00 | currency}}</span>
 				</h4>
 				<h4>Total - Order # <i class="orderId">{{lineItem.ID}}</i>
-					<span style="margin-left: 130px; margin-right:100px" ng-if="myOrderDetail.shippingAddress.xp.Taxcost > 0">
+					<span style="margin-left: 130px; margin-right:100px" ng-if="myOrderDetail.list.Items[0].ShippingAddress.xp.Taxcost > 0">
 						{{myOrderDetail.getSubTotal(lineItemsList) 
 						+ base.currentOrder.ShippingCost 
 						+ ((myOrderDetail.getSubTotal(lineItemsList) 
-						* myOrderDetail.shippingAddress.xp.Taxcost)/100) | currency}}
+						* myOrderDetail.list.Items[0].ShippingAddress.xp.Taxcost)) | currency}}
 					</span>
-					<span style="margin-left: 130px; margin-right:100px" ng-if="!myOrderDetail.shippingAddress.xp.Taxcost">
+					<span style="margin-left: 130px; margin-right:100px" ng-if="!myOrderDetail.list.Items[0].ShippingAddress.xp.Taxcost">
 						{{myOrderDetail.getSubTotal(lineItemsList) 
 						+ base.currentOrder.ShippingCost | currency}}
 					</span>
