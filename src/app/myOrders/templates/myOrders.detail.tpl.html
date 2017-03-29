@@ -80,8 +80,7 @@
 					Items in Your Cart
 				</h3>
 			</div>
-    <form name="OrderLineItemForm" class="row c-line-item" ng-repeat="lineItem in myOrderDetail.list.Items track by $index"
-				style="margin-left: 1.5px; margin-right: 1.5px" >
+    <form name="OrderLineItemForm" class="row c-line-item" ng-repeat="lineItem in myOrderDetail.list.Items track by $index">
 				<div class="panel panel-default" > 
 					 <div class="panel-heading">
 						<h4 class="panel-title"><b>
@@ -107,7 +106,7 @@
 			<hr>
 			</div><hr>
 			</div>
-    <div class="row c-line-item" ng-repeat="lineItem in myOrderDetail.list.Items track by $index" style="margin-left: 1.5px; margin-right: 1.5px">
+    <div class="row c-line-item" ng-repeat="lineItem in myOrderDetail.list.Items track by $index">
         <div class="col-xs-3 col-sm-2">
 				<div class="thumbnail c-line-item__img">
 					<img class="img-responsive" ng-src="{{lineItem.Product.xp.image.URL || 'http://placehold.it/100x100?text=' + lineItem.Product.Name}}"
