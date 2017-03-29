@@ -215,41 +215,37 @@ function MyOrdersController($state, $ocMedia, OrderCloud, ocParameters, OrderLis
 }
 
 function MyOrderDetailController($state, $exceptionHandler, $scope, toastr, OrderCloud, ocConfirm, SelectedOrder, LineItemsList, SelectedPayments, LineItemList, PromotionList, CategoryList, ProductList) {
-	 	var vm = this;
-	    vm.order = SelectedOrder;
-	    vm.list = LineItemList;
-	    vm.paymentList = SelectedPayments.Items;
-	    vm.canCancel = SelectedOrder.Status === 'Unsubmitted' || SelectedOrder.Status === 'AwaitingApproval';
-	    vm.promotionList = PromotionList.Meta ? PromotionList.Items : PromotionList;
-	    
-	    vm.lineItems = LineItemsList;
-	    vm.vendorLineItemsMap = {};
-	    
-	    console.log('LineItems', vm.lineItems);
-	    console.log('CategoryList :: ', CategoryList);
-	    console.log('Products :: ', ProductList);
-	    console.log('vm.lineItems ::' , JSON.stringify(vm.lineItems));
-	    vm.total = 0.0;
-	    
-	    // watcher on vm.lineItems
-	    $scope.$watch(function () {
-	        	return vm.lineItems;
-	    	}, function(newVal, oldVal){
-	    	console.log('New Val:: ', newVal);
-	    	vm.vendorLineItemsMap = {};
-		var subTotal = 0.0;
-	    	angular.forEach(vm.lineItems.Items, function(lineItem){
-	        	var productId = lineItem.ProductID;
-	        	var vendorName = productId.split("_")[0]; 
-	        	
-			subTotal += lineItem.LineTotal;
-	        	if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
-	        		vm.vendorLineItemsMap[vendorName] = [];
-	        	}
-	        	vm.vendorLineItemsMap[vendorName].push(lineItem);
-	        });
-		vm.total = subTotal + (subTotal * vm.lineItems.Items[0].ShippingAddress.xp.Taxcost);
-	    }, true); 
+    var vm = this;
+    vm.order = SelectedOrder;
+    vm.list = LineItemList;
+    vm.paymentList = SelectedPayments.Items;
+    vm.canCancel = SelectedOrder.Status === 'Unsubmitted' || SelectedOrder.Status === 'AwaitingApproval';
+    vm.promotionList = PromotionList.Meta ? PromotionList.Items : PromotionList;
+    
+    vm.lineItems = LineItemsList;
+    vm.vendorLineItemsMap = {};
+    
+    console.log('LineItems', vm.lineItems);
+    console.log('CategoryList :: ', CategoryList);
+    console.log('Products :: ', ProductList);
+    console.log('vm.lineItems ::' , JSON.stringify(vm.lineItems));
+    
+    // watcher on vm.lineItems
+    $scope.$watch(function () {
+        	return vm.lineItems;
+    	}, function(newVal, oldVal){
+    	console.log('New Val:: ', newVal);
+    	vm.vendorLineItemsMap = {};
+    	angular.forEach(vm.lineItems.Items, function(lineItem){
+        	var productId = lineItem.ProductID;
+        	var vendorName = productId.split("_")[0]; 
+        	
+        	if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
+        		vm.vendorLineItemsMap[vendorName] = [];
+        	}
+        	vm.vendorLineItemsMap[vendorName].push(lineItem);
+        });
+    }, true);  
     
     
     console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
