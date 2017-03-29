@@ -250,7 +250,7 @@ function MyOrderDetailController($state, $scope, $exceptionHandler, toastr, Orde
         	        	
         });
     	
-    	vm.total = subTotal + (subTotal * vm.lineItems.Items[0].ShippingAddress.xp.Taxcost);
+    	//vm.total = subTotal + (subTotal * vm.lineItems.Items[0].ShippingAddress.xp.Taxcost);
     	
     }, true);
         
