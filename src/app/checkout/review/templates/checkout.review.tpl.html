@@ -124,9 +124,14 @@
 						</b>
 					</p>
 					 <hr>
-					<h5>Subtotal:- All Orders <span class="pull-right">{{base.currentOrder.Subtotal | currency}}</span></h5>
+					<h5>Subtotal: <span class="pull-right">{{base.currentOrder.Subtotal | currency}}</span></h5>
+					<h5>Shipping: <span style="margin-left: 150px; margin-right:50px">{{base.currentOrder.ShippingCost | currency}}</span></h5>
+					<h5>Processing Fee: 
+	 					<span style="margin-left: 150px; margin-right:50px" ng-if="checkout.shippingAddress.xp.Taxcost > 0" >{{((base.currentOrder.Subtotal * checkout.shippingAddress.xp.Taxcost)) | currency}}</span>
+	 					<span style="margin-left: 150px; margin-right:50px" ng-if="!checkout.shippingAddress.xp.Taxcost">{{0.00 | currency}}</span>
+ 					</h5>
 					<hr>
-					<h4>Total: <b class="pull-right text-primary">{{base.currentOrder.Total | currency}}</b></h4>
+					<h4>Total:- All Orders <b class="pull-right text-primary">{{checkoutShipping.total | currency}}</b></h4>
 					<hr>
 					<div ng-repeat="payment in checkoutReview.payments.Items">
 						<p>{{payment.Type | humanize}} <b class="pull-right text-primary">{{payment.Amount | currency}}</b></p>
