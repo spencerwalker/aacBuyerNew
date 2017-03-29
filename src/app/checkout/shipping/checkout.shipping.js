@@ -78,27 +78,20 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     	angular.forEach(vm.lineItems.Items, function(lineItem){
  	        
 		console.log(' vm.lineItems.Items = ', lineItem.ID);
-    		var s = lineItem.ID;    		
-    		s = s.substring(0, 7);
-    		console.log('s = ', s);
+    		var ID = lineItem.ID;    		
+    		ID = ID.substring(0, 7);
+    		console.log('ID = ', ID);
     		var productId = lineItem.ProductID;
 		    var vendorName = productId.split("_")[0]; 
-		    /*
-	    	    if(lineItem.ID.match("^[a-zA-Z\(\)]+$")) {  
-	    	      } else {
-	    	    	 var number = Math.floor(1000000 + Math.random() * 9000000);
-	    	    	 lineItem.ID = number;
-	    	      }  
-    	    	
-	        	lineItem.vendorName = vendorName;
-		     */
+		    
 		    subTotal += lineItem.LineTotal;
 		    	if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
         		vm.vendorLineItemsMap[vendorName] = [];
         	}
         	vm.vendorLineItemsMap[vendorName].push(lineItem);
         	        	
-		$('.' + vendorName).val(s);
+        	$('.' + vendorName).val(ID);
+		
         });
     	
     	vm.total = subTotal + (subTotal * vm.lineItems.Items[0].ShippingAddress.xp.Taxcost);
