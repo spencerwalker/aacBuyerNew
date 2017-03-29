@@ -39,7 +39,12 @@
 						<b class="pull-right text-primary">{{base.availableFunds | currency}}</b>
 					</h4>
                     <hr>
-                    <h4>Balance Due: <b class="pull-right text-primary"><span ng-if = "base.availableFunds - base.currentOrder.Subtotal > 0" > {{0 | currency}}  </span><span ng-if = "base.availableFunds - base.currentOrder.Subtotal <= 0" > {{base.currentOrder.Subtotal - base.availableFunds | currency}} </span></b></h4>
+                    <h4>Balance Due:
+						<b class="pull-right text-primary">
+							<span ng-if = "base.availableFunds - ((base.currentOrder.Subtotal * checkout.shippingAddress.xp.Taxcost))) > 0" > {{0 | currency}}  </span>
+							<span ng-if = "base.availableFunds - ((base.currentOrder.Subtotal * checkout.shippingAddress.xp.Taxcost))) <= 0" > {{((base.currentOrder.Subtotal * checkout.shippingAddress.xp.Taxcost))) - base.availableFunds | currency}} </span>
+						</b>
+					</h4>
                 </div>
             </div>
         </div>
