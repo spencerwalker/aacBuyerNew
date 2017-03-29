@@ -213,7 +213,7 @@ function MyOrdersController($state, $ocMedia, OrderCloud, ocParameters, OrderLis
     };
 }
 
-function MyOrderDetailController($state, $exceptionHandler, toastr, OrderCloud, ocConfirm, SelectedOrder, SelectedPayments, LineItemList, PromotionList, LineItemsList, CategoryList, ProductList) {
+function MyOrderDetailController($state, $scope, $exceptionHandler, toastr, OrderCloud, ocConfirm, SelectedOrder, SelectedPayments, LineItemList, PromotionList, LineItemsList, CategoryList, ProductList) {
     var vm = this;
     vm.order = SelectedOrder;
     vm.list = LineItemList;
