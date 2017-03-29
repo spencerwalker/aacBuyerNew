@@ -47,7 +47,7 @@
           	<div class="panel panel-default" > 
                 <div class="panel-heading">
 	                <h4 class="panel-title"><b>
-						{{ vendorName}} :: Order # 
+						{{ vendorName}} 
 	               	</b></h4>
                	</div>
           	</div>
@@ -131,7 +131,7 @@
 						{{base.currentOrder.ShippingCost | currency}}
 					</span>
 				</h4>
-				<h4>Total - Order # <i class="orderId">{{lineItem.ID}}</i> 
+				<h4>Total: <i class="orderId">{{lineItem.ID}}</i> 
 					<span style="margin-left: 130px; margin-right:50px">
 						{{cart.getSubTotal(lineItemsList) + base.currentOrder.ShippingCost | currency}}
 					</span>
