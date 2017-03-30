@@ -42,7 +42,7 @@
 				</h3>
 			</div>
 			<form name="OrderLineItemForm" class="panel panel-default" cg-busy="checkoutReview.lineLoading[$index]"
-			 ng-repeat="(vendorName, lineItemsList) in checkoutReview.vendorLineItemsMap"
+			 ng-repeat="lineItem in checkoutReview.lineItems.Items track by $index"
 				style="margin-left: 1.5px; margin-right: 1.5px" >
     			<div class="panel panel-default" > 
 					 <div class="panel-heading">
@@ -69,7 +69,7 @@
 			<hr>
 			</div><hr>
 	</div>
-	<div class="row c-line-item" ng-repeat="lineItem in lineItemsList"  cg-busy="checkoutReview.lineLoading[$index]" style="margin-left: 1.5px; margin-right: 1.5px" >
+	<div class="row c-line-item" ng-repeat="lineItem in checkoutReview.lineItems.Items track by $index"  cg-busy="checkoutReview.lineLoading[$index]" style="margin-left: 1.5px; margin-right: 1.5px" >
         <div class="col-xs-3 col-sm-2">
 				<div class="thumbnail c-line-item__img">
 					<img class="img-responsive" ng-src="{{lineItem.Product.xp.image.URL || 'http://placehold.it/100x100?text=' + lineItem.Product.Name}}"
