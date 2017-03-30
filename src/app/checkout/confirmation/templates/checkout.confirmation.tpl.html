@@ -20,12 +20,13 @@
 				<span class="pull-right">- {{promotion.Amount | currency}}</span></h5>
 			<hr>
 			<h4>Total: <b class="pull-right text-primary">
-				<span class="pull-right" ng-if="checkoutConfirmation.shippingAddress.xp.Taxcost > 0">
-                   	{{checkoutConfirmation.order.Total + base.currentOrder.ShippingCost + (base.currentOrder.Subtotal * checkoutConfirmation.shippingAddress.xp.Taxcost) | currency}}
-	 			</span>
-	 			<span class="pull-right" ng-if="!checkoutConfirmation.shippingAddress.xp.Taxcost">
-                	{{checkoutConfirmation.order.Total + base.currentOrder.ShippingCost | currency}}
-	 			</span></b>
+				<span style="margin-left: 130px; margin-right:100px" ng-if="checkoutConfirmation.shippingAddress.xp.Taxcost > 0">
+					{{checkoutConfirmation.getSubTotal(lineItemsList) + base.currentOrder.ShippingCost 
+					+ (checkoutConfirmation.getSubTotal(lineItemsList) * checkoutConfirmation.shippingAddress.xp.Taxcost) | currency}}
+				</span>
+				<span style="margin-left: 130px; margin-right:100px" ng-if="!checkoutConfirmation.shippingAddress.xp.Taxcost">
+					{{checkoutConfirmation.getSubTotal(lineItemsList) + base.currentOrder.ShippingCost | currency}}
+				</span></b>
 			</h4>
 			<hr>
 			<h4>
