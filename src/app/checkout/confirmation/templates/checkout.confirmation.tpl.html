@@ -26,7 +26,7 @@
 			<hr>
 			<h4>Total: <b class="pull-right text-primary">
 				<span ng-if="checkoutConfirmation.shippingAddress.xp.Taxcost > 0">
-					{{checkoutConfirmation.order.Total + base.currentOrder.ShippingCost + (base.currentOrder.Subtotal * checkoutConfirmation.shippingAddress.xp.Taxcost) | currency}}
+					{{checkoutConfirmation.order.Total + base.currentOrder.ShippingCost + (checkoutConfirmation.order.Total * checkoutConfirmation.shippingAddress.xp.Taxcost) | currency}}
 				</span>
 				<span ng-if="!checkoutConfirmation.shippingAddress.xp.Taxcost">
 					{{checkoutConfirmation.order.Total + base.currentOrder.ShippingCost | currency}}
