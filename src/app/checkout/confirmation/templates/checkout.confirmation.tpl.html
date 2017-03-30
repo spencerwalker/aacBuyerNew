@@ -17,10 +17,10 @@
 			<h5>Shipping: All Orders <span class="pull-right">{{base.currentOrder.ShippingCost | currency}}</span></h5>
             <h5>Processing Fee: All Orders 
                	<span class="pull-right" ng-if="checkoutConfirmation.shippingAddress.xp.Taxcost > 0">
-               		{{base.currentOrder.Subtotal * checkoutConfirmation.shippingAddress.xp.Taxcost | currency}}
+               		{{checkoutConfirmation.order.Total * checkoutConfirmation.shippingAddress.xp.Taxcost | currency}}
 	 			</span>
 	 			<span class="pull-right" ng-if="!checkoutConfirmation.shippingAddress.xp.Taxcost">
-            		{{checkoutConfirmation.shippingAddress.xp.Taxcost | currency}}
+            		{{0.00 | currency}}
 	 			</span>
             </h5>
 			<hr>
