@@ -30,6 +30,17 @@ function checkoutReviewConfig($stateProvider) {
 						});
 					return dfd.promise;
 				},
+				
+				CategoryList: function($stateParams, OrderCloud) {
+    	  			var depth = 1;
+    	  			return OrderCloud.Me.ListCategories(null, null, null, null, null, {ParentID: $stateParams.categoryid}, depth);
+    	  		},
+    	  		
+    	  		ProductList: function($stateParams, OrderCloud) {
+    	  			return OrderCloud.Me.ListProducts(null, null, null, null, null, null, $stateParams.categoryid);
+
+    	  		},
+				
 				OrderPaymentsDetail: function($q, OrderCloud, CurrentOrder, $state) {
 					return OrderCloud.Payments.List(CurrentOrder.ID)
 						.then(function(data) {
@@ -70,22 +81,13 @@ function checkoutReviewConfig($stateProvider) {
 								});
 							return dfd.promise;
 						})
-
-				},
-				
-				CategoryList: function($stateParams, OrderCloud) {
-    	  			var depth = 1;
-    	  			return OrderCloud.Me.ListCategories(null, null, null, null, null, {ParentID: $stateParams.categoryid}, depth);
-    	  		},
-    	  		ProductList: function($stateParams, OrderCloud) {
-    	  			return OrderCloud.Me.ListProducts(null, null, null, null, null, null, $stateParams.categoryid);
-
-    	  		}
 			}
+			}
+
 		});
 }
 
-function CheckoutReviewController(LineItemsList, $scope, OrderPaymentsDetail,CategoryList, ProductList) {
+function CheckoutReviewController($exceptionHandler, ocConfirm, OrderCloud, $rootScope, LineItemsList, $scope, $state,toastr, OrderPaymentsDetail, CategoryList, ProductList) {
 	var vm = this;
 	vm.payments = OrderPaymentsDetail;
 	vm.vendorLineItemsMap = {};
