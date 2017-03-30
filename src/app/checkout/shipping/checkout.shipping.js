@@ -60,13 +60,12 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     vm.analyzeShipments = analyzeShipments;
     
     vm.vendorLineItemsMap = {};
-        
+    
     vm.lineItems = LineItemsList;
     console.log('LineItems', vm.lineItems);
     console.log('CategoryList :: ', CategoryList);
     console.log('Products :: ', ProductList);
     console.log('vm.lineItems ::' , JSON.stringify(vm.lineItems));
-
     
  // watcher on vm.lineItems
     $scope.$watch(function () {
@@ -74,28 +73,23 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     	}, function(newVal, oldVal){
     	console.log('New Val:: ', newVal);
     	vm.vendorLineItemsMap = {};
-
     	angular.forEach(vm.lineItems.Items, function(lineItem){
- 	        
-		console.log(' vm.lineItems.Items = ', lineItem.ID);
-    		var ID = lineItem.ID;    		
-    		ID = ID.substring(0, 7);
-    		console.log('ID = ', ID);
-    		var productId = lineItem.ProductID;
-		    var vendorName = productId.split("_")[0]; 
-		    
-
-		    	if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
+    		    		
+    		console.log(' vm.lineItems.Items = ', lineItem.ID);
+    		var s = lineItem.ID;    		
+    		s = s.substring(0, 7);
+    		console.log('s = ', s);
+    		 
+        	var productId = lineItem.ProductID;
+        	var vendorName = productId.split("_")[0]; 
+   
+        	if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
         		vm.vendorLineItemsMap[vendorName] = [];
         	}
         	vm.vendorLineItemsMap[vendorName].push(lineItem);
-        	        	
-        	$('.' + vendorName).val(ID);
         	
+        	$('.' + vendorName).val(s);
         });
-    	
-
-    	
     }, true);
         
     console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
