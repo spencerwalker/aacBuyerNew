@@ -88,7 +88,7 @@ function checkoutReviewConfig($stateProvider) {
 function CheckoutReviewController(LineItemsList, $scope, OrderPaymentsDetail,CategoryList, ProductList) {
 	var vm = this;
 	vm.payments = OrderPaymentsDetail;
-vm.vendorLineItemsMap = {};
+	vm.vendorLineItemsMap = {};
     
     vm.lineItems = LineItemsList;
     console.log('LineItems', vm.lineItems);
