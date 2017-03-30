@@ -20,7 +20,7 @@
                		{{base.currentOrder.Subtotal * checkoutConfirmation.shippingAddress.xp.Taxcost | currency}}
 	 			</span>
 	 			<span class="pull-right" ng-if="!checkoutConfirmation.shippingAddress.xp.Taxcost">
-            		{{0.00 | currency}}
+            		{{checkoutConfirmation.shippingAddress.xp.Taxcost | currency}}
 	 			</span>
             </h5>
 			<hr>
