@@ -127,11 +127,48 @@ function MyOrdersConfig($stateProvider) {
         });
 }
 
-function MyOrdersController($state, $ocMedia, OrderCloud, ocParameters, OrderList, Parameters) {
+function MyOrdersController($state, $ocMedia, $exceptionHandler, $scope, toastr, OrderCloud, ocParameters, OrderList, Parameters, ocConfirm, SelectedOrder, LineItemList, PromotionList, CategoryList, ProductList) {
     var vm = this;
     vm.list = OrderList;
     vm.parameters = Parameters;
     vm.sortSelection = Parameters.sortBy ? (Parameters.sortBy.indexOf('!') == 0 ? Parameters.sortBy.split('!')[1] : Parameters.sortBy) : null;
+    
+    // BH Team Added 
+    vm.lineItems = LineItemsList;
+    vm.vendorLineItemsMap = {};
+    
+    console.log('LineItems', vm.lineItems);
+    console.log('CategoryList :: ', CategoryList);
+    console.log('Products :: ', ProductList);
+    console.log('vm.lineItems ::' , JSON.stringify(vm.lineItems));
+    
+    // watcher on vm.lineItems
+    $scope.$watch(function () {
+        	return vm.lineItems;
+    	}, function(newVal, oldVal){
+    	console.log('New Val:: ', newVal);
+    	vm.vendorLineItemsMap = {};
+    	angular.forEach(vm.lineItems.Items, function(lineItem){
+        	var productId = lineItem.ProductID;
+        	var vendorName = productId.split("_")[0]; 
+        	
+        	if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
+        		vm.vendorLineItemsMap[vendorName] = [];
+        	}
+        	vm.vendorLineItemsMap[vendorName].push(lineItem);
+        });
+    }, true);  
+    
+    
+    console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
+    
+    vm.getSubTotal = function(lineItemsList){
+		var total = 0.0;
+		angular.forEach(lineItemsList, function(lineItem){
+			total += ( lineItem.UnitPrice * lineItem.Quantity);
+		});
+		return total;
+		}
 
     //Check if filters are applied
     vm.filtersApplied = vm.parameters.filters || vm.parameters.from || vm.parameters.to || ($ocMedia('max-width:767px') && vm.sortSelection); //Sort by is a filter on mobile devices
