@@ -1,3 +1,6 @@
+@import url(http://fonts.googleapis.com/css?family=Lato);
+@import url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css);
+
 .c-header {
   position: relative;
   min-height: @navbar-height; // Ensure a navbar always shows (e.g., without a .navbar-brand in collapsed mode)
@@ -15,77 +18,24 @@
     border-width: 0 0 1px;
     z-index: @zindex-navbar-fixed;
   }
-  /* Icons */
-
-f {
-  color:#fff;
-  background: #314d91;
-  border-radius:4px;
-  text-decoration:none;
-  position: relative;
-  display: inline-block;
-  width:40px;
-  height:28px;
-  padding-top:12px;
-  margin:0 2px;
-  -o-transition:all .5s;
-  -webkit-transition: all .5s;
-  -moz-transition: all .5s;
-  transition: all .5s;
-   -webkit-font-smoothing: antialiased;
+.social-icon {
+    color: #fff;
 }
 
-f:hover {
-  background: #20B2AA;
+.social-icons f {
+    color: #fff;
+    text-decoration: none;
 }
-
-/* pop-up text */
-
-f span {
-  color:#666;
-  position:absolute;
-  font-family:sans-serif;
-  bottom:0;
-  left:-25px;
-  right:-25px;
-  padding:5px 7px;
-  z-index:-1;
-  font-size:14px;
-  border-radius:2px;
-  background:#FFA500;
-  visibility:hidden;
-  opacity:0;
-  -o-transition:all .5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  -webkit-transition: all .5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  -moz-transition: all .5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  transition: all .5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+.fa-facebook {
+    padding:10px 14px;
+    -o-transition:.5s;
+    -ms-transition:.5s;
+    -moz-transition:.5s;
+    -webkit-transition:.5s;
+    transition: .5s;
+    background-color: #20B2AA;
 }
-
-/* pop-up text arrow */
-
-f span:before {
-  content:'';
-  width: 0; 
-  height: 0; 
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 5px solid #fff;
-  position:absolute;
-  bottom:-5px;
-  left:40px;
-}
-
-/* text pops up when icon is in hover state */
-
-f:hover span {
-  bottom:50px;
-  visibility:visible;
-  opacity:1;
-}
-
-/* font awesome icons */
-
-f:nth-of-type(1):before {
-content:'\f09a';
+.fa-facebook:hover {
+    background-color: #3d5b99;
 }
 }
