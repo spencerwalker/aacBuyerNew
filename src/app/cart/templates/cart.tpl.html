@@ -46,8 +46,11 @@
 				style="margin-left: 1.5px; margin-right: 1.5px" >
           	<div class="panel panel-default" > 
                 <div class="panel-heading">
-	                <h4 class="panel-title"><b class="text-primary">
+	               <!-- <h4 class="panel-title"><b class="text-primary">
 						{{vendorName}} :: Order # {{lineItemsList[0].ID.substring(0,7)}} 
+	               	</b></h4> -->
+	               	<h4 class="panel-title"><b class="text-primary">
+						{{vendorName}} 
 	               	</b></h4>
                	</div>
           	</div>
@@ -126,7 +129,7 @@
 						{{ cart.getSubTotal(lineItemsList) | currency }}
 					</span>
 				</h4>
-				<h4>Shipping: 
+		   <!-- <h4>Shipping: 
 					<span style="margin-left: 150px; margin-right:50px">
 						{{base.currentOrder.ShippingCost | currency}}
 					</span>
@@ -135,7 +138,7 @@
 					<span style="margin-left: 150px; margin-right:50px">
 						{{cart.getSubTotal(lineItemsList) + base.currentOrder.ShippingCost | currency}}
 					</span>
-				</h4>
+				</h4> -->
 			</div>
 			<br>
        </form>
