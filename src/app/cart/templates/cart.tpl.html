@@ -131,7 +131,7 @@
 						{{base.currentOrder.ShippingCost | currency}}
 					</span>
 				</h4>
-				<h4>Total: <i class="orderId">{{lineItem.ID}}</i> 
+				<h4>Total - Order # {{lineItemsList[0].ID.substring(0,7)}} <i class="orderId">{{lineItem.ID}}</i> 
 					<span style="margin-left: 150px; margin-right:50px">
 						{{cart.getSubTotal(lineItemsList) + base.currentOrder.ShippingCost | currency}}
 					</span>
