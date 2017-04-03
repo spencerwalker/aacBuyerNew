@@ -171,6 +171,7 @@
 					<span style="margin-left: 150px; margin-right:100px" ng-if="myOrderDetail.shippingAddress.xp.Taxcost > 0" >{{ ((myOrderDetail.getSubTotal(lineItemsList) * myOrderDetail.shippingAddress.xp.Taxcost)/100) | currency}}</span>
 					<span style="margin-left: 150px; margin-right:100px" ng-if="!myOrderDetail.shippingAddress.xp.Taxcost">{{0.00 | currency}}</span>
 				</h4>
+				<b class="text-primary">
 				<h4>Total - Order # {{lineItemsList[0].ID.substring(0,7)}} <i class="orderId">{{lineItem.ID}}</i>
 					<span style="margin-left: 130px; margin-right:100px" ng-if="myOrderDetail.shippingAddress.xp.Taxcost > 0">
 						{{myOrderDetail.getSubTotal(lineItemsList) 
@@ -182,7 +183,7 @@
 						{{myOrderDetail.getSubTotal(lineItemsList) 
 						+ base.currentOrder.ShippingCost | currency}}
 					</span>
-				</h4>
+				</h4></b>
 			</div>
 		<br>
     	</form>
