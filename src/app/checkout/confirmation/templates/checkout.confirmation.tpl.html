@@ -107,7 +107,7 @@
 				<div class="panel panel-default" > 
 					 <div class="panel-heading">
 						<h4 class="panel-title"><b class="text-primary">
-						{{vendorName}} :: Order # {{lineItemsList[0].ID.substring(0,7)}} <i class="orderId"></i>
+						{{vendorName}} :: Order # {{lineItemsList[0].ID.substring(0,7)}}
 	               	    </b></h4>
 					 </div>
 		        </div>
@@ -181,7 +181,7 @@
 							<span style="margin-left: 150px; margin-right:100px" ng-if="checkoutConfirmation.shippingAddress.xp.Taxcost > 0" >{{ (checkoutConfirmation.getSubTotal(lineItemsList) * checkoutConfirmation.shippingAddress.xp.Taxcost) | currency}}</span>
 							<span style="margin-left: 150px; margin-right:100px" ng-if="!checkoutConfirmation.shippingAddress.xp.Taxcost">{{0.00 | currency}}</span>
 						</h4>
-						<h4>Total - Order # <i class="orderId">{{lineItem.ID}}</i>
+						<h4>Total - Order # {{lineItemsList[0].ID.substring(0,7)}} <i class="orderId">{{lineItem.ID}}</i>
 							<span style="margin-left: 130px; margin-right:100px" ng-if="checkoutConfirmation.shippingAddress.xp.Taxcost > 0">
 								{{checkoutConfirmation.getSubTotal(lineItemsList) 
 								+ base.currentOrder.ShippingCost 
