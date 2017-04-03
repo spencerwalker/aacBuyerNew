@@ -231,22 +231,33 @@ function MyOrderDetailController($state, $exceptionHandler, $scope, toastr, Orde
     console.log('Products :: ', ProductList);
     console.log('vm.lineItems ::' , JSON.stringify(vm.lineItems));
     
+    vm.vendorLineItemsMap = {};
+	angular.forEach(vm.list.Items, function(lineItem){
+    	var productId = lineItem.ProductID;
+    	var vendorName = productId.split("_")[0]; 
+    	
+    	if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
+    		vm.vendorLineItemsMap[vendorName] = [];
+    	}
+    	vm.vendorLineItemsMap[vendorName].push(lineItem);
+    });
+    
     // watcher on vm.lineItems
-    $scope.$watch(function () {
-        	return vm.lineItems;
-    	}, function(newVal, oldVal){
-    	console.log('New Val:: ', newVal);
-    	vm.vendorLineItemsMap = {};
-    	angular.forEach(vm.lineItems.Items, function(lineItem){
-        	var productId = lineItem.ProductID;
-        	var vendorName = productId.split("_")[0]; 
-        	
-        	if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
-        		vm.vendorLineItemsMap[vendorName] = [];
-        	}
-        	vm.vendorLineItemsMap[vendorName].push(lineItem);
-        });
-    }, true);  
+    // $scope.$watch(function () {
+    //    	return vm.lineItems;
+    //	}, function(newVal, oldVal){
+    //	console.log('New Val:: ', newVal);
+    //	vm.vendorLineItemsMap = {};
+    //	angular.forEach(vm.lineItems.Items, function(lineItem){
+    //    	var productId = lineItem.ProductID;
+    //    	var vendorName = productId.split("_")[0]; 
+    //    	
+    //    	if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
+    //    		vm.vendorLineItemsMap[vendorName] = [];
+    //    	}
+    //    	vm.vendorLineItemsMap[vendorName].push(lineItem);
+    //    });
+    // }, true);  
     
     
     console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
