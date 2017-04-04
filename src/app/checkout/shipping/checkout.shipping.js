@@ -50,7 +50,7 @@ function checkoutShippingConfig($stateProvider) {
         });
 	}
 
-function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $state,toastr, OrderCloud, MyAddressesModal, AddressSelectModal, ShippingRates, CheckoutConfig, LineItemsList, CurrentPromotions, ocConfirm, CategoryList, ProductList) {
+function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $state,toastr, OrderCloud, MyAddressesModal, AddressSelectModal, ShippingRates, CheckoutConfig, LineItemsList, CurrentPromotions, ocConfirm, CategoryList, ProductList, CurrentOrder) {
     var vm = this;
     vm.createAddress = createAddress;
     vm.changeShippingAddress = changeShippingAddress;
@@ -98,11 +98,11 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     	
     });
 	// BH DEV
-	console.log('order test', $rootScope);
+	console.log('order test', CurrentOrder);
 	console.log('order test2', vm);
 	console.log('xp', xp);
 	vm.updateVendorId = function(){
-    	OrderCloud.Orders.Patch(vm.order.ID, {xp :xp})
+    	OrderCloud.Orders.Patch(CurrentOrder.ID, {xp :xp})
     		.then(function(data){
     		})	    
     };
