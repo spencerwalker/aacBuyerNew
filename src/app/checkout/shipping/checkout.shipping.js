@@ -2,6 +2,7 @@ angular.module('orderCloud')
     .config(checkoutShippingConfig)
     .controller('CheckoutShippingCtrl', CheckoutShippingController);
 
+
 function checkoutShippingConfig($stateProvider) {
     $stateProvider
         .state('checkout.shipping', {
@@ -67,6 +68,12 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     console.log('Products :: ', ProductList);
     console.log('vm.lineItems ::' , JSON.stringify(vm.lineItems));
     
+  //BH Dev//
+    var xp = {
+    		vendorOrderIds: []
+    }
+    //BH Dev//
+    
     // watcher on vm.lineItems
     $scope.$watch(function () {
         	return vm.lineItems;
@@ -85,12 +92,23 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
 		
 		if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
         		vm.vendorLineItemsMap[vendorName] = [];
+        		// BH DEV
+        		xp.vendorOrderIds.push(lineItem.ID.substring(0,7));
+        		// BH DEV
+        		
         	}
         	vm.vendorLineItemsMap[vendorName].push(lineItem);
         	   
         	$('.' + vendorName).val(ID);
         	
         });
+    	// BH DEV
+    	vm.updateVendorId = function(){
+	    	OrderCloud.Orders.Patch(vm.order.ID, {xp :xp})
+	    		.then(function(data){
+	    		})	    
+	    };
+	 // BH DEV
     }, true);
     
     console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
