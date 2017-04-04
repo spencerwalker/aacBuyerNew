@@ -98,6 +98,9 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     	
     });
 	// BH DEV
+	console.log('order test', vm.order);
+	console.log('order test2', vm);
+	console.log('xp', xp);
 	vm.updateVendorId = function(){
     	OrderCloud.Orders.Patch(vm.order.ID, {xp :xp})
     		.then(function(data){
