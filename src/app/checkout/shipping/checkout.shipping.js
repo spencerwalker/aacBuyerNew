@@ -74,8 +74,39 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     }
     //BH Dev//
     
+	vm.vendorLineItemsMap = {};
+	angular.forEach(vm.lineItems.Items, function(lineItem){
+		
+		console.log(' vm.lineItems.Items = ', lineItem.ID);
+		var ID = lineItem.ID;    		
+		ID = ID.substring(0, 7);
+		console.log('ID = ', ID);
+		
+	        var productId = lineItem.ProductID;
+	       var vendorName = productId.split("_")[0]; 
+	
+	if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
+    		vm.vendorLineItemsMap[vendorName] = [];
+    		// BH DEV
+    		xp.vendorOrderIds.push(lineItem.ID.substring(0,7));
+    		// BH DEV
+    		
+    	}
+    	vm.vendorLineItemsMap[vendorName].push(lineItem);
+    	   
+    	$('.' + vendorName).val(ID);
+    	
+    });
+	// BH DEV
+	vm.updateVendorId = function(){
+    	OrderCloud.Orders.Patch(vm.order.ID, {xp :xp})
+    		.then(function(data){
+    		})	    
+    };
+ // BH DEV
+    
     // watcher on vm.lineItems
-    $scope.$watch(function () {
+   /* $scope.$watch(function () {
         	return vm.lineItems;
     	}, function(newVal, oldVal){
     	console.log('New Val:: ', newVal);
@@ -109,7 +140,7 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
 	    		})	    
 	    };
 	 // BH DEV
-    }, true);
+    }, true);*/
     
     console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
     
