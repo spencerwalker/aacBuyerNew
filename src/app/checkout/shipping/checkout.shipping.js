@@ -98,7 +98,7 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     	
     });
 	// BH DEV
-	console.log('order test', vm.order);
+	console.log('order test', $rootScope);
 	console.log('order test2', vm);
 	console.log('xp', xp);
 	vm.updateVendorId = function(){
