@@ -68,51 +68,14 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     console.log('Products :: ', ProductList);
     console.log('vm.lineItems ::' , JSON.stringify(vm.lineItems));
     
-  //BH Dev//
-    var xp = {
-    		vendorOrderIds: []
-    }
-    //BH Dev//
-    
-	vm.vendorLineItemsMap = {};
-	angular.forEach(vm.lineItems.Items, function(lineItem){
-		
-		console.log(' vm.lineItems.Items = ', lineItem.ID);
-		var ID = lineItem.ID;    		
-		ID = ID.substring(0, 7);
-		console.log('ID = ', ID);
-		
-	        var productId = lineItem.ProductID;
-	       var vendorName = productId.split("_")[0]; 
-	
-	if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
-    		vm.vendorLineItemsMap[vendorName] = [];
-    		// BH DEV
-    		xp.vendorOrderIds.push(lineItem.ID.substring(0,7));
-    		// BH DEV
-    		
-    	}
-    	vm.vendorLineItemsMap[vendorName].push(lineItem);
-    	   
-    	$('.' + vendorName).val(ID);
-    	
-    });
-	// BH DEV
-	console.log('order test', CurrentOrder);
-	console.log('order test2', vm);
-	console.log('xp', xp);
-	vm.updateVendorId = function(){
-    	OrderCloud.Orders.Patch(CurrentOrder.ID, {xp :xp})
-    		.then(function(data){
-    		})	    
-    };
- // BH DEV
-    
     // watcher on vm.lineItems
-   /* $scope.$watch(function () {
+    $scope.$watch(function () {
         	return vm.lineItems;
     	}, function(newVal, oldVal){
     	console.log('New Val:: ', newVal);
+    	var xp = {
+        		vendorOrderIds: []
+        }
     	vm.vendorLineItemsMap = {};
     	angular.forEach(vm.lineItems.Items, function(lineItem){
     		
@@ -136,9 +99,10 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
         	$('.' + vendorName).val(ID);
         	
         });
-    	// BH DEV
+    	console.log('order test', CurrentOrder);
+    	console.log('xp', xp);
     	vm.updateVendorId = function(){
-	    	OrderCloud.Orders.Patch(vm.order.ID, {xp :xp})
+	    	OrderCloud.Orders.Patch(CurrentOrder.ID, {xp :xp})
 	    		.then(function(data){
 	    		})	    
 	    };
