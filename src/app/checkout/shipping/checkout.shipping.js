@@ -107,7 +107,7 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
 	    		})	    
 	    };
 	 // BH DEV
-    }, true);*/
+    }, true);
     
     console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
     
