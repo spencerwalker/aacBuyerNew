@@ -34,8 +34,6 @@ switch(env) {
         app.use(express.static(config.root + config.build.replace('.', '')));
         // Host unchanged html files
         app.use(express.static(config.root + config.src.replace('.', '') + 'app/'));
-        //app.use(express.static(config.root));
-    	//app.use(express.static(config.root + config.components.dir));
         app.get('/*', function(req, res) {
             res.sendFile(config.root + config.build.replace('.', '') + 'index.html');
         });
