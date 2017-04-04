@@ -2,6 +2,7 @@ angular.module('orderCloud')
     .config(checkoutShippingConfig)
     .controller('CheckoutShippingCtrl', CheckoutShippingController);
 
+
 function checkoutShippingConfig($stateProvider) {
     $stateProvider
         .state('checkout.shipping', {
