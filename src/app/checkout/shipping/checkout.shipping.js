@@ -10,47 +10,47 @@ function checkoutShippingConfig($stateProvider) {
             templateUrl: 'checkout/shipping/templates/checkout.shipping.tpl.html',
             controller: 'CheckoutShippingCtrl',
             controllerAs: 'checkoutShipping',
-            	  data: {
-            	          pageTitle: "Delivery Address"
-            	  		},
-            	  		resolve: {
-            	  		LineItemsList: function($q, $state, toastr, OrderCloud, ocLineItems, CurrentOrder) {
-            	  		var dfd = $q.defer();
-            	  		OrderCloud.LineItems.List(CurrentOrder.ID)
-            	  		.then(function(data) {
-            	  			if (!data.Items.length) {
-            	  				dfd.resolve(data);
-            	  				}
-            	  				else {
-            	  					ocLineItems.GetProductInfo(data.Items)
-            	  					.then(function() {
-            	  						dfd.resolve(data);
-            	  					});
-            	  				}
-            	  		})
-            	  		.catch(function() {
-            	  			toastr.error('Your order does not contain any line items.', 'Error');
-            	  			dfd.reject();
-            	  		});
-            	  		return dfd.promise;
-            	  		},
-            	  		CurrentPromotions: function(CurrentOrder, OrderCloud) {
-            	  			return OrderCloud.Orders.ListPromotions(CurrentOrder.ID);
-            	  		},
-            	                
-            	  		CategoryList: function($stateParams, OrderCloud) {
-            	  			var depth = 1;
-            	  			return OrderCloud.Me.ListCategories(null, null, null, null, null, {ParentID: $stateParams.categoryid}, depth);
-            	  		},
-            	  		ProductList: function($stateParams, OrderCloud) {
-            	  			return OrderCloud.Me.ListProducts(null, null, null, null, null, null, $stateParams.categoryid);
+            data: {
+                pageTitle: "Delivery Address"
+            },
+            resolve: {
+                LineItemsList: function($q, $state, toastr, OrderCloud, ocLineItems, CurrentOrder) {
+                    var dfd = $q.defer();
+                    OrderCloud.LineItems.List(CurrentOrder.ID)
+                        .then(function(data) {
+                            if (!data.Items.length) {
+                                dfd.resolve(data);
+                            }
+                            else {
+                                ocLineItems.GetProductInfo(data.Items)
+                                    .then(function() {
+                                        dfd.resolve(data);
+                                    });
+                            }
+                        })
+                        .catch(function() {
+                            toastr.error('Your order does not contain any line items.', 'Error');
+                            dfd.reject();
+                        });
+                    return dfd.promise;
+                },
+                CurrentPromotions: function(CurrentOrder, OrderCloud) {
+                    return OrderCloud.Orders.ListPromotions(CurrentOrder.ID);
+                },
 
-            	  		}
-            	  		}
+                CategoryList: function($stateParams, OrderCloud) {
+                    var depth = 1;
+                    return OrderCloud.Me.ListCategories(null, null, null, null, null, {ParentID: $stateParams.categoryid}, depth);
+                },
+                ProductList: function($stateParams, OrderCloud) {
+                    return OrderCloud.Me.ListProducts(null, null, null, null, null, null, $stateParams.categoryid);
+
+                }
+            }
         });
-	}
+}
 
-function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $state,toastr, OrderCloud, MyAddressesModal, AddressSelectModal, ShippingRates, CheckoutConfig, LineItemsList, CurrentPromotions, ocConfirm, CategoryList, ProductList, CurrentOrder) {
+function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $state, $q, toastr, OrderCloud, MyAddressesModal, AddressSelectModal, ShippingRates, CheckoutConfig, LineItemsList, CurrentPromotions, ocConfirm, CategoryList, ProductList, CurrentOrder) {
     var vm = this;
     vm.createAddress = createAddress;
     vm.changeShippingAddress = changeShippingAddress;
@@ -59,58 +59,55 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     vm.initShippingRates = initShippingRates;
     vm.getShippingRates = getShippingRates;
     vm.analyzeShipments = analyzeShipments;
-    
+
     vm.vendorLineItemsMap = {};
-        
+
     vm.lineItems = LineItemsList;
     console.log('LineItems', vm.lineItems);
     console.log('CategoryList :: ', CategoryList);
     console.log('Products :: ', ProductList);
     console.log('vm.lineItems ::' , JSON.stringify(vm.lineItems));
-    
+
     // watcher on vm.lineItems
     $scope.$watch(function () {
-        	return vm.lineItems;
-    	}, function(newVal, oldVal){
-    	console.log('New Val:: ', newVal);
-    	var xp = {
-        		vendorOrderIds: []
-        }
-    	vm.vendorLineItemsMap = {};
-    	angular.forEach(vm.lineItems.Items, function(lineItem){
-    		
-    		console.log(' vm.lineItems.Items = ', lineItem.ID);
-    		var ID = lineItem.ID;    		
-    		ID = ID.substring(0, 7);
-    		console.log('ID = ', ID);
-    		
- 	        var productId = lineItem.ProductID;
-		       var vendorName = productId.split("_")[0]; 
-		
-		if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
-        		vm.vendorLineItemsMap[vendorName] = [];
-        		// BH DEV
-        		xp.vendorOrderIds.push(lineItem.ID.substring(0,7));
-        		// BH DEV
-        		
-        	}
-        	vm.vendorLineItemsMap[vendorName].push(lineItem);
-        	   
-        	$('.' + vendorName).val(ID);
-        	
+        return vm.lineItems;
+    }, function(newVal, oldVal){
+        //create a queue to hold all the api calls that will be sent out at once
+        var lineItemUpdateQueue = [];
+        vm.vendorLineItemsMap = {};
+        angular.forEach(vm.lineItems.Items, function(lineItem){
+            var xp = {
+                vendorOrderId: []
+            };
+            var ID;
+            var productId = lineItem.ProductID;
+            var vendorName = productId.split("_")[0];
+
+            if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined') {
+                vm.vendorLineItemsMap[vendorName] = [];
+                vm.vendorLineItemsMap[vendorName].push(lineItem);
+                ID = vm.vendorLineItemsMap[vendorName][0].ID.substring(0, 7);
+                xp.vendorOrderId.push(ID);
+            }else{
+                vm.vendorLineItemsMap[vendorName].push(lineItem);
+                ID = vm.vendorLineItemsMap[vendorName][0].ID.substring(0, 7);
+                xp.vendorOrderId.push(ID);
+            }
+
+            $('.' + vendorName).val(ID);
+           //this line pushes all the api calls into a queue that will be sent off once $q.all is invoked with the queue.
+            lineItemUpdateQueue.push(OrderCloud.LineItems.Patch(CurrentOrder.ID, lineItem.ID, {'xp' : xp}));
         });
-    	console.log('order test', CurrentOrder);
-    	console.log('xp', xp);
-    	vm.updateVendorId = function(){
-	    	OrderCloud.Orders.Patch(CurrentOrder.ID, {xp :xp})
-	    		.then(function(data){
-	    		})	    
-	    };
-	 // BH DEV
+        //this calls runs all the async calls in the queue and waits for them to be returned. This works because each OrderCloud.method returns a promise.
+        $q.all(lineItemUpdateQueue)
+            .then(function(updatedLineItems){
+                //this should have have all the updated line items. Line items should now be updated.
+                console.log("updated line items", updatedLineItems);
+            })
     }, true);
-    
+
     console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
-    
+
     vm.promotions = CurrentPromotions.Meta ? CurrentPromotions.Items : CurrentPromotions;
     vm.removeItem = function(order, scope) {
         vm.lineLoading = [];
@@ -140,14 +137,14 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
                     });
             });
     };
-    
+
     vm.getSubTotal = function(lineItemsList){
-		var total = 0.0;
-		angular.forEach(lineItemsList, function(lineItem){
-			total += ( lineItem.UnitPrice * lineItem.Quantity);
-		});
-		return total;
-	}
+        var total = 0.0;
+        angular.forEach(lineItemsList, function(lineItem){
+            total += ( lineItem.UnitPrice * lineItem.Quantity);
+        });
+        return total;
+    }
     //TODO: missing unit tests
     $rootScope.$on('OC:UpdatePromotions', function(event, orderid) {
         OrderCloud.Orders.ListPromotions(orderid)
@@ -180,7 +177,7 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
                 }
             })
     }
-    
+
     function saveShipAddress(order) {
         if (order && order.ShippingAddressID) {
             OrderCloud.Orders.Patch(order.ID, {ShippingAddressID: order.ShippingAddressID})
