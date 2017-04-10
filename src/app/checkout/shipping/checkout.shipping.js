@@ -107,7 +107,6 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
         
         CurrentOrder.ShippingCost = vm.calculateShippingCost();
         ShippingRates.SetShippingCost(CurrentOrder.ID, CurrentOrder.ShippingCost);
-        console.log('sc test',base.currentOrder);
     }, true);
 
     console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
