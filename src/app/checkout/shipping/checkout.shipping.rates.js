@@ -140,7 +140,7 @@ function VendorShippingCriteria() {
 			shippingCostFunc: function(order) {return 0;}
 		},
 		{
-			name: 'AKJ Books',
+			name: 'AKJEducation',
 			minOrderAmount: 0,
 			shippingCostFunc: function(order) {
 				return 3 + 0.1*order.amount;
@@ -150,7 +150,7 @@ function VendorShippingCriteria() {
 			name: 'Bazillions',
 			minOrderAmount: 0,
 			shippingCostFunc: function(order) {
-				return 1.5 + 1*order.itemsCount;
+				return 1.5 + 1*order.itemCount;
 			}
 		},
 		{
@@ -229,7 +229,7 @@ function VendorShippingCriteria() {
 			}
 		},
 		{
-			name: 'Really Good Stuff',
+			name: 'ReallyGoodStuff',
 			minOrderAmount: 0,
 			shippingCostFunc: function(order) {
 				return Math.max(9.95, 0.14*order.amount);
@@ -277,7 +277,7 @@ function VendorShippingCriteria() {
 			}
 		},
 		{
-			name: 'Wonder Workshop',
+			name: 'WonderWorkshop',
 			minOrderAmount: 0,
 			shippingCostFunc: function(order) {
 				return order.amount > 99 ? 0 : 10;

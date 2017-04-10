@@ -150,12 +150,12 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     
     vm.getShippingCostByVendor = function(vendorName){
         var vendorLineItems = vm.vendorLineItemsMap[vendorName];
-        var itemsCount = 0;
+        var itemCount = 0;
         var amount = 0;
         var state = '';
         angular.forEach(vendorLineItems, function(lineItem){
             amount += ( lineItem.UnitPrice * lineItem.Quantity);
-            itemsCount += lineItem.Quantity;
+            itemCount += lineItem.Quantity;
             state = lineItem.ShippingAddress.State;
         });
 
@@ -165,7 +165,7 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
 
         var shippingCost = shippingCalculator({
             amount: amount,
-            itemsCount: itemsCount
+            itemCount: itemCount
         });
         console.log('sc test', vendorName, shippingCost, vm.vendorLineItemsMap[vendorName]);
         return shippingCost;
