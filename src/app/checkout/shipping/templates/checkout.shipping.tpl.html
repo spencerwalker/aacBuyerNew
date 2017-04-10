@@ -123,12 +123,12 @@
 	 				<h4> <b class="text-primary"> Total - Order # {{lineItemsList[0].ID.substring(0,7)}} <i class="orderId">{{lineItem.ID}}</i>
 	 					<span style="margin-left: 150px; margin-right:50px" ng-if="checkout.shippingAddress.xp.Taxcost > 0">
 	 						{{checkoutShipping.getSubTotal(lineItemsList) 
-	 							+ base.currentOrder.ShippingCost 
+	 							+ checkoutShipping.getShippingCostByVendor(vendorName) 
 	 							+ ((checkoutShipping.getSubTotal(lineItemsList) 
 	 							* checkout.shippingAddress.xp.Taxcost)) | currency}}
 	 					</span>
 	 					<span style="margin-left: 150px; margin-right:50px" ng-if="!checkout.shippingAddress.xp.Taxcost">
-	 						{{checkoutShipping.getSubTotal(lineItemsList) + base.currentOrder.ShippingCost | currency}}
+	 						{{checkoutShipping.getSubTotal(lineItemsList) + checkoutShipping.getShippingCostByVendor(vendorName) | currency}}
 	 					</span>
 	 				</b></h4>
 				</div>
