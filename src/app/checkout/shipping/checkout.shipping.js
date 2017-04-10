@@ -167,7 +167,7 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
             amount: amount,
             itemsCount: itemsCount
         });
-
+        console.log('sc test', vendorName, shippingCost, vm.vendorLineItemsMap[vendorName]);
         return shippingCost;
     };
 
