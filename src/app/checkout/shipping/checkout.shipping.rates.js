@@ -1,4 +1,5 @@
 angular.module('orderCloud')
+	.service('VendorShippingCriteria', VendorShippingCriteria)
     .factory('ShippingRates', ShippingRatesService)
 ;
 
@@ -128,4 +129,248 @@ function ShippingRatesService($q, $resource, OrderCloud, apiurl) {
     }
 
     return service;
+}
+
+
+function VendorShippingCriteria() {
+	this.ByVendor = [
+		{
+			name: 'Adventure to Fitness',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {return 0;}
+		},
+		{
+			name: 'AKJ Books',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {
+				return 3 + 0.1*order.amount;
+			}
+		},
+		{
+			name: 'Bazillions',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {
+				return 1.5 + 1*order.itemsCount;
+			}
+		},
+		{
+			name: 'Beckers',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {
+				return Math.max(7.5, 0.15*order.amount);
+			}
+		},
+		{
+			name: 'Best Buy',
+			minOrderAmount: 25,
+			shippingCostFunc: function(order) {
+				return 5 + 0.0175*order.amount;
+			}
+		},
+		{
+			name: 'Carson Dellosa',
+			minOrderAmount: 15,
+			shippingCostFunc: function(order) {
+				return 0.15*order.amount;
+			}
+		},
+		{
+			name: 'Edupress',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {
+				return 0.15*order.amount;
+			}
+		},
+		{
+			name: 'HoverCam',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {
+				return 0.15*order.amount;
+			}
+		},
+		{
+			name: 'Kaplan',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {
+				return 0.15*order.amount;
+			}
+		},
+		{
+			name: 'Laser Classroom',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {
+				return 9.99;
+			}
+		},
+		{
+			name: 'Learning A-Z',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {return 0;}
+		},
+		{
+			name: 'Lorenz',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {
+				return 5.95 + 0.15*order.amount;
+			}
+		},
+		{
+			name: "Miss Humblebee's Academy",
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {
+				return 0.15*order.amount;
+			}
+		},
+		{
+			name: 'Office Depot',
+			minOrderAmount: 25,
+			shippingCostFunc: function(order) {
+				return order.amount > 49.99 ? 0 : 5.95;
+			}
+		},
+		{
+			name: 'Really Good Stuff',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {
+				return Math.max(9.95, 0.14*order.amount);
+			}
+		},
+		{
+			name: 'Scholastic Teacher Store',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {
+				return 0.15*order.amount;
+			}
+		},
+		{
+			name: 'Scholastic Classroom Magazines',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {return 0;}
+		},
+		{
+			name: 'School Specialty / Frey Scientific',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {
+				return order.amount > 49.99 ? 0 : 9.95;
+			}
+		},
+		{
+			name: 'Science4Us',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {return 0;}
+		},
+		{
+			name: 'Speakaboos',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {return 0;}
+		},
+		{
+			name: 'Spelling City',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {return 0;}
+		},
+		{
+			name: 'West Music',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {
+				return 0.09*order.amount;
+			}
+		},
+		{
+			name: 'Wonder Workshop',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {
+				return order.amount > 99 ? 0 : 10;
+			}
+		},
+		{
+			name: 'YourDollarBuys',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {return 0;}
+		}
+	];
+
+	this.ByState = [
+		{
+			name: 'CA',
+			shippingCostFunc: function(order) {
+				var cost = 0;
+				if(order.itemCount < 10) {
+					cost = 13;
+				}else if (order.itemCount <= 20) {
+					cost = 26;
+				}else if (order.itemCount <= 40) {
+					cost = 50;
+				}else if (order.itemCount <= 60) {
+					cost = 80;
+				}else if (order.itemCount <= 80) {
+					cost = 120;
+				}else if (order.itemCount <= 100) {
+					cost = 150;
+				}
+				return cost;
+			}
+		},
+		{
+			name: 'HI',
+			shippingCostFunc: function(order) {
+				var cost = 0;
+				if(order.itemCount < 10) {
+					cost = 40;
+				}else if (order.itemCount <= 20) {
+					cost = 80;
+				}else if (order.itemCount <= 40) {
+					cost = 180;
+				}else if (order.itemCount <= 60) {
+					cost = 280;
+				}else if (order.itemCount <= 80) {
+					cost = 380;
+				}else if (order.itemCount <= 100) {
+					cost = 440;
+				}
+				return cost;
+			}
+		},
+		{
+			name: 'AK',
+			shippingCostFunc: function(order) {
+				var cost = 0;
+				if(order.itemCount < 10) {
+					cost = 40;
+				}else if (order.itemCount <= 20) {
+					cost = 80;
+				}else if (order.itemCount <= 40) {
+					cost = 180;
+				}else if (order.itemCount <= 60) {
+					cost = 280;
+				}else if (order.itemCount <= 80) {
+					cost = 380;
+				}else if (order.itemCount <= 100) {
+					cost = 440;
+				}
+				return cost;
+			}
+		}
+	];
+	
+	this.ByDefault = {
+		name: 'Other',
+		shippingCostFunc: function(order) {
+			var cost = 0;
+			if(order.itemCount < 10) {
+				cost = 12;
+			}else if (order.itemCount <= 20) {
+				cost = 20;
+			}else if (order.itemCount <= 40) {
+				cost = 35;
+			}else if (order.itemCount <= 60) {
+				cost = 50;
+			}else if (order.itemCount <= 80) {
+				cost = 80;
+			}else if (order.itemCount <= 100) {
+				cost = 100;
+			}
+			return cost;
+		}
+	}
 }

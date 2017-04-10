@@ -50,7 +50,7 @@ function checkoutShippingConfig($stateProvider) {
         });
 }
 
-function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $state, $q, toastr, OrderCloud, MyAddressesModal, AddressSelectModal, ShippingRates, CheckoutConfig, LineItemsList, CurrentPromotions, ocConfirm, CategoryList, ProductList, CurrentOrder) {
+function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $state, $q, toastr, OrderCloud, MyAddressesModal, AddressSelectModal, ShippingRates, VendorShippingCriteria, CheckoutConfig, LineItemsList, CurrentPromotions, ocConfirm, CategoryList, ProductList, CurrentOrder) {
     var vm = this;
     vm.createAddress = createAddress;
     vm.changeShippingAddress = changeShippingAddress;
@@ -104,6 +104,8 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
                 //this should have have all the updated line items. Line items should now be updated.
                 console.log("updated line items", updatedLineItems);
             })
+        
+        ShippingRates.SetShippingCost(CurrentOrder.ID, vm.calculateShippingCost());
     }, true);
 
     console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
@@ -145,6 +147,42 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
         });
         return total;
     }
+    
+    vm.getShippingCostByVendor = function(vendorName){
+        var vendorLineItems = vm.vendorLineItemsMap[vendorName];
+        var itemsCount = 0;
+        var amount = 0;
+        var state = '';
+        angular.forEach(vendorLineItems, function(lineItem){
+            amount += ( lineItem.UnitPrice * lineItem.Quantity);
+            itemsCount += lineItem.Quantity;
+            state = lineItem.ShippingAddress.State;
+        });
+
+        var vendorShippingCriteria = _.find(VendorShippingCriteria.ByVendor, {name: vendorName}) || _.find(VendorShippingCriteria.ByState, {name: state}) || VendorShippingCriteria.ByDefault;
+
+        var shippingCalculator = vendorShippingCriteria.shippingCostFunc;
+
+        var shippingCost = shippingCalculator({
+            amount: amount,
+            itemsCount: itemsCount
+        });
+
+        return shippingCost;
+    };
+
+    vm.calculateShippingCost = function() {
+        var vendorNames = Object.keys(vm.vendorLineItemsMap);
+        var totalShippingCost = 0;
+
+        angular.forEach(vendorNames, function(vendorName){
+            totalShippingCost += vm.getShippingCostByVendor(vendorName);
+        });
+
+        return totalShippingCost;
+    };
+    
+    
     //TODO: missing unit tests
     $rootScope.$on('OC:UpdatePromotions', function(event, orderid) {
         OrderCloud.Orders.ListPromotions(orderid)
