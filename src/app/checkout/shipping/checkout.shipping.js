@@ -106,6 +106,7 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
             })
         $scope.base.currentOrder.ShippingCost = vm.calculateShippingCost();
         ShippingRates.SetShippingCost(CurrentOrder.ID, $scope.base.currentOrder.ShippingCost);
+        OrderCloud.Orders.Patch(CurrentOrder.ID, {xp: {ShippingCost: $scope.base.currentOrder.ShippingCost.toFixed(2), TaxCost: ($scope.base.currentOrder.Subtotal * $scope.checkout.shippingAddress.xp.Taxcost).toFixed(2)}})
     }, true);
 
     console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
