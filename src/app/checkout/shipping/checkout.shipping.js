@@ -105,7 +105,9 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
                 console.log("updated line items", updatedLineItems);
             })
         
-        ShippingRates.SetShippingCost(CurrentOrder.ID, vm.calculateShippingCost());
+        CurrentOrder.ShippingCost = vm.calculateShippingCost();
+        ShippingRates.SetShippingCost(CurrentOrder.ID, CurrentOrder.ShippingCost);
+        console.log('sc test',base.currentOrder);
     }, true);
 
     console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
@@ -167,7 +169,6 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
             amount: amount,
             itemCount: itemCount
         });
-        console.log('sc test', vendorName, shippingCost, vm.vendorLineItemsMap[vendorName]);
         return shippingCost;
     };
 
