@@ -104,7 +104,7 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
                 //this should have have all the updated line items. Line items should now be updated.
                 console.log("updated line items", updatedLineItems);
             })
-        
+        console.log('sc test',$scope,$scope.base);
         CurrentOrder.ShippingCost = vm.calculateShippingCost();
         ShippingRates.SetShippingCost(CurrentOrder.ID, CurrentOrder.ShippingCost);
     }, true);
