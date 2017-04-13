@@ -20,11 +20,11 @@
 		   <div class="panel-body">
             <h5>Date Submitted: <span class="pull-right">{{myOrderDetail.order.DateSubmitted | date:'short'}}</span></h5>
             <h5>Subtotal: <span class="pull-right">{{myOrderDetail.order.Subtotal | currency}}</span></h5>
-            <h5 ng-if="myOrderDetail.order.ShippingCost" class="text-muted">Shipping: <span class="pull-right"> + {{myOrderDetail.order.ShippingCost | currency}}</span></h5>
-            <h5 ng-if="myOrderDetail.order.TaxCost" class="text-muted">Tax: <span class="pull-right"> + {{myOrderDetail.order.TaxCost | currency}}</span></h5>
-            <h5 ng-repeat="promotion in myOrderDetail.promotions" class="text-danger">
-                {{promotion.Code}}
-                <span class="pull-right">- {{promotion.Amount | currency}}</span></h5>
+            <h5>Shipping: <span class="pull-right">{{myOrderDetail.order.ShippingCost | currency}}</span></h5>
+			<h5>Processing Fee: 																								
+				<span class="pull-right" ng-if="myOrderDetail.shippingAddress.xp.Taxcost > 0" >{{myOrderDetail.order.TaxCost | currency}}</span>
+				<span class="pull-right" ng-if="!myOrderDetail.shippingAddress.xp.Taxcost">{{0.00 | currency}}</span>
+			</h5>
             <hr>
             <h4>Total: <b class="pull-right text-primary">{{myOrderDetail.order.Total | currency}}</b></h4>
             <hr>
@@ -166,7 +166,7 @@
 		</div><br>
 			<div class="row text-right">
 				<h4>Subtotal:<span style="margin-left: 150px; margin-right:100px">{{myOrderDetail.getSubTotal(lineItemsList) | currency}}</span></h4>	 							
-				<h4>Shipping: <span style="margin-left: 150px; margin-right:100px">{{base.currentOrder.ShippingCost | currency}}</span></h4>
+				<h4>Shipping: <span style="margin-left: 150px; margin-right:100px">{{myOrderDetail.getShippingCostByVendor(vendorName) | currency}}</span></h4>
 				<h4>Processing Fee: 																								
 					<span style="margin-left: 150px; margin-right:100px" ng-if="myOrderDetail.shippingAddress.xp.Taxcost > 0" >{{ (myOrderDetail.getSubTotal(lineItemsList) * myOrderDetail.shippingAddress.xp.Taxcost) | currency}}</span>
 					<span style="margin-left: 150px; margin-right:100px" ng-if="!myOrderDetail.shippingAddress.xp.Taxcost">{{0.00 | currency}}</span>
@@ -174,13 +174,13 @@
 				<h4> <b class="text-primary"> Total - Order # {{lineItemsList[0].ID.substring(0,7)}} 
 					<span style="margin-left: 130px; margin-right:100px" ng-if="myOrderDetail.shippingAddress.xp.Taxcost > 0">
 						{{myOrderDetail.getSubTotal(lineItemsList) 
-						+ base.currentOrder.ShippingCost 
+						+ myOrderDetail.getShippingCostByVendor(vendorName) 
 						+ (myOrderDetail.getSubTotal(lineItemsList) 
 						* myOrderDetail.shippingAddress.xp.Taxcost) | currency}}
 					</span>
 					<span style="margin-left: 130px; margin-right:100px" ng-if="!myOrderDetail.shippingAddress.xp.Taxcost">
 						{{myOrderDetail.getSubTotal(lineItemsList) 
-						+ base.currentOrder.ShippingCost | currency}}
+						+ myOrderDetail.getShippingCostByVendor(vendorName) | currency}}
 					</span>
 				</b></h4>
 			</div>

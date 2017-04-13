@@ -167,10 +167,10 @@
                     <hr>
                     <h4>Estimated Total <b class="pull-right text-primary">
                     	<span class="pull-right" ng-if="checkout.shippingAddress.xp.Taxcost > 0">
-                    	{{base.currentOrder.Total + base.currentOrder.ShippingCost + (base.currentOrder.Subtotal * checkout.shippingAddress.xp.Taxcost) | currency}}
+                    	{{base.currentOrder.Subtotal + base.currentOrder.ShippingCost + (base.currentOrder.Subtotal * checkout.shippingAddress.xp.Taxcost) | currency}}
 	 					</span>
 	 					<span class="pull-right" ng-if="!checkout.shippingAddress.xp.Taxcost">
-                		{{base.currentOrder.Total + base.currentOrder.ShippingCost | currency}}
+                		{{base.currentOrder.Subtotal + base.currentOrder.ShippingCost | currency}}
 	 					</span>
 	 					</b>
                     </h4>

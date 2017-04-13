@@ -215,13 +215,21 @@ function MyOrdersController($state, $ocMedia, OrderCloud, ocParameters, OrderLis
     };
 }
 
-function MyOrderDetailController($state, $exceptionHandler, $scope, toastr, OrderCloud, ocConfirm, SelectedOrder, LineItemsList, SelectedPayments, LineItemList, PromotionList, CategoryList, ProductList) {
+function MyOrderDetailController($state, $exceptionHandler, $scope, toastr, OrderCloud, ocConfirm, SelectedOrder, LineItemsList, SelectedPayments, LineItemList, PromotionList, CategoryList, ProductList, VendorShippingCriteria) {
     var vm = this;
     vm.order = SelectedOrder;
     vm.list = LineItemList;
     vm.paymentList = SelectedPayments.Items;
     vm.canCancel = SelectedOrder.Status === 'Unsubmitted' || SelectedOrder.Status === 'AwaitingApproval';
     vm.promotionList = PromotionList.Meta ? PromotionList.Items : PromotionList;
+    
+    OrderCloud.Me.GetAddress(vm.order.ShippingAddressID)
+	    .then(function(address) {
+	        vm.shippingAddress = address;
+	    })
+	    .catch(function(ex) {
+	    	vm.shippingAddress = null;
+	    });
     
     vm.lineItems = LineItemsList;
     vm.vendorLineItemsMap = {};
@@ -261,6 +269,10 @@ function MyOrderDetailController($state, $exceptionHandler, $scope, toastr, Orde
     
     
     console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
+    
+    vm.getShippingCostByVendor = function(vendorName){
+        return VendorShippingCriteria.getShippingCostByVendor(vendorName, vm.vendorLineItemsMap[vendorName]);
+    };
     
     vm.getSubTotal = function(lineItemsList){
 		var total = 0.0;

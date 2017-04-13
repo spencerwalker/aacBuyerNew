@@ -133,7 +133,7 @@ function ShippingRatesService($q, $resource, OrderCloud, apiurl) {
 
 
 function VendorShippingCriteria() {
-	this.ByVendor = [
+	var ByVendor = [
 		{
 			name: 'Adventure to Fitness',
 			minOrderAmount: 0,
@@ -290,7 +290,7 @@ function VendorShippingCriteria() {
 		}
 	];
 
-	this.ByState = [
+	var ByState = [
 		{
 			name: 'CA',
 			shippingCostFunc: function(order) {
@@ -353,7 +353,7 @@ function VendorShippingCriteria() {
 		}
 	];
 	
-	this.ByDefault = {
+	var ByDefault = {
 		name: 'Other',
 		shippingCostFunc: function(order) {
 			var cost = 0;
@@ -372,5 +372,26 @@ function VendorShippingCriteria() {
 			}
 			return cost;
 		}
-	}
+	};
+	
+	this.getShippingCostByVendor = function(vendorName, vendorLineItems){
+        var itemCount = 0;
+        var amount = 0;
+        var state = '';
+        angular.forEach(vendorLineItems, function(lineItem){
+            amount += ( lineItem.UnitPrice * lineItem.Quantity);
+            itemCount += lineItem.Quantity;
+            state = lineItem.ShippingAddress.State;
+        });
+
+        var vendorShippingCriteria = _.find(ByVendor, {name: vendorName}) || _.find(ByState, {name: state}) || ByDefault;
+
+        var shippingCalculator = vendorShippingCriteria.shippingCostFunc;
+
+        var shippingCost = shippingCalculator({
+            amount: amount,
+            itemCount: itemCount
+        });
+        return shippingCost;
+    };
 }
