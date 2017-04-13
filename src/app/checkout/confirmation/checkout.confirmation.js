@@ -86,7 +86,7 @@ function checkoutConfirmationConfig($stateProvider) {
 		});
 }
 
-function CheckoutConfirmationController(SubmittedOrder, $scope, OrderShipAddress, OrderPromotions, OrderBillingAddress, OrderPayments, LineItemsList, CategoryList, ProductList) {
+function CheckoutConfirmationController(SubmittedOrder, $scope, OrderShipAddress, OrderPromotions, OrderBillingAddress, OrderPayments, LineItemsList, CategoryList, ProductList, VendorShippingCriteria) {
 	var vm = this;
 	vm.order = SubmittedOrder;
 	vm.shippingAddress = OrderShipAddress;
@@ -129,6 +129,10 @@ function CheckoutConfirmationController(SubmittedOrder, $scope, OrderShipAddress
     
     
     console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
+    
+    vm.getShippingCostByVendor = function(vendorName){
+        return VendorShippingCriteria.getShippingCostByVendor(vendorName, vm.vendorLineItemsMap[vendorName]);
+    };
     
     vm.getSubTotal = function(lineItemsList){
 		var total = 0.0;

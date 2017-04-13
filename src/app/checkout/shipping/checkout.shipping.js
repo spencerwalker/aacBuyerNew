@@ -106,7 +106,7 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
             })
         $scope.base.currentOrder.ShippingCost = vm.calculateShippingCost();
         ShippingRates.SetShippingCost(CurrentOrder.ID, $scope.base.currentOrder.ShippingCost);
-        OrderCloud.Orders.Patch(CurrentOrder.ID, {xp: {ShippingCost: $scope.base.currentOrder.ShippingCost.toFixed(2), TaxCost: ($scope.base.currentOrder.Subtotal * $scope.checkout.shippingAddress.xp.Taxcost).toFixed(2)}})
+        OrderCloud.Orders.Patch(CurrentOrder.ID, {ShippingCost: $scope.base.currentOrder.ShippingCost.toFixed(2), TaxCost: ($scope.base.currentOrder.Subtotal * $scope.checkout.shippingAddress.xp.Taxcost).toFixed(2)})
     }, true);
 
     console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
@@ -150,25 +150,7 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     }
     
     vm.getShippingCostByVendor = function(vendorName){
-        var vendorLineItems = vm.vendorLineItemsMap[vendorName];
-        var itemCount = 0;
-        var amount = 0;
-        var state = '';
-        angular.forEach(vendorLineItems, function(lineItem){
-            amount += ( lineItem.UnitPrice * lineItem.Quantity);
-            itemCount += lineItem.Quantity;
-            state = lineItem.ShippingAddress.State;
-        });
-
-        var vendorShippingCriteria = _.find(VendorShippingCriteria.ByVendor, {name: vendorName}) || _.find(VendorShippingCriteria.ByState, {name: state}) || VendorShippingCriteria.ByDefault;
-
-        var shippingCalculator = vendorShippingCriteria.shippingCostFunc;
-
-        var shippingCost = shippingCalculator({
-            amount: amount,
-            itemCount: itemCount
-        });
-        return shippingCost;
+        return VendorShippingCriteria.getShippingCostByVendor(vendorName, vm.vendorLineItemsMap[vendorName]);
     };
 
     vm.calculateShippingCost = function() {
