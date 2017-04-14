@@ -30,10 +30,10 @@
                 </div>
                 <div class="panel-body">
                      <h5>Donation Account: 
-						<span ng-if = "base.availableFunds - (base.currentOrder.Total + ((base.currentOrder.Subtotal * checkout.shippingAddress.xp.Taxcost))) > 0" >
-							({{base.availableFunds - (base.currentOrder.Total + ((base.currentOrder.Subtotal * checkout.shippingAddress.xp.Taxcost))) | currency}}  left)
+						<span ng-if = "base.availableFunds - (base.currentOrder.Subtotal + base.currentOrder.ShippingCost + (base.currentOrder.Subtotal * checkout.shippingAddress.xp.Taxcost)) > 0" >
+							({{base.availableFunds - (base.currentOrder.Subtotal + base.currentOrder.ShippingCost + (base.currentOrder.Subtotal * checkout.shippingAddress.xp.Taxcost)) | currency}}  left)
 						</span> 
-						<span ng-if = "base.availableFunds - (base.currentOrder.Total + ((base.currentOrder.Subtotal * checkout.shippingAddress.xp.Taxcost))) <= 0" >
+						<span ng-if = "base.availableFunds - (base.currentOrder.Subtotal + base.currentOrder.ShippingCost + (base.currentOrder.Subtotal * checkout.shippingAddress.xp.Taxcost)) <= 0" >
 							({{0 | currency}} left)
 						</span>
 						<b class="pull-right text-primary">{{base.availableFunds | currency}}</b>
@@ -41,8 +41,8 @@
                     <hr>
                     <h5>Balance Due:
 						<b class="pull-right text-primary">
-							<span ng-if = "base.availableFunds - (base.currentOrder.Total + ((base.currentOrder.Subtotal * checkout.shippingAddress.xp.Taxcost))) > 0" > {{0 | currency}}  </span>
-							<span ng-if = "base.availableFunds - (base.currentOrder.Total + ((base.currentOrder.Subtotal * checkout.shippingAddress.xp.Taxcost))) <= 0" > {{(base.currentOrder.Total + ((base.currentOrder.Subtotal * checkout.shippingAddress.xp.Taxcost))) - base.availableFunds | currency}} </span>
+							<span ng-if = "base.availableFunds - (base.currentOrder.Subtotal + base.currentOrder.ShippingCost + (base.currentOrder.Subtotal * checkout.shippingAddress.xp.Taxcost)) > 0" > {{0 | currency}}  </span>
+							<span ng-if = "base.availableFunds - (base.currentOrder.Subtotal + base.currentOrder.ShippingCost + (base.currentOrder.Subtotal * checkout.shippingAddress.xp.Taxcost)) <= 0" > {{base.currentOrder.Subtotal + base.currentOrder.ShippingCost + (base.currentOrder.Subtotal * checkout.shippingAddress.xp.Taxcost) - base.availableFunds | currency}} </span>
 						</b>
 					</h5>
                 </div>
