@@ -29,7 +29,7 @@
                     </h3>
                 </div>
                 <div class="panel-body">
-                     <h4>Donation Account: 
+                     <h5>Donation Account: 
 						<span ng-if = "base.availableFunds - (base.currentOrder.Total + ((base.currentOrder.Subtotal * checkout.shippingAddress.xp.Taxcost))) > 0" >
 							({{base.availableFunds - (base.currentOrder.Total + ((base.currentOrder.Subtotal * checkout.shippingAddress.xp.Taxcost))) | currency}}  left)
 						</span> 
@@ -37,14 +37,14 @@
 							({{0 | currency}} left)
 						</span>
 						<b class="pull-right text-primary">{{base.availableFunds | currency}}</b>
-					</h4>
+					</h5>
                     <hr>
-                    <h4>Balance Due:
+                    <h5>Balance Due:
 						<b class="pull-right text-primary">
 							<span ng-if = "base.availableFunds - (base.currentOrder.Total + ((base.currentOrder.Subtotal * checkout.shippingAddress.xp.Taxcost))) > 0" > {{0 | currency}}  </span>
 							<span ng-if = "base.availableFunds - (base.currentOrder.Total + ((base.currentOrder.Subtotal * checkout.shippingAddress.xp.Taxcost))) <= 0" > {{(base.currentOrder.Total + ((base.currentOrder.Subtotal * checkout.shippingAddress.xp.Taxcost))) - base.availableFunds | currency}} </span>
 						</b>
-					</h4>
+					</h5>
                 </div>
             </div>
         </div>
@@ -66,10 +66,10 @@
                     </p>
                     <hr>
                     <h5>Subtotal: All Orders <span class="pull-right">{{base.currentOrder.Subtotal | currency}}</span></h5>
-                	<h5>Shipping: <span class="pull-right">{{base.currentOrder.ShippingCost | currency}}</span></h5>  
-             	    <h5>Processing Fee: <span class="pull-right">{{((base.currentOrder.Subtotal * checkout.shippingAddress.xp.Taxcost)) | currency}}</span></h5>  
+                	<h5>Shipping: All Orders <span class="pull-right">{{base.currentOrder.ShippingCost | currency}}</span></h5>  
+             	    <h5>Processing Fee: All Orders <span class="pull-right">{{((base.currentOrder.Subtotal * checkout.shippingAddress.xp.Taxcost)) | currency}}</span></h5>  
                     <hr>
-                    <h4>Estimated Total: <b class="pull-right text-primary">{{base.currentOrder.Subtotal + base.currentOrder.ShippingCost + ((base.currentOrder.Subtotal * checkout.shippingAddress.xp.Taxcost)) | currency}}</b></h4>
+                    <h4>Estimated Total: <b class="pull-right text-primary">{{base.currentOrder.Subtotal + base.currentOrder.ShippingCost + (base.currentOrder.Subtotal * checkout.shippingAddress.xp.Taxcost) | currency}}</b></h4>
                 </div>
                 <div class="panel-footer">
                     <button type="button" class="btn btn-primary form-control" ng-disabled="OC_Checkout_Payment.$invalid" ui-sref="checkout.review">Review Order</button>

@@ -1,6 +1,6 @@
 <form name="OCProductForm" ng-submit="productQuickView.addToCart()" autocomplete="off" novalidate>
 	<div class="modal-header">
-		<button type="button" class="close" ng-click="productQuickView.cancel()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+         <button type="button" class="close" ng-click="productQuickView.cancel()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 		<h1>{{productQuickView.item.Name || productQuickView.item.ID}} <small ng-if="productQuickView.item.Name">{{productQuickView.item.ID}}</small></h1>
 	</div>
 	<div class="modal-body">
@@ -21,7 +21,7 @@
 						{{productQuickView.item.Description}}
 					</div>
 				</div>
-				<div class="panel panel-default" ng-if="productQuickView.item.StandardPriceSchedule.PriceBreaks">
+				 <div class="panel panel-default" ng-if="productQuickView.item.StandardPriceSchedule.PriceBreaks">
 					<div class="panel-heading">
 						<h3 class="panel-title">Price Breaks</h3>
 					</div>
@@ -49,5 +49,5 @@
 	</div>
 	<div class="modal-footer">
 		<button type="submit" class="btn btn-block btn-success">Add to Cart  <span ng-if="productQuickView.item.Quantity"  class="badge badge-success">{{productQuickView.findPrice(productQuickView.item.Quantity) | currency}}</span></button>
-	</div>
+	</div> 
 </form>
