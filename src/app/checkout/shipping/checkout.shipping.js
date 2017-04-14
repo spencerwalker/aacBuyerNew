@@ -104,9 +104,10 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
                 //this should have have all the updated line items. Line items should now be updated.
                 console.log("updated line items", updatedLineItems);
             })
+        $scope.base.currentOrder.TaxCost = vm.calculateTaxCost();
         $scope.base.currentOrder.ShippingCost = vm.calculateShippingCost();
         ShippingRates.SetShippingCost(CurrentOrder.ID, $scope.base.currentOrder.ShippingCost);
-        OrderCloud.Orders.Patch(CurrentOrder.ID, {ShippingCost: $scope.base.currentOrder.ShippingCost.toFixed(2), TaxCost: ($scope.base.currentOrder.Subtotal * $scope.checkout.shippingAddress.xp.Taxcost).toFixed(2)})
+        OrderCloud.Orders.Patch(CurrentOrder.ID, {ShippingCost: $scope.base.currentOrder.ShippingCost.toFixed(2), TaxCost: $scope.base.currentOrder.TaxCost.toFixed(2)})
     }, true);
 
     console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
@@ -152,6 +153,14 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     vm.getShippingCostByVendor = function(vendorName){
         return VendorShippingCriteria.getShippingCostByVendor(vendorName, vm.vendorLineItemsMap[vendorName]);
     };
+    
+    vm.getTaxCostByVendor = function(vendorName){
+    	if (!$scope.checkout.shippingAddress.xp.Taxcost) {
+    		return 0;
+    	}
+    	var lineItemsList = vm.vendorLineItemsMap[vendorName]
+    	return vm.getSubTotal(lineItemsList) * $scope.checkout.shippingAddress.xp.Taxcost;
+    };
 
     vm.calculateShippingCost = function() {
         var vendorNames = Object.keys(vm.vendorLineItemsMap);
@@ -162,6 +171,17 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
         });
 
         return totalShippingCost;
+    };
+    
+    vm.calculateTaxCost = function() {
+    	var vendorNames = Object.keys(vm.vendorLineItemsMap);
+        var totaTaxCost = 0;
+
+        angular.forEach(vendorNames, function(vendorName){
+        	totaTaxCost += vm.getTaxCostByVendor(vendorName);
+        });
+
+        return totaTaxCost;
     };
     
     
