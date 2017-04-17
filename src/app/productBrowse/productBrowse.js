@@ -24,7 +24,24 @@ function ProductBrowseConfig($urlRouterProvider, $stateProvider) {
                     return ocParameters.Get($stateParams);
                 },
                 CategoryList: function(OrderCloud) {
-                    return OrderCloud.Me.ListCategories(null, 1, 100, null, null, null, 'all');
+                	var page = 1;
+                	var categories ={};
+                	categories.Items = [];
+                	function getCategories(){
+                		return OrderCloud.Me.ListCategories(null, page, 100, null, null, null, 'all')
+                			.then(function(data){
+                			categories.Items = categories.Items.concat(data.Items);
+                			if (data.Meta.Page < data.Meta.TotalPages){
+                				page++;
+                				return getCategories();
+                			}
+                			else {
+                				return categories;
+                			}
+                		});
+                	}
+                	return getCategories();
+
                 },
                 CategoryTree: function(CategoryList) {
                     var result = [];
