@@ -7,9 +7,9 @@ angular.module('orderCloud')
         controller: AddPromotionComponentCtrl
     });
 
-function AddPromotionComponentCtrl($exceptionHandler, $rootScope, OrderCloud, toastr) {
+function AddPromotionComponentCtrl($exceptionHandler, $rootScope, OrderCloudSDK, toastr) {
     this.submit = function(orderID, promoCode) {
-        OrderCloud.Orders.AddPromotion(orderID, promoCode)
+        OrderCloudSDK.Orders.AddPromotion('outgoing', orderID, promoCode)
             .then(function(promo) {
                 $rootScope.$broadcast('OC:UpdatePromotions', orderID);
                 $rootScope.$broadcast('OC:UpdateOrder', orderID);

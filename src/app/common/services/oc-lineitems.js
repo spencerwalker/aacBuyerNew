@@ -2,7 +2,7 @@ angular.module('orderCloud')
     .factory('ocLineItems', LineItemFactory)
 ;
 
-function LineItemFactory($rootScope, $q, $uibModal, OrderCloud) {
+function LineItemFactory($rootScope, $q, $uibModal, OrderCloudSDK, catalogid, buyerid) {
     return {
         SpecConvert: _specConvert,
         AddItem: _addItem,
@@ -44,7 +44,7 @@ function LineItemFactory($rootScope, $q, $uibModal, OrderCloud) {
             Specs: _specConvert(product.Specs)
         };
         li.ShippingAddressID = isSingleShipping(order) ? getSingleShippingAddressID(order) : null;
-        OrderCloud.LineItems.Create(order.ID, li)
+        OrderCloudSDK.LineItems.Create('outgoing', order.ID, li)
             .then(function(lineItem) {
                 $rootScope.$broadcast('OC:UpdateOrder', order.ID);
                 deferred.resolve();
@@ -70,7 +70,7 @@ function LineItemFactory($rootScope, $q, $uibModal, OrderCloud) {
         var dfd = $q.defer();
         var queue = [];
         angular.forEach(productIDs, function (productid) {
-            queue.push(OrderCloud.Me.GetProduct(productid));
+            queue.push(OrderCloudSDK.Me.GetProduct(catalogid, productid));
         });
         $q.all(queue)
             .then(function (results) {
@@ -94,7 +94,7 @@ function LineItemFactory($rootScope, $q, $uibModal, OrderCloud) {
         modalInstance.result
             .then(function (address) {
                 address.ID = Math.floor(Math.random() * 1000000).toString();
-                OrderCloud.LineItems.SetShippingAddress(Order.ID, LineItem.ID, address)
+                OrderCloudSDK.LineItems.SetShippingAddress('outgoing', Order.ID, LineItem.ID, address)
                     .then(function () {
                         $rootScope.$broadcast('LineItemAddressUpdated', LineItem.ID, address);
                     });
@@ -102,9 +102,9 @@ function LineItemFactory($rootScope, $q, $uibModal, OrderCloud) {
     }
 
     function _updateShipping(Order, LineItem, AddressID) {
-        OrderCloud.Addresses.Get(AddressID)
+        OrderCloudSDK.Addresses.Get(buyerid, AddressID)
             .then(function (address) {
-                OrderCloud.LineItems.SetShippingAddress(Order.ID, LineItem.ID, address);
+                OrderCloudSDK.LineItems.SetShippingAddress('outgoing', Order.ID, LineItem.ID, address);
                 $rootScope.$broadcast('LineItemAddressUpdated', LineItem.ID, address);
             });
     }
@@ -113,14 +113,19 @@ function LineItemFactory($rootScope, $q, $uibModal, OrderCloud) {
         var li;
         var dfd = $q.defer();
         var queue = [];
-        OrderCloud.LineItems.List(orderID, null, 1, 100)
+        var opts = {
+            page: 1,
+            pageSize: 100
+        };
+        OrderCloudSDK.LineItems.List('outgoing', orderID, opts)
             .then(function (data) {
                 li = data;
                 if (data.Meta.TotalPages > data.Meta.Page) {
                     var page = data.Meta.Page;
                     while (page < data.Meta.TotalPages) {
                         page += 1;
-                        queue.push(OrderCloud.LineItems.List(orderID, null, page, 100));
+                        opts.page = page;
+                        queue.push(OrderCloudSDK.LineItems.List('outgoing', orderID, opts));
                     }
                 }
                 $q.all(queue)

@@ -24,7 +24,7 @@ function AutoLoginService($q, $window, $state, toastr, OrderCloud, TokenRefresh,
     };
 }
 
-function AutoLoginController($state, $stateParams, $exceptionHandler, OrderCloud, LoginService, TokenRefresh, buyerid, $http) {
+function AutoLoginController($state, $stateParams, $exceptionHandler, OrderCloud, OrderCloudSDK, LoginService, TokenRefresh, buyerid, $http) {
     var vm = this;
 
     vm.token = $stateParams.token;
@@ -36,7 +36,7 @@ function AutoLoginController($state, $stateParams, $exceptionHandler, OrderCloud
     vm.form = 'login';
     vm.submit = function() {
         OrderCloud.BuyerID.Set(buyerid);
-        OrderCloud.Auth.SetToken(vm.token);
+        OrderCloudSDK.Auth.SetToken(vm.token);
         /*if(vm.catid){
         	console.log('Inside if Submit');
           $state.go('categoryBrowse', {'categoryid':vm.catid});

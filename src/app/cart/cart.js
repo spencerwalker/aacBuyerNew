@@ -15,9 +15,9 @@ function CartConfig($stateProvider) {
                 pageTitle: "Shopping Cart"
             },
             resolve: {
-                LineItemsList: function($q, $state, toastr, OrderCloud, ocLineItems, CurrentOrder) {
+                LineItemsList: function($q, $state, toastr, OrderCloudSDK, ocLineItems, CurrentOrder) {
                     var dfd = $q.defer();
-                    OrderCloud.LineItems.List(CurrentOrder.ID)
+                    OrderCloudSDK.LineItems.List('outgoing', CurrentOrder.ID)
                         .then(function(data) {
                             if (!data.Items.length) {
                                 dfd.resolve(data);
@@ -35,24 +35,28 @@ function CartConfig($stateProvider) {
                         });
                     return dfd.promise;
                 },
-                CurrentPromotions: function(CurrentOrder, OrderCloud) {
-                    return OrderCloud.Orders.ListPromotions(CurrentOrder.ID);
+                CurrentPromotions: function(CurrentOrder, OrderCloudSDK) {
+                    return OrderCloudSDK.Orders.ListPromotions('outgoing', CurrentOrder.ID);
                 
                 },
                 
-                CategoryList: function($stateParams, OrderCloud) {
-                    var depth = 1;
-                    return OrderCloud.Me.ListCategories(null, null, null, null, null, {ParentID: $stateParams.categoryid}, depth);
+                CategoryList: function($stateParams, OrderCloudSDK) {
+                    var opts = {
+                        depth: 1,
+                        filters: {ParentID: $stateParams.categoryid}
+                    };
+                    return OrderCloudSDK.Me.ListCategories(opts);
                 },
-                ProductList: function($stateParams, OrderCloud) {
-                    return OrderCloud.Me.ListProducts(null, null, null, null, null, null, $stateParams.categoryid);
+                ProductList: function($stateParams, OrderCloudSDK) {
+                    var opts = {catalogID: $stateParams.categoryid };
+                    return OrderCloudSDK.Me.ListProducts(opts);
 
                 }
             }
         });
 }
 
-function CartController($rootScope, $scope,  $state, toastr, OrderCloud, LineItemsList, CurrentPromotions, ocConfirm, CategoryList, ProductList) {
+function CartController($rootScope, $scope,  $state, toastr, OrderCloudSDK, LineItemsList, CurrentPromotions, ocConfirm, CategoryList, ProductList) {
     var vm = this;
     vm.vendorLineItemsMap = {};
     
@@ -89,7 +93,7 @@ function CartController($rootScope, $scope,  $state, toastr, OrderCloud, LineIte
     vm.promotions = CurrentPromotions.Meta ? CurrentPromotions.Items : CurrentPromotions;
     vm.removeItem = function(order, scope) {
         vm.lineLoading = [];
-        vm.lineLoading[scope.$index] = OrderCloud.LineItems.Delete(order.ID, scope.lineItem.ID)
+        vm.lineLoading[scope.$index] = OrderCloudSDK.LineItems.Delete('outgoing', order.ID, scope.lineItem.ID)
             .then(function () {
                 $rootScope.$broadcast('OC:UpdateOrder', order.ID);
                 vm.lineItems.Items.splice(scope.$index, 1);
@@ -99,7 +103,7 @@ function CartController($rootScope, $scope,  $state, toastr, OrderCloud, LineIte
 
     //TODO: missing unit tests
     vm.removePromotion = function(order, scope) {
-        OrderCloud.Orders.RemovePromotion(order.ID, scope.promotion.Code)
+        OrderCloudSDK.Orders.RemovePromotion('outgoing', order.ID, scope.promotion.Code)
             .then(function() {
                 $rootScope.$broadcast('OC:UpdateOrder', order.ID);
                 vm.promotions.splice(scope.$index, 1);
@@ -109,7 +113,7 @@ function CartController($rootScope, $scope,  $state, toastr, OrderCloud, LineIte
     vm.cancelOrder = function(order){
         ocConfirm.Confirm("Are you sure you want cancel this order?")
             .then(function() {
-                OrderCloud.Orders.Delete(order.ID)
+                OrderCloudSDK.Orders.Delete('outgoing', order.ID)
                     .then(function(){
                         $state.go("productBrowse.products",{}, {reload:'base'})
                     });
@@ -125,7 +129,7 @@ function CartController($rootScope, $scope,  $state, toastr, OrderCloud, LineIte
 	}
     //TODO: missing unit tests
     $rootScope.$on('OC:UpdatePromotions', function(event, orderid) {
-        OrderCloud.Orders.ListPromotions(orderid)
+        OrderCloudSDK.Orders.ListPromotions('outgoing', orderid)
             .then(function(data) {
                 if (data.Meta) {
                     vm.promotions = data.Items;

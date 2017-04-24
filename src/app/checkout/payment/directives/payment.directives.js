@@ -34,47 +34,42 @@ function OCPaymentPurchaseOrder() {
 	}
 }
 
-function PaymentPurchaseOrderController($scope, $rootScope, toastr, OrderCloud, $exceptionHandler) {
-	if (!$scope.payment) {
-		OrderCloud.Payments.List($scope.order.ID)
-			.then(function(data) {
-				if (data.Items.length) {
-					OrderCloud.Payments.Patch($scope.order.ID, data.Items[0].ID, {
-						Type: 'PurchaseOrder',
-						CreditCardID: null,
-						SpendingAccountID: null,
-						Amount: null
-					}).then(function(data) {
-						$scope.payment = data;
-					});
-				} else {
-					OrderCloud.Payments.Create($scope.order.ID, {Type: 'PurchaseOrder'})
-						.then(function(data) {
-							$scope.payment = data;
-						});
-				}
-			});
-	} else if (!($scope.payment.Type == "PurchaseOrder" && $scope.payment.CreditCardID == null && $scope.payment.SpendingAccountID == null)) {
-		$scope.payment.Type = "PurchaseOrder";
-		$scope.payment.CreditCardID = null;
-		$scope.payment.SpendingAccountID = null;
-		OrderCloud.Payments.Patch($scope.order.ID, $scope.payment.ID, $scope.payment).then(function() {
-			toastr.success('Paying by purchase order', 'Purchase Order Payment');
-			$rootScope.$broadcast('OC:PaymentsUpdated');
-		});
-	}
+function PaymentPurchaseOrderController($scope, $rootScope, toastr, OrderCloudSDK, $exceptionHandler) {
+    if (!$scope.payment) {
+        OrderCloudSDK.Payments.List('outgoing', $scope.order.ID)
+            .then(function(data) {
+                if (data.Items.length) {
+                    $scope.payment.Items[0];
+                } else {
+                    var payment = {
+                        Type: 'PurchaseOrder',
+                        DateCreated: new Date().toISOString(),
+                        CreditCardID: null,
+                        SpendingAccountID: null,
+                        Description: null,
+                        Amount: $scope.order.Total,
+                        xp: {},
+                        Editing: true
+                    };
+                    $scope.payment = payment;
+                }
+            });
+    } else if (!($scope.payment.Type == 'PurchaseOrder' && $scope.payment.CreditCardID == null && $scope.payment.SpendingAccountID == null)) {
+        $scope.payment.Type = 'PurchaseOrder';
+        $scope.payment.CreditCardID = null;
+        $scope.payment.SpendingAccountID = null;
+    } else {
+        $scope.payment.CreditCardID = null;
+        $scope.payment.SpendingAccountID = null;
+    }
 
-	$scope.updatePayment = function() {
-		if ($scope.payment.xp && $scope.payment.xp.PONumber && (!$scope.payment.xp.PONumber.length)) $scope.payment.xp.PONumber = null;
-		OrderCloud.Payments.Update($scope.order.ID, $scope.payment.ID, $scope.payment)
-			.then(function() {
-				toastr.success('Purchase Order Number Saved');
-				$rootScope.$broadcast('OC:PaymentsUpdated');
-			})
-			.catch(function(ex) {
-				$exceptionHandler(ex);
-			});
-	}
+    $scope.$watch('payment', function(n, o) {
+        if (n.Editing) {
+            $scope.OCPaymentPurchaseOrder.$setValidity('PurchaseOrderNotSaved', false);
+        } else {
+            $scope.OCPaymentPurchaseOrder.$setValidity('PurchaseOrderNotSaved', true);
+        }
+    }, true);
 }
 
 function OCPaymentSpendingAccount() {
@@ -91,68 +86,72 @@ function OCPaymentSpendingAccount() {
 	}
 }
 
-function PaymentSpendingAccountController($scope, $rootScope, toastr, OrderCloud, $exceptionHandler) {
-	OrderCloud.Me.ListSpendingAccounts(null, 1, 100, null, null, {RedemptionCode: '!*', AllowAsPaymentMethod: true})
-		.then(function(data) {
-			$scope.spendingAccounts = data.Items;
-		});
+function PaymentSpendingAccountController($scope, $rootScope, toastr, OrderCloudSDK, ocCheckoutPaymentService) {
+    if (!$scope.payment) {
+        OrderCloudSDK.Payments.List('outgoing', $scope.order.ID)
+            .then(function(data) {
+                if (data.Items.length) {
+                    $scope.payment = data.Items[0];
+                    $scope.showPaymentOptions = false;
+                    getSpendingAccounts();
+                } else {
+                    var payment = {
+                        Type: 'SpendingAccount',
+                        DateCreated: new Date().toISOString(),
+                        CreditCardID: null,
+                        SpendingAccountID: null,
+                        Description: null,
+                        Amount: $scope.order.Total,
+                        xp: {}
+                    };
+                    $scope.payment = payment;
+                    getSpendingAccounts();
+                }
+            });
+    } else {
+        delete $scope.payment.CreditCardID;
+        if ($scope.payment.xp && $scope.payment.xp.PONumber) $scope.payment.xp.PONumber = null;
+        getSpendingAccounts();
+    }
 
-	if (!$scope.payment) {
-		OrderCloud.Payments.List($scope.order.ID)
-			.then(function(data) {
-				if (data.Items.length) {
-					OrderCloud.Payments.Patch($scope.order.ID, data.Items[0].ID, {
-						Type: 'SpendingAccount',
-						xp: {
-							PONumber:null
-						},
-						CreditCardID:null,
-						SpendingAccountID:null,
-						Amount:null
-					}).then(function(data) {
-						$scope.payment = data;
-						if (!$scope.payment.SpendingAccountID) $scope.showPaymentOptions = true;
-					});
-				} else {
-					OrderCloud.Payments.Create($scope.order.ID, {Type: 'SpendingAccount'})
-						.then(function(data) {
-							$scope.payment = data;
-							$scope.showPaymentOptions = true;
-						});
-				}
-			});
-	} else {
-		delete $scope.payment.CreditCardID;
-		if ($scope.payment.xp && $scope.payment.xp.PONumber) $scope.payment.xp.PONumber = null;
-		if (!$scope.payment.SpendingAccountID) $scope.showPaymentOptions = true;
-	}
+    function getSpendingAccounts() {
+        var spendingAccountListOptions = {
+            page: 1,
+            pageSize: 100,
+            filters: {RedemptionCode: '!*', AllowAsPaymentMethod: true}
+        };
+        OrderCloudSDK.Me.ListSpendingAccounts(spendingAccountListOptions)
+            .then(function(data) {
+                $scope.spendingAccounts = data.Items;
+                if ($scope.payment.SpendingAccountID) {
+                    $scope.payment.SpendingAccount = _.findWhere($scope.spendingAccounts, {ID: $scope.payment.SpendingAccountID});
+                } else {
+                    $scope.showPaymentOptions = true;
+                }
+            });
+    }
 
-	$scope.changePayment = function() {
-		$scope.showPaymentOptions = true;
-	};
+    $scope.changePaymentAccount = function() {
+        ocCheckoutPaymentService.SelectPaymentAccount($scope.payment, $scope.order)
+            .then(function(payment) {
+                $scope.payment = payment;
+                $scope.OCPaymentSpendingAccount.$setValidity('SpendingAccountNotSet', true);
+                $rootScope.$broadcast('OCPaymentUpdated', payment);
+            });
+    };
 
-	$scope.updatePayment = function(scope) {
-		var oldSelection = angular.copy($scope.payment.SpendingAccountID);
-		$scope.payment.SpendingAccountID = scope.spendingAccount.ID;
-		$scope.updatingSpendingAccountPayment = OrderCloud.Payments.Update($scope.order.ID, $scope.payment.ID, $scope.payment)
-			.then(function() {
-				$scope.showPaymentOptions = false;
-				toastr.success('Using ' + scope.spendingAccount.Name,'Spending Account Payment');
-				$rootScope.$broadcast('OC:PaymentsUpdated');
-			})
-			.catch(function(ex) {
-				$scope.payment.SpendingAccountID = oldSelection;
-				$exceptionHandler(ex);
-			});
-	};
+    $scope.$watch('payment', function(n, o) {
+        if (n && !n.SpendingAccountID || n.Editing) {
+            $scope.OCPaymentSpendingAccount.$setValidity('SpendingAccountNotSet', false);
+        } else {
+            $scope.OCPaymentSpendingAccount.$setValidity('SpendingAccountNotSet', true);
+        }
 
-	$scope.$watch('payment', function(n,o) {
-		if (n && !n.SpendingAccountID) {
-			$scope.OCPaymentSpendingAccount.$setValidity('SpendingAccount_Not_Set', false);
-		} else {
-			$scope.OCPaymentSpendingAccount.$setValidity('SpendingAccount_Not_Set', true);
-		}
-	}, true);
+        if (n.SpendingAccountID) n.SpendingAccount = _.findWhere($scope.spendingAccounts, {ID: $scope.payment.SpendingAccountID});
+        $scope.showPaymentOptions = n.Editing;
+        if (n.CreditCardID) delete n.CreditCardID;
+        if (n.xp && n.xp.PONumber) delete n.xp.PONumber;
+    }, true);
 }
 
 function OCPaymentCreditCard() {
@@ -169,77 +168,90 @@ function OCPaymentCreditCard() {
 	}
 }
 
-function PaymentCreditCardController($scope, $rootScope, toastr, $filter, OrderCloud, MyPaymentCreditCardModal, $exceptionHandler) {
-	OrderCloud.Me.ListCreditCards(null, 1, 100, null, null, {})
-		.then(function(data) {
-			$scope.creditCards = data.Items;
-		});
+function PaymentCreditCardController($scope, $rootScope, toastr, CheckoutConfig, OrderCloudSDK, ocCheckoutPaymentService, ocMyCreditCards) {
+    var creditCardListOptions = {
+        page: 1,
+        pageSize: 100
+    };
+    OrderCloudSDK.Me.ListCreditCards(creditCardListOptions)
+        .then(function(data) {
+            $scope.creditCards = data.Items;
+        });
 
-	if (!$scope.payment) {
-		OrderCloud.Payments.List($scope.order.ID)
-			.then(function(data) {
-				if (data.Items.length) {
-					OrderCloud.Payments.Patch($scope.order.ID, data.Items[0].ID, {
-						Type: 'CreditCard',
-						xp: {
-							PONumber: null
-						},
-						SpendingAccountID: null,
-						Amount: null
-					}).then(function(data) {
-						$scope.payment = data;
-						if (!$scope.payment.SpendingAccountID) $scope.showPaymentOptions = true;
-					});
-				} else {
-					OrderCloud.Payments.Create($scope.order.ID, {Type: 'CreditCard'})
-						.then(function(data) {
-							$scope.payment = data;
-							$scope.showPaymentOptions = true;
-						});
-				}
-			});
-	} else {
-		delete $scope.payment.SpendingAccountID;
-		if ($scope.payment.xp && $scope.payment.xp.PONumber) $scope.payment.xp.PONumber = null;
-		if (!$scope.payment.CreditCardID) $scope.showPaymentOptions = true;
-	}
+    if (!$scope.payment) {
+        OrderCloudSDK.Payments.List('outgoing', $scope.order.ID)
+            .then(function(data) {
+                if (data.Items.length) {
+                    $scope.payment = data.Items[0];
+                    $scope.showPaymentOptions = false;
+                    getCreditCards();
+                } else {
+                    var payment = {
+                        Type: CheckoutConfig.AvailablePaymentMethods[0],
+                        DateCreated: new Date().toISOString(),
+                        CreditCardID: null,
+                        SpendingAccountID: null,
+                        Description: null,
+                        Amount: $scope.order.Total,
+                        xp: {}
+                    };
+                    $scope.payment = payment;
+                    getCreditCards();
+                }
+            });
+    } else {
+        delete $scope.payment.SpendingAccountID;
+        if ($scope.payment.xp && $scope.payment.xp.PONumber) $scope.payment.xp.PONumber = null;
+        getCreditCards();
+    }
 
-	$scope.changePayment = function() {
-		$scope.showPaymentOptions = true;
-	};
+    function getCreditCards() {
+        var creditCardListOptions = {
+            page: 1,
+            pageSize: 100
+        };
+        OrderCloudSDK.Me.ListCreditCards(creditCardListOptions)
+            .then(function(data) {
+                $scope.creditCards = data.Items;
+                if ($scope.payment.CreditCardID) {
+                    $scope.payment.CreditCard = _.findWhere($scope.creditCards, {ID: $scope.payment.CreditCardID});
+                } else {
+                    $scope.showPaymentOptions = true;
+                }
+            });
+    }
 
-	$scope.$watch('payment', function(n,o) {
-		if (n && !n.CreditCardID) {
-			$scope.OCPaymentCreditCard.$setValidity('CreditCard_Not_Set', false);
-		} else {
-			$scope.OCPaymentCreditCard.$setValidity('CreditCard_Not_Set', true);
+    $scope.changePaymentAccount = function() {
+        ocCheckoutPaymentService.SelectPaymentAccount($scope.payment, $scope.order)
+            .then(function(payment) {
+                $scope.payment = payment;
+                $scope.OCPaymentCreditCard.$setValidity('CreditCardNotSet', true);
+                $rootScope.$broadcast('OCPaymentUpdated', payment);
+            });
+    };
 
-		}
-	}, true);
+    $scope.$watch('payment', function(n) {
+        if (n && !n.CreditCardID || n.Editing) {
+            $scope.OCPaymentCreditCard.$setValidity('CreditCardNotSet', false);
+        } else {
+            $scope.OCPaymentCreditCard.$setValidity('CreditCardNotSet', true);
 
-	$scope.updatePayment = function(scope) {
-		var oldSelection = angular.copy($scope.payment.CreditCardID);
-		$scope.payment.CreditCardID = scope.creditCard.ID;
-		$scope.updatingCreditCardPayment = OrderCloud.Payments.Update($scope.order.ID, $scope.payment.ID, $scope.payment)
-			.then(function() {
-				$scope.showPaymentOptions = false;
-				toastr.success('Using ' + $filter('humanize')(scope.creditCard.CardType) + ' ending in ' + scope.creditCard.PartialAccountNumber,'Credit Card Payment');
-				$rootScope.$broadcast('OC:PaymentsUpdated');
-			})
-			.catch(function(ex) {
-				$scope.payment.CreditCardID = oldSelection;
-				$exceptionHandler(ex);
-			});
-	};
+        }
 
-	$scope.createCreditCard = function() {
-		MyPaymentCreditCardModal.Create()
-			.then(function(card) {
-				toastr.success('Credit Card Created', 'Success');
-				$scope.creditCards.push(card);
-				$scope.updatePayment({creditCard:card});
-			});
-	};
+        if (n.CreditCardID) n.CreditCard = _.findWhere($scope.creditCards, {ID: $scope.payment.CreditCardID});
+        $scope.showPaymentOptions = n.Editing;
+        if (n.SpendingAccountID) delete n.SpendingAccountID;
+        if (n.xp && n.xp.PONumber) delete n.xp.PONumber;
+    }, true);
+
+    $scope.createCreditCard = function() {
+        ocMyCreditCards.Create()
+            .then(function(card) {
+                toastr.success('Credit card ending in ' + card.PartialAccountNumber + ' was saved.');
+                $scope.creditCards.push(card);
+                $scope.updatePayment({creditCard:card});
+            });
+    };
 }
 
 function OCPayment() {
@@ -258,35 +270,95 @@ function OCPayment() {
 	}
 }
 
-function PaymentController($scope, $rootScope, OrderCloud, CheckoutConfig) {
-	if (!$scope.methods) $scope.methods = CheckoutConfig.AvailablePaymentMethods;
-	if (!$scope.payment) {
-		OrderCloud.Payments.List($scope.order.ID)
-			.then(function(data) {
-				if (CheckoutPaymentService.PaymentsExceedTotal(data, $scope.order.Total)) {
-					CheckoutPaymentService.RemoveAllPayments(data, $scope.order)
-						.then(function(data) {
-							OrderCloud.Payments.Create($scope.order.ID, {Type: CheckoutConfig.AvailablePaymentMethods[0]})
-								.then(function(data) {
-									$scope.payment = data;
-									$rootScope.$broadcast('OC:PaymentsUpdated');
-								});
-						});
-				}
-				else if (data.Items.length) {
-					$scope.payment = data.Items[0];
-					if ($scope.methods.length == 1) $scope.payment.Type = $scope.methods[0];
-				} else {
-					OrderCloud.Payments.Create($scope.order.ID, {Type: CheckoutConfig.AvailablePaymentMethods[0]})
-						.then(function(data) {
-							$scope.payment = data;
-							$rootScope.$broadcast('OC:PaymentsUpdated');
-						});
-				}
-			});
-	} else if ($scope.methods.length == 1) {
-		$scope.payment.Type = $scope.methods[0];
-	}
+function PaymentController($scope, $rootScope, OrderCloudSDK, CheckoutConfig, ocCheckoutPaymentService) {
+    if (!$scope.methods) $scope.methods = CheckoutConfig.AvailablePaymentMethods;
+    if (!$scope.payment) {
+        OrderCloudSDK.Payments.List('outgoing', $scope.order.ID)
+            .then(function(data) {
+                if (ocCheckoutPaymentService.PaymentsExceedTotal(data, $scope.order.Total)) {
+                    ocCheckoutPaymentService.RemoveAllPayments(data, $scope.order)
+                        .then(function(data) {
+                            var payment = {
+                                Type: CheckoutConfig.AvailablePaymentMethods[0],
+                                DateCreated: new Date().toISOString(),
+                                CreditCardID: null,
+                                SpendingAccountID: null,
+                                Description: null,
+                                Amount: $scope.order.Total,
+                                xp: {}
+                            };
+                            $scope.payment = payment;
+                        });
+                }
+                else if (data.Items.length) {
+                    $scope.payment = data.Items[0];
+                    if ($scope.methods.length == 1) $scope.payment.Type = $scope.methods[0];
+                } else {
+                    var payment = {
+                        Type: CheckoutConfig.AvailablePaymentMethods[0],
+                        DateCreated: new Date().toISOString(),
+                        CreditCardID: null,
+                        SpendingAccountID: null,
+                        Description: null,
+                        Amount: $scope.order.Total,
+                        xp: {},
+                        Editing: true
+                    };
+                    $scope.payment = payment;
+                }
+            });
+    } else if ($scope.methods.length == 1) {
+        $scope.payment.Type = $scope.methods[0];
+    }
+
+    $rootScope.$on('OCPaymentUpdated', function(event, payment) {
+        $scope.payment = payment;
+    });
+
+    $scope.savePayment = function(payment) {
+        if (payment.ID) {
+            OrderCloudSDK.Payments.Delete('outgoing', $scope.order.ID, payment.ID)
+                .then(function() {
+                    delete payment.ID;
+                    createPayment(payment);
+                });
+        } else {
+            createPayment(payment);
+        }
+
+        function createPayment(newPayment) {
+            if (angular.isDefined(newPayment.Accepted)) delete newPayment.Accepted;
+            OrderCloudSDK.Payments.Create('outgoing', $scope.order.ID, newPayment)
+                .then(function(data) {
+                    data.Editing = false;
+                    $scope.OCPayment.$setValidity('ValidPayment', true);
+                    $scope.payment = data;
+                });
+        }
+    };
+
+
+    $scope.paymentValid = function(payment) {
+        if (!payment || payment.Editing || payment.Amount != $scope.order.Total) return false; //TODO: refactor for multiple payments
+
+        var valid = false;
+
+        switch(payment.Type) {
+            case 'CreditCard':
+                valid = payment.CreditCardID != null;
+                break;
+            case 'SpendingAccount':
+                valid = payment.SpendingAccountID != null;
+                break;
+            case 'PurchaseOrder':
+                valid = true;
+                break;
+        }
+
+        $scope.OCPayment.$setValidity('ValidPayment', (valid && !payment.Editing));
+
+        return valid;
+    };
 }
 
 function OCPayments() {
@@ -301,78 +373,86 @@ function OCPayments() {
 	}
 }
 
-function PaymentsController($rootScope, $scope, $exceptionHandler, toastr, OrderCloud, CheckoutPaymentService, CheckoutConfig) {
-	if (!$scope.methods) $scope.methods = CheckoutConfig.AvailablePaymentMethods;
+function PaymentsController($rootScope, $scope, $exceptionHandler, toastr, OrderCloudSDK, ocCheckoutPaymentService, CheckoutConfig) {
+    if (!$scope.methods) $scope.methods = CheckoutConfig.AvailablePaymentMethods;
 
-	OrderCloud.Payments.List($scope.order.ID)
-		.then(function(data) {
-			if (!data.Items.length) {
-				$scope.payments = {Items: []};
-				$scope.addNewPayment();
-			}
-			else if (CheckoutPaymentService.PaymentsExceedTotal(data, $scope.order.Total)) {
-				CheckoutPaymentService.RemoveAllPayments(data, $scope.order)
-					.then(function(data) {
-						$scope.payments = {Items: []};
-						$scope.addNewPayment();
-					});
-			}
-			else {
-				$scope.payments = data;
-				calculateMaxTotal();
-			}
-		});
+    OrderCloudSDK.Payments.List('outgoing', $scope.order.ID)
+        .then(function(data) {
+            if (!data.Items.length) {
+                $scope.payments = {Items: []};
+                $scope.addNewPayment(false);
+            }
+            else if (ocCheckoutPaymentService.PaymentsExceedTotal(data, $scope.order.Total)) {
+                ocCheckoutPaymentService.RemoveAllPayments(data, $scope.order)
+                    .then(function(data) {
+                        $scope.payments = {Items: []};
+                        $scope.addNewPayment(false);
+                    });
+            }
+            else {
+                $scope.payments = data;
+                calculateMaxTotal();
+            }
+        });
 
-	$scope.addNewPayment = function() {
-		OrderCloud.Payments.Create($scope.order.ID, {Type: CheckoutConfig.AvailablePaymentMethods[0]})
-			.then(function(data) {
-				$scope.payments.Items.push(data);
-				calculateMaxTotal();
-				toastr.success('Payment Added');
-			});
-	};
+    $scope.addNewPayment = function(notify) {
+        var paymentTotal = $scope.order.Total - _.reduce($scope.payments.Items, function(sum, payment) { return payment.Amount + sum; }, 0);
+        var payment = {
+            Type: CheckoutConfig.AvailablePaymentMethods[0],
+            DateCreated: new Date().toISOString(),
+            CreditCardID: null,
+            SpendingAccountID: null,
+            Description: null,
+            Amount: paymentTotal,
+            xp: {}
+        };
+        $scope.payments.Items.push(payment);
+        calculateMaxTotal();
+    };
 
-	$scope.removePayment = function(scope) {
-		OrderCloud.Payments.Delete($scope.order.ID, scope.payment.ID)
-			.then(function() {
-				$scope.payments.Items.splice(scope.$index, 1);
-				calculateMaxTotal();
-				toastr.success('Payment Removed');
-			});
-	};
+    $scope.removePayment = function(scope) {
+        // TODO: when api bug EX-1053 is fixed refactor this to simply delete the payment
 
-	$scope.updatePaymentAmount = function(scope) {
-		if (scope.payment.Amount > scope.payment.MaxAmount || !scope.payment.Amount) return;
-		OrderCloud.Payments.Update($scope.order.ID, scope.payment.ID, scope.payment)
-			.then(function(data) {
-				toastr.success('Payment Amount Updated');
-				calculateMaxTotal();
-			})
-			.catch(function(ex) {
-				$exceptionHandler(ex);
-			});
-	};
+        return OrderCloudSDK.Payments.Delete('outgoing', $scope.order.ID, scope.payment.ID)
+            .then(function(){
+                $scope.payments.Items.splice(scope.$index, 1);
+                calculateMaxTotal();
+                return toastr.success('Payment removed.');
+            });
+    };
 
-	$rootScope.$on('OC:PaymentsUpdated', function() {
-		calculateMaxTotal();
-	});
+    $scope.updatePaymentAmount = function(scope) {
+        if (scope.payment.Amount > scope.payment.MaxAmount || !scope.payment.Amount) return;
+        //TODO: Buyer Users currently cannot patch a payment - we need to refactor for multiple payments
+        OrderCloudSDK.Payments.Patch('outgoing', $scope.order.ID, scope.payment.ID, scope.payment)
+            .then(function(data) {
+                toastr.success('Payment amount updated to ' + $filter('currency')(scope.payment.Amount));
+                calculateMaxTotal();
+            })
+            .catch(function(ex) {
+                $exceptionHandler(ex);
+            });
+    };
+
+    $rootScope.$on('OC:PaymentsUpdated', function() {
+        calculateMaxTotal();
+    });
 
 
-	function calculateMaxTotal() {
-		var paymentTotal = 0;
-		$scope.excludeOptions = {
-			SpendingAccounts: [],
-			CreditCards: []
-		};
-		angular.forEach($scope.payments.Items, function(payment) {
-			paymentTotal += payment.Amount;
-			if (payment.SpendingAccountID) $scope.excludeOptions.SpendingAccounts.push(payment.SpendingAccountID);
-			if (payment.CreditCardID) $scope.excludeOptions.CreditCards.push(payment.CreditCardID);
-			var maxAmount = $scope.order.Subtotal + $scope.order.ShippingCost + $scope.order.TaxCost - _.reduce(_.pluck($scope.payments.Items, 'Amount'), function(a, b) {return a + b; });
-			payment.MaxAmount = (payment.Amount + maxAmount).toFixed(2);
-			// alert(maxAmount + '    ' + payment.MaxAmount);
-		});
-		$scope.canAddPayment = paymentTotal < $scope.order.Total;
-		if($scope.OCPayments) $scope.OCPayments.$setValidity('Insufficient_Payment', !$scope.canAddPayment);
-	}
+    function calculateMaxTotal() {
+        var paymentTotal = 0;
+        $scope.excludeOptions = {
+            SpendingAccounts: [],
+            CreditCards: []
+        };
+        angular.forEach($scope.payments.Items, function(payment) {
+            paymentTotal += payment.Amount;
+            if (payment.SpendingAccountID) $scope.excludeOptions.SpendingAccounts.push(payment.SpendingAccountID);
+            if (payment.CreditCardID) $scope.excludeOptions.CreditCards.push(payment.CreditCardID);
+            var maxAmount = $scope.order.Total - _.reduce(_.pluck($scope.payments.Items, 'Amount'), function(a, b) {return a + b; });
+            payment.MaxAmount = (payment.Amount + maxAmount).toFixed(2);
+        });
+        $scope.canAddPayment = paymentTotal < $scope.order.Total;
+        if($scope.OCPayments) $scope.OCPayments.$setValidity('Insufficient_Payment', !$scope.canAddPayment);
+    }
 }

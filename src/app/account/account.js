@@ -22,7 +22,7 @@ function AccountConfig($stateProvider) {
 	;
 }
 
-function AccountService($q, $uibModal, OrderCloud, toastr) {
+function AccountService($q, $uibModal, OrderCloudSDK, toastr) {
 	var service = {
 		Update: _update,
 		ChangePassword: _changePassword
@@ -32,7 +32,7 @@ function AccountService($q, $uibModal, OrderCloud, toastr) {
 		var deferred = $q.defer();
 
 		function updateUser() {
-			OrderCloud.Me.Update(newProfile)
+			OrderCloudSDK.Me.Update(newProfile)
 				.then(function(data) {
 					deferred.resolve(data);
 				})
@@ -53,7 +53,7 @@ function AccountService($q, $uibModal, OrderCloud, toastr) {
 				Password: password
 			};
 
-			OrderCloud.Auth.GetToken(checkPasswordCredentials)
+			OrderCloudSDK.GetToken(checkPasswordCredentials)
 				.then(function() {
 					updateUser();
 					toastr.success('Account changes were saved.', 'Success!');
@@ -78,13 +78,13 @@ function AccountService($q, $uibModal, OrderCloud, toastr) {
 
 		function changePassword() {
 			currentUser.Password = currentUser.NewPassword;
-			OrderCloud.Me.Update(currentUser)
+			OrderCloudSDK.Me.Update(currentUser)
 				.then(function() {
 					deferred.resolve();
 				});
 		}
 
-		OrderCloud.Auth.GetToken(checkPasswordCredentials)
+		OrderCloudSDK.GetToken(checkPasswordCredentials)
 			.then(function() {
 				changePassword();
 			})

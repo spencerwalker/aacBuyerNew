@@ -14,9 +14,9 @@ function checkoutShippingConfig($stateProvider) {
                 pageTitle: "Delivery Address"
             },
             resolve: {
-                LineItemsList: function($q, $state, toastr, OrderCloud, ocLineItems, CurrentOrder) {
+                LineItemsList: function($q, $state, toastr, OrderCloudSDK, ocLineItems, CurrentOrder) {
                     var dfd = $q.defer();
-                    OrderCloud.LineItems.List(CurrentOrder.ID)
+                    OrderCloudSDK.LineItems.List('outgoing', CurrentOrder.ID)
                         .then(function(data) {
                             if (!data.Items.length) {
                                 dfd.resolve(data);
@@ -34,23 +34,27 @@ function checkoutShippingConfig($stateProvider) {
                         });
                     return dfd.promise;
                 },
-                CurrentPromotions: function(CurrentOrder, OrderCloud) {
-                    return OrderCloud.Orders.ListPromotions(CurrentOrder.ID);
+                CurrentPromotions: function(CurrentOrder, OrderCloudSDK) {
+                    return OrderCloudSDK.Orders.ListPromotions('outgoing', CurrentOrder.ID);
                 },
 
-                CategoryList: function($stateParams, OrderCloud) {
-                    var depth = 1;
-                    return OrderCloud.Me.ListCategories(null, null, null, null, null, {ParentID: $stateParams.categoryid}, depth);
+                CategoryList: function($stateParams, OrderCloudSDK) {
+                    var opts = {
+                        depth: 1,
+                        filters: {ParentID: $stateParams.categoryid}
+                    }
+                    return OrderCloudSDK.Me.ListCategories(opts);
                 },
-                ProductList: function($stateParams, OrderCloud) {
-                    return OrderCloud.Me.ListProducts(null, null, null, null, null, null, $stateParams.categoryid);
+                ProductList: function($stateParams, OrderCloudSDK) {
+                    var opts = {categoryID: $stateParams.categoryid};
+                    return OrderCloudSDK.Me.ListProducts(opts);
 
                 }
             }
         });
 }
 
-function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $state, $q, toastr, OrderCloud, MyAddressesModal, AddressSelectModal, ShippingRates, VendorShippingCriteria, CheckoutConfig, LineItemsList, CurrentPromotions, ocConfirm, CategoryList, ProductList, CurrentOrder) {
+function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $state, $q, toastr, OrderCloudSDK, MyAddressesModal, AddressSelectModal, ShippingRates, VendorShippingCriteria, CheckoutConfig, LineItemsList, CurrentPromotions, ocConfirm, CategoryList, ProductList, CurrentOrder) {
     var vm = this;
     vm.createAddress = createAddress;
     vm.changeShippingAddress = changeShippingAddress;
@@ -96,7 +100,7 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
 
             $('.' + vendorName).val(ID);
            //this line pushes all the api calls into a queue that will be sent off once $q.all is invoked with the queue.
-            lineItemUpdateQueue.push(OrderCloud.LineItems.Patch(CurrentOrder.ID, lineItem.ID, {'xp' : xp}));
+            lineItemUpdateQueue.push(OrderCloudSDK.LineItems.Patch('outgoing', CurrentOrder.ID, lineItem.ID, {'xp' : xp}));
         });
         //this calls runs all the async calls in the queue and waits for them to be returned. This works because each OrderCloud.method returns a promise.
         $q.all(lineItemUpdateQueue)
@@ -107,7 +111,7 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
         $scope.base.currentOrder.TaxCost = vm.calculateTaxCost();
         $scope.base.currentOrder.ShippingCost = vm.calculateShippingCost();
         ShippingRates.SetShippingCost(CurrentOrder.ID, $scope.base.currentOrder.ShippingCost);
-        OrderCloud.Orders.Patch(CurrentOrder.ID, {ShippingCost: $scope.base.currentOrder.ShippingCost.toFixed(2), TaxCost: $scope.base.currentOrder.TaxCost.toFixed(2)})
+        OrderCloudSDK.Orders.Patch('outgoing', CurrentOrder.ID, {ShippingCost: $scope.base.currentOrder.ShippingCost.toFixed(2), TaxCost: $scope.base.currentOrder.TaxCost.toFixed(2)})
     }, true);
 
     console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
@@ -115,7 +119,7 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     vm.promotions = CurrentPromotions.Meta ? CurrentPromotions.Items : CurrentPromotions;
     vm.removeItem = function(order, scope) {
         vm.lineLoading = [];
-        vm.lineLoading[scope.$index] = OrderCloud.LineItems.Delete(order.ID, scope.lineItem.ID)
+        vm.lineLoading[scope.$index] = OrderCloudSDK.LineItems.Delete('outgoing', order.ID, scope.lineItem.ID)
             .then(function () {
                 $rootScope.$broadcast('OC:UpdateOrder', order.ID);
                 vm.lineItems.Items.splice(scope.$index, 1);
@@ -125,7 +129,7 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
 
     //TODO: missing unit tests
     vm.removePromotion = function(order, scope) {
-        OrderCloud.Orders.RemovePromotion(order.ID, scope.promotion.Code)
+        OrderCloudSDK.Orders.RemovePromotion('outgoing', order.ID, scope.promotion.Code)
             .then(function() {
                 $rootScope.$broadcast('OC:UpdateOrder', order.ID);
                 vm.promotions.splice(scope.$index, 1);
@@ -135,7 +139,7 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     vm.cancelOrder = function(order){
         ocConfirm.Confirm("Are you sure you want cancel this order?")
             .then(function() {
-                OrderCloud.Orders.Delete(order.ID)
+                OrderCloudSDK.Orders.Delete('outgoing', order.ID)
                     .then(function(){
                         $state.go("productBrowse.products",{}, {reload:'base'})
                     });
@@ -187,7 +191,7 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     
     //TODO: missing unit tests
     $rootScope.$on('OC:UpdatePromotions', function(event, orderid) {
-        OrderCloud.Orders.ListPromotions(orderid)
+        OrderCloudSDK.Orders.ListPromotions('outgoing', orderid)
             .then(function(data) {
                 if (data.Meta) {
                     vm.promotions = data.Items;
@@ -220,7 +224,7 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
 
     function saveShipAddress(order) {
         if (order && order.ShippingAddressID) {
-            OrderCloud.Orders.Patch(order.ID, {ShippingAddressID: order.ShippingAddressID})
+            OrderCloudSDK.Orders.Patch('outgoing', order.ID, {ShippingAddressID: order.ShippingAddressID})
                 .then(function(updatedOrder) {
                     $rootScope.$broadcast('OC:OrderShipAddressUpdated', updatedOrder);
                     vm.getShippingRates(order);
