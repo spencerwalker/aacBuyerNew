@@ -10,9 +10,9 @@ function checkoutReviewConfig($stateProvider) {
             controller: 'CheckoutReviewCtrl',
             controllerAs: 'checkoutReview',
             resolve: {
-                LineItemsList: function ($q, $state, toastr, OrderCloud, ocLineItems, CurrentOrder) {
+                LineItemsList: function ($q, $state, toastr, OrderCloudSDK, ocLineItems, CurrentOrder) {
                     var dfd = $q.defer();
-                    OrderCloud.LineItems.List(CurrentOrder.ID)
+                    OrderCloudSDK.LineItems.List('outgoing', CurrentOrder.ID)
                         .then(function (data) {
                             if (!data.Items.length) {
                                 dfd.resolve(data);
@@ -31,18 +31,18 @@ function checkoutReviewConfig($stateProvider) {
                     return dfd.promise;
                 },
 
-                CategoryList: function ($stateParams, OrderCloud) {
+                CategoryList: function ($stateParams, OrderCloudSDK) {
                     var depth = 1;
-                    return OrderCloud.Me.ListCategories(null, null, null, null, null, {ParentID: $stateParams.categoryid}, depth);
+                    return OrderCloudSDK.Me.ListCategories({fitlers:{ParentID: $stateParams.categoryid}, depth:1});
                 },
 
-                ProductList: function ($stateParams, OrderCloud) {
-                    return OrderCloud.Me.ListProducts(null, null, null, null, null, null, $stateParams.categoryid);
+                ProductList: function ($stateParams, OrderCloudSDK) {
+                    return OrderCloudSDK.Me.ListProducts({categoryID:$stateParams.categoryid });
 
                 },
 
-                OrderPaymentsDetail: function ($q, OrderCloud, CurrentOrder, $state) {
-                    return OrderCloud.Payments.List(CurrentOrder.ID)
+                OrderPaymentsDetail: function ($q, OrderCloudSDK, CurrentOrder, $state) {
+                    return OrderCloudSDK.Payments.List('outgoing', CurrentOrder.ID)
                         .then(function (data) {
                             //TODO: create a queue that can be resolved
                             var dfd = $q.defer();
@@ -55,7 +55,7 @@ function checkoutReviewConfig($stateProvider) {
                                 if (payment.Type === 'CreditCard' && payment.CreditCardID) {
                                     queue.push((function () {
                                         var d = $q.defer();
-                                        OrderCloud.Me.GetCreditCard(payment.CreditCardID)
+                                        OrderCloudSDK.Me.GetCreditCard(payment.CreditCardID)
                                             .then(function (cc) {
                                                 data.Items[index].Details = cc;
                                                 d.resolve();
@@ -66,7 +66,7 @@ function checkoutReviewConfig($stateProvider) {
                                 if (payment.Type === 'SpendingAccount' && payment.SpendingAccountID) {
                                     queue.push((function () {
                                         var d = $q.defer();
-                                        OrderCloud.Me.GetSpendingAccount(payment.SpendingAccountID)
+                                        OrderCloudSDK.Me.GetSpendingAccount(payment.SpendingAccountID)
                                             .then(function (sa) {
                                                 data.Items[index].Details = sa;
                                                 d.resolve();

@@ -15,7 +15,7 @@ function checkoutConfirmationConfig($stateProvider) {
   	  		},
 			resolve: {
 				SubmittedOrder: function($stateParams, OrderCloudSDK) {
-					return OrderCloudSDK.Me.GetOrder($stateParams.orderid);
+					return OrderCloudSDK.Orders.Get('outgoing', $stateParams.orderid);
 				},
 				OrderShipAddress: function(SubmittedOrder, OrderCloudSDK){
 					return OrderCloudSDK.Me.GetAddress(SubmittedOrder.ShippingAddressID);
