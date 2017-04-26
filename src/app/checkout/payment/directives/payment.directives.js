@@ -141,7 +141,6 @@ function PaymentSpendingAccountController($scope, $rootScope, toastr, OrderCloud
         $scope.payment.SpendingAccountID = scope.spendingAccount.ID;
         $scope.updatingSpendingAccountPayment = OrderCloudSDK.Payments.Delete('outgoing', $scope.order.ID, $scope.payment.ID)
             .then(function() {
-                delete $scope.payment.ID;
                 OrderCloudSDK.Payments.Create('outgoing', $scope.order.ID, $scope.payment)
                 .then(function(payment){
                     $scope.showPaymentOptions = false;
@@ -179,7 +178,7 @@ function OCPaymentCreditCard() {
 }
 
 function PaymentCreditCardController($scope, $rootScope, toastr, $filter, OrderCloudSDK, MyPaymentCreditCardModal, $exceptionHandler) {
-    OrderCloudSDK.Me.ListCreditCards({page: 1, pageSize: 100})
+    OrderCloudSDK.Me.ListCreditCards({page: 1, pageSize: 100, filters: {}})
         .then(function(data) {
             $scope.creditCards = data.Items;
         });
@@ -228,10 +227,10 @@ function PaymentCreditCardController($scope, $rootScope, toastr, $filter, OrderC
         $scope.payment.CreditCardID = scope.creditCard.ID;
         $scope.updatingCreditCardPayment = OrderCloudSDK.Payments.Delete('outgoing', $scope.order.ID, $scope.payment.ID)
             .then(function() {
-                delete $scope.payment.ID;
                 OrderCloudSDK.Payments.Create('outgoing', $scope.order.ID, $scope.payment)
                 .then(function(payment){
                     $scope.showPaymentOptions = false;
+                    // $scope.payment = payment;
                     toastr.success('Using ' + $filter('humanize')(scope.creditCard.CardType) + ' ending in ' + scope.creditCard.PartialAccountNumber, 'Credit Card Payment');
                     $rootScope.$broadcast('OC:PaymentsUpdated');
                 });
@@ -351,16 +350,13 @@ function PaymentsController($rootScope, $scope, $exceptionHandler, toastr, Order
             });
     };
 
+
     $scope.updatePaymentAmount = function(scope) {
         if (scope.payment.Amount > scope.payment.MaxAmount || !scope.payment.Amount) return;
-        OrderCloudSDK.Payments.Delete('outgoing', $scope.order.ID, scope.payment.ID)
+        OrderCloudSDK.Payments.Patch('outgoing', $scope.order.ID, scope.payment.ID, {Amount:scope.payment.Amount })
             .then(function(data) {
-                OrderCloudSDK.Payments.Create('outgoing', $scope.order.ID, scope.payment.ID)
-                .then(function(payment){
                     toastr.success('Payment Amount Updated');
                     calculateMaxTotal();
-                })
-
             })
             .catch(function(ex) {
                 $exceptionHandler(ex);
