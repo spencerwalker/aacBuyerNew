@@ -122,7 +122,7 @@
 	<div class="row c-line-item" ng-repeat="lineItem in lineItemsList"  cg-busy="myOrderDetail.lineLoading[$index]" style="margin-left: 1.5px; margin-right: 1.5px" >
         <div class="col-xs-3 col-sm-2">
 				<div class="thumbnail c-line-item__img">
-					<img class="img-responsive" ng-src="{{lineItem.Product.xp.image.URL || 'http://placehold.it/100x100?text=' + lineItem.Product.Name}}"
+					<img class="img-responsive" ng-src="{{lineItem.Product.xp.image.URL || 'http://placehold.it/100x100?text=' + (lineItem.Punchout ? lineItem.xp.SupplierPartID : lineItem.Product.Name)}}"
 					alt="{{lineItem.Product.xp.image.Name || 'Product Image'}}">
 				</div>
 		</div>
@@ -130,9 +130,9 @@
 			<div class="row c-line-item__info c-line-item--centered">
 				<div class="col-sm-5 col-lg-6 c-line-item__info--top">
 					<h4 class="c-line-item__name">
-						{{lineItem.Product.Name}}
+						{{lineItem.Punchout ? (lineItem.xp | punchoutProductName:lineItem.xp.PunchoutName) : lineItem.Product.Name}}
 					</h4>
-					<small class="text-muted c-line-item__id">{{lineItem.Product.Description}}</small>
+					<small class="text-muted c-line-item__id">{{lineItem.Punchout ? lineItem.xp.SupplierPartID : lineItem.Product.Description}}</small>
 						<ul class="c-line-item__spec-list" ng-if="lineItem.Specs.length > 0">
 							<li class="c-line-item__spec" ng-repeat="spec in lineItem.Specs">
 								<small>{{spec.Name}}:</small>
