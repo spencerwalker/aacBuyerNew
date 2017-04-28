@@ -103,7 +103,7 @@ function ProductBrowseConfig($urlRouterProvider, $stateProvider) {
         });
 }
 
-function ProductBrowseController($state, $uibModal, CategoryList, CategoryTree, Parameters) {
+function ProductBrowseController($state, $window, $uibModal, ocPunchout, CategoryList, CategoryTree, Parameters, CurrentOrder) {
     var vm = this;
     vm.parameters = Parameters;
     vm.categoryList = CategoryList;
@@ -123,8 +123,15 @@ function ProductBrowseController($state, $uibModal, CategoryList, CategoryTree, 
     };
 
     vm.treeConfig.selectNode = function (node) {
-
-        $state.go('productBrowse.products', {categoryid: node.ID, page: ''});
+        var punchoutCategory = ocPunchout.IsPunchoutCategory(node.ID);
+        if (punchoutCategory) {
+            vm.loading = ocPunchout.SetupRequest(punchoutCategory.Name, punchoutCategory.SupplierPartID, CurrentOrder.ID)
+                .then(function(data) {
+                    $window.location.href = data.StartURL;
+                });
+        } else {
+            $state.go('productBrowse.products', {categoryid: node.ID, page: ''});
+        }
     };
     //Initiate breadcrumbs is triggered by product list view (child state "productBrowse.products")
     vm.treeConfig.initBreadcrumbs = function (activeCategoryID, ignoreSetNode) {
@@ -171,9 +178,8 @@ function ProductBrowseController($state, $uibModal, CategoryList, CategoryTree, 
                     return vm.treeConfig;
                 }
             }
-        })
-            .result.then(function (node) {
-
+        }).result.then(function (node) {
+            //Check Punchout Here
             $state.go('productBrowse.products', {categoryid: node.ID, page: ''});
         });
     };

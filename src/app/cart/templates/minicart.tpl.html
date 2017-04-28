@@ -38,8 +38,8 @@
                 <tr ng-repeat="lineItem in minicart.LineItems.Items">
                     <td>{{lineItem.Quantity}}</td>
                     <td>
-                        <a href="#">{{lineItem.Product.Name}}</a><br>
-                        <small class="text-muted">{{lineItem.ProductID}}</small>
+                        <a href="#">{{lineItem.Punchout ? (lineItem.xp | punchoutProductName:lineItem.xp.PunchoutName) : lineItem.Product.Name}}</a><br>
+                        <small class="text-muted">{{lineItem.Punchout ? lineItem.xp.SupplierPartID : lineItem.ProductID}}</small>
                         </br>
                     </td>
                     <td style="padding-right: 25px;">

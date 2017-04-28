@@ -8,5 +8,7 @@
   "environment": "staging",
   "defaultstate": "home",
   "anonymous": false,
-  "bootswatchtheme": null
+  "bootswatchtheme": null,
+  "punchoutproduct": "AACPunchoutProduct",
+  "punchouturl": "https://vendors.adoptaclassroom.org"
 }
