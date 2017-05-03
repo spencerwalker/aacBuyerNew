@@ -18,14 +18,14 @@ function MyOrdersConfig($stateProvider) {
                 Parameters: function ($stateParams, ocParameters) {
                     return ocParameters.Get($stateParams);
                 },
-                OrderList: function (OrderCloud, Parameters, CurrentUser) {
+                OrderList: function (OrderCloudSDK, Parameters, CurrentUser) {
                     if (Parameters.favorites && CurrentUser.xp.FavoriteOrders) {
                         Parameters.filters ? angular.extend(Parameters.filters, Parameters.filters, {ID: CurrentUser.xp.FavoriteOrders.join('|')}) : Parameters.filters = {ID: CurrentUser.xp.FavoriteOrders.join('|')};
                     } else if (Parameters.filters) {
                         delete Parameters.filters.ID;
                     }
                     var showSubmittedOnly = angular.extend({}, Parameters.filters, {Status: '!Unsubmitted'});
-                    return OrderCloud.Me.ListOutgoingOrders(Parameters.search, Parameters.page, Parameters.pageSize || 12, Parameters.searchOn, Parameters.sortBy, showSubmittedOnly, Parameters.from, Parameters.to);
+                    return OrderCloudSDK.Me.ListOrders({search:Parameters.search, page: Parameters.page, pageSize: Parameters.pageSize || 12, searchOn: Parameters.searchOn, sortBy: Parameters.sortBy, from: Parameters.from, to:Parameters.to});
                 }
             }
         })

@@ -14,12 +14,22 @@ function AppConfig($urlRouterProvider, $urlMatcherFactoryProvider, $locationProv
     //Error Handling
     $provide.decorator('$exceptionHandler', handler);
     $qProvider.errorOnUnhandledRejections(false); //Stop .catch validation from angular v1.6.0
-    function handler($delegate, $injector) { //Catch all for unhandled errors
-        return function(ex, cause) {
-            $delegate(ex, cause);
-            $injector.get('toastr').error(ex.data ? (ex.data.error || (ex.data.Errors ? ex.data.Errors[0].Message : ex.data)) : ex.message, 'Error');
-        };
-    }
+   function handler($delegate, $injector) {
+		return function(ex, cause) {
+		var message = '';
+		if(ex && ex.response && ex.response.body && ex.response.body.Errors && ex.response.body.Errors.length) {
+			message = ex.response.body.Errors[0].Message;
+		} else if(ex && ex.response && ex.response.body && ex.response.body['error_description']) {
+			message = ex.response.body['error_description'];
+		} else if(ex.message) {
+			message = ex.message;
+		} else {
+			message = 'An error occurred';
+		}
+		$delegate(ex, cause);
+		$injector.get('toastr').error(message, 'Error');
+	};
+	}
 
     //HTTP Interceptor for OrderCloud Authentication
     $httpProvider.interceptors.push(function($q, $rootScope) {

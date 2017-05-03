@@ -52,10 +52,13 @@ function ProductQuickViewController(toastr, $uibModalInstance, SelectedProduct, 
 				$uibModalInstance.close();
 			});
 	};
+	vm.cancel = function(){
+		$uibModalInstance.dismiss();
+	};
 
 	vm.findPrice = function(qty){
 		var finalPriceBreak = null;
-		angular.forEach(vm.item.StandardPriceSchedule.PriceBreaks, function(priceBreak) {
+		angular.forEach(vm.item.PriceSchedule.PriceBreaks, function(priceBreak) {
 			if (priceBreak.Quantity <= qty)
 				finalPriceBreak = angular.copy(priceBreak);
 		});

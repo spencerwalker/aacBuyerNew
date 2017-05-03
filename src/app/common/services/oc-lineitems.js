@@ -70,7 +70,7 @@ function LineItemFactory($rootScope, $q, $uibModal, OrderCloudSDK, catalogid, bu
         var dfd = $q.defer();
         var queue = [];
         angular.forEach(productIDs, function (productid) {
-            queue.push(OrderCloudSDK.Me.GetProduct(catalogid, productid));
+            queue.push(OrderCloudSDK.Me.GetProduct(productid));
         });
         $q.all(queue)
             .then(function (results) {

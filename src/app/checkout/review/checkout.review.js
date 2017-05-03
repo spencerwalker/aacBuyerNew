@@ -124,7 +124,12 @@ function CheckoutReviewController($exceptionHandler, ocConfirm, OrderCloud, $roo
             }
             vm.vendorLineItemsMap[vendorName].push(lineItem);
         });
-        vm.total = subTotal + (subTotal * vm.lineItems.Items[0].ShippingAddress.xp.Taxcost);
+        if(vm.lineItems.Items[0].ShippingAddress.xp && vm.lineItems.Items[0].ShippingAddress.xp.Taxcost ){
+              vm.total = subTotal + (subTotal * vm.lineItems.Items[0].ShippingAddress.xp.Taxcost);
+        }else{
+            vm.total = subTotal;
+        }
+        
     }, true);
 
     console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
