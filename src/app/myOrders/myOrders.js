@@ -24,8 +24,8 @@ function MyOrdersConfig($stateProvider) {
                     } else if (Parameters.filters) {
                         delete Parameters.filters.ID;
                     }
-                    var showSubmittedOnly = angular.extend({}, Parameters.filters, {Status: '!Unsubmitted'});
-                    return OrderCloudSDK.Me.ListOrders({search:Parameters.search, page: Parameters.page, pageSize: Parameters.pageSize || 12, searchOn: Parameters.searchOn, sortBy: Parameters.sortBy, from: Parameters.from, to:Parameters.to});
+                    var showSubmittedOnly = angular.extend({}, Parameters.filters, {Status: 'Open|AwaitingApproval|Completed|Canceled|Declined'});
+                    return OrderCloudSDK.Me.ListOrders({search:Parameters.search, page: Parameters.page, pageSize: Parameters.pageSize || 12, searchOn: Parameters.searchOn, fitlers: showSubmittedOnly, sortBy: Parameters.sortBy, from: Parameters.from, to:Parameters.to});
                 }
             }
         })
