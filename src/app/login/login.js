@@ -90,7 +90,7 @@ function LoginService($q, $window, $state, $cookies, toastr, OrderCloudSDK, ocRo
     }
 }
 
-function LoginController($state, $stateParams, $exceptionHandler, OrderCloudSDK, OrderCloud, LoginService, ocRolesService, buyerid, clientid, scope) {
+function LoginController($state, $stateParams, $exceptionHandler, OrderCloudSDK, OrderCloud, LoginService, ocRolesService, buyerid, clientid, scope, defaultstate) {
     var vm = this;
     vm.credentials = {
         Username: null,
@@ -113,11 +113,11 @@ function LoginController($state, $stateParams, $exceptionHandler, OrderCloudSDK,
                     vm.token = data.access_token;
                     vm.form = 'resetByToken';
                 } else {
-                    $state.go('home');
+                    $state.go(defaultstate);
                 }
                 OrderCloud.BuyerID.Set(buyerid);
                 OrderCloud.Auth.SetToken(data['access_token']);
-                $state.go('home');
+                $state.go(defaultstate);
             })
             .catch(function(ex) {
                 $exceptionHandler(ex);
