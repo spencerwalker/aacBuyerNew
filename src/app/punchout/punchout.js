@@ -3,6 +3,8 @@ angular.module('orderCloud')
     .provider('$ocPunchout', OrderCloudPunchoutProvider)
     .config(OrderCloudPunchoutConfig)
     .filter('punchoutProductName', punchoutProductName)
+    .controller('punchoutCtrl', punchoutController)
+    .directive('iframeSetDimensionsOnload', IframeSetDimensionsOnload)
 ;
 
 function OrderCloudPunchoutService($q, $resource, $ocPunchout, OrderCloudSDK, punchouturl, buyerid) {
@@ -77,7 +79,7 @@ function OrderCloudPunchoutProvider() {
     };
 }
 
-function OrderCloudPunchoutConfig($ocPunchoutProvider) {
+function OrderCloudPunchoutConfig($ocPunchoutProvider, $stateProvider) {
     var punchouts = [
         {Name: 'officedepot', CategoryID: 'TopStores_OfficeDepot', SupplierPartID: 'AAA'}
     ];
@@ -85,6 +87,21 @@ function OrderCloudPunchoutConfig($ocPunchoutProvider) {
     angular.forEach(punchouts, function(punchout) {
         $ocPunchoutProvider.AddPunchout(punchout);
     });
+
+     $stateProvider
+        .state('punchout', {
+            url: '/punchout?link',
+            templateUrl: 'punchout/templates/punchout.tpl.html',
+            controller: 'punchoutCtrl',
+            controllerAs: 'punchout',
+            resolve: {
+                Parameters: function ($stateParams, ocParameters) {
+                    return ocParameters.Get($stateParams);
+                }
+            }
+    })
+
+
 }
 
 function punchoutProductName() {
@@ -98,3 +115,13 @@ function punchoutProductName() {
         return xp[map[punchoutName]];
     }
 }
+
+function punchoutController(Parameters, $sce, $scope){
+    var vm = this;
+    vm.link = Parameters.link;
+    vm.trustSrc = function(src){
+        return $sce.trustAsResourceUrl(src);
+    };
+    vm.outboundtURL = vm.trustSrc(vm.link);
+}
+
