@@ -4,7 +4,6 @@ angular.module('orderCloud')
     .config(OrderCloudPunchoutConfig)
     .filter('punchoutProductName', punchoutProductName)
     .controller('punchoutCtrl', punchoutController)
-    .directive('iframeSetDimensionsOnload', IframeSetDimensionsOnload)
 ;
 
 function OrderCloudPunchoutService($q, $resource, $ocPunchout, OrderCloudSDK, punchouturl, buyerid) {
