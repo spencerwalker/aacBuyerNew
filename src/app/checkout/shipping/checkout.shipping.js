@@ -14,43 +14,50 @@ function checkoutShippingConfig($stateProvider) {
                 pageTitle: "Delivery Address"
             },
             resolve: {
-                LineItemsList: function($q, $state, toastr, OrderCloud, ocLineItems, CurrentOrder) {
+                LineItemsList: function ($q, $state, toastr, OrderCloudSDK, ocLineItems, CurrentOrder) {
                     var dfd = $q.defer();
-                    OrderCloud.LineItems.List(CurrentOrder.ID)
-                        .then(function(data) {
+                    OrderCloudSDK.LineItems.List('outgoing', CurrentOrder.ID)
+                        .then(function (data) {
                             if (!data.Items.length) {
                                 dfd.resolve(data);
-                            }
-                            else {
+                            } else {
                                 ocLineItems.GetProductInfo(data.Items)
-                                    .then(function() {
+                                    .then(function () {
                                         dfd.resolve(data);
                                     });
                             }
                         })
-                        .catch(function() {
+                        .catch(function () {
                             toastr.error('Your order does not contain any line items.', 'Error');
                             dfd.reject();
                         });
                     return dfd.promise;
                 },
-                CurrentPromotions: function(CurrentOrder, OrderCloud) {
-                    return OrderCloud.Orders.ListPromotions(CurrentOrder.ID);
+                CurrentPromotions: function (CurrentOrder, OrderCloudSDK) {
+                    return OrderCloudSDK.Orders.ListPromotions('outgoing', CurrentOrder.ID);
                 },
 
-                CategoryList: function($stateParams, OrderCloud) {
-                    var depth = 1;
-                    return OrderCloud.Me.ListCategories(null, null, null, null, null, {ParentID: $stateParams.categoryid}, depth);
+                CategoryList: function ($stateParams, OrderCloudSDK) {
+                    var opts = {
+                        depth: 1,
+                        filters: {
+                            ParentID: $stateParams.categoryid
+                        }
+                    }
+                    return OrderCloudSDK.Me.ListCategories(opts);
                 },
-                ProductList: function($stateParams, OrderCloud) {
-                    return OrderCloud.Me.ListProducts(null, null, null, null, null, null, $stateParams.categoryid);
+                ProductList: function ($stateParams, OrderCloudSDK) {
+                    var opts = {
+                        categoryID: $stateParams.categoryid
+                    };
+                    return OrderCloudSDK.Me.ListProducts(opts);
 
                 }
             }
         });
 }
 
-function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $state, $q, toastr, OrderCloud, MyAddressesModal, AddressSelectModal, ShippingRates, VendorShippingCriteria, CheckoutConfig, LineItemsList, CurrentPromotions, ocConfirm, CategoryList, ProductList, CurrentOrder) {
+function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $state, $q, toastr, OrderCloudSDK, MyAddressesModal, AddressSelectModal, ShippingRates, VendorShippingCriteria, CheckoutConfig, LineItemsList, CurrentPromotions, ocConfirm, CategoryList, ProductList, CurrentOrder) {
     var vm = this;
     vm.createAddress = createAddress;
     vm.changeShippingAddress = changeShippingAddress;
@@ -66,16 +73,16 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     console.log('LineItems', vm.lineItems);
     console.log('CategoryList :: ', CategoryList);
     console.log('Products :: ', ProductList);
-    console.log('vm.lineItems ::' , JSON.stringify(vm.lineItems));
+    console.log('vm.lineItems ::', JSON.stringify(vm.lineItems));
 
     // watcher on vm.lineItems
     $scope.$watch(function () {
         return vm.lineItems;
-    }, function(newVal, oldVal){
+    }, function (newVal, oldVal) {
         //create a queue to hold all the api calls that will be sent out at once
         var lineItemUpdateQueue = [];
         vm.vendorLineItemsMap = {};
-        angular.forEach(vm.lineItems.Items, function(lineItem){
+        angular.forEach(vm.lineItems.Items, function (lineItem) {
             var xp = {
                 vendorOrderId: []
             };
@@ -83,39 +90,44 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
             var productId = lineItem.ProductID;
             var vendorName = productId.split("_")[0];
 
-            if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined') {
+            if (typeof vm.vendorLineItemsMap[vendorName] === 'undefined') {
                 vm.vendorLineItemsMap[vendorName] = [];
                 vm.vendorLineItemsMap[vendorName].push(lineItem);
                 ID = vm.vendorLineItemsMap[vendorName][0].ID.substring(0, 7);
                 xp.vendorOrderId.push(ID);
-            }else{
+            } else {
                 vm.vendorLineItemsMap[vendorName].push(lineItem);
                 ID = vm.vendorLineItemsMap[vendorName][0].ID.substring(0, 7);
                 xp.vendorOrderId.push(ID);
             }
 
             $('.' + vendorName).val(ID);
-           //this line pushes all the api calls into a queue that will be sent off once $q.all is invoked with the queue.
-            lineItemUpdateQueue.push(OrderCloud.LineItems.Patch(CurrentOrder.ID, lineItem.ID, {'xp' : xp}));
+            //this line pushes all the api calls into a queue that will be sent off once $q.all is invoked with the queue.
+            lineItemUpdateQueue.push(OrderCloudSDK.LineItems.Patch('outgoing', CurrentOrder.ID, lineItem.ID, {
+                'xp': xp
+            }));
         });
         //this calls runs all the async calls in the queue and waits for them to be returned. This works because each OrderCloud.method returns a promise.
         $q.all(lineItemUpdateQueue)
-            .then(function(updatedLineItems){
+            .then(function (updatedLineItems) {
                 //this should have have all the updated line items. Line items should now be updated.
                 console.log("updated line items", updatedLineItems);
             })
         $scope.base.currentOrder.TaxCost = vm.calculateTaxCost();
         $scope.base.currentOrder.ShippingCost = vm.calculateShippingCost();
         ShippingRates.SetShippingCost(CurrentOrder.ID, $scope.base.currentOrder.ShippingCost);
-        OrderCloud.Orders.Patch(CurrentOrder.ID, {ShippingCost: $scope.base.currentOrder.ShippingCost.toFixed(2), TaxCost: $scope.base.currentOrder.TaxCost.toFixed(2)})
+        OrderCloudSDK.Orders.Patch('outgoing', CurrentOrder.ID, {
+            ShippingCost: $scope.base.currentOrder.ShippingCost.toFixed(2),
+            TaxCost: $scope.base.currentOrder.TaxCost.toFixed(2)
+        })
     }, true);
 
     console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
 
     vm.promotions = CurrentPromotions.Meta ? CurrentPromotions.Items : CurrentPromotions;
-    vm.removeItem = function(order, scope) {
+    vm.removeItem = function (order, scope) {
         vm.lineLoading = [];
-        vm.lineLoading[scope.$index] = OrderCloud.LineItems.Delete(order.ID, scope.lineItem.ID)
+        vm.lineLoading[scope.$index] = OrderCloudSDK.LineItems.Delete('outgoing', order.ID, scope.lineItem.ID)
             .then(function () {
                 $rootScope.$broadcast('OC:UpdateOrder', order.ID);
                 vm.lineItems.Items.splice(scope.$index, 1);
@@ -124,71 +136,73 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     };
 
     //TODO: missing unit tests
-    vm.removePromotion = function(order, scope) {
-        OrderCloud.Orders.RemovePromotion(order.ID, scope.promotion.Code)
-            .then(function() {
+    vm.removePromotion = function (order, scope) {
+        OrderCloudSDK.Orders.RemovePromotion('outgoing', order.ID, scope.promotion.Code)
+            .then(function () {
                 $rootScope.$broadcast('OC:UpdateOrder', order.ID);
                 vm.promotions.splice(scope.$index, 1);
             });
     };
 
-    vm.cancelOrder = function(order){
+    vm.cancelOrder = function (order) {
         ocConfirm.Confirm("Are you sure you want cancel this order?")
-            .then(function() {
-                OrderCloud.Orders.Delete(order.ID)
-                    .then(function(){
-                        $state.go("productBrowse.products",{}, {reload:'base'})
+            .then(function () {
+                OrderCloudSDK.Orders.Delete('outgoing', order.ID)
+                    .then(function () {
+                        $state.go("productBrowse.products", {}, {
+                            reload: 'base'
+                        })
                     });
             });
     };
 
-    vm.getSubTotal = function(lineItemsList){
+    vm.getSubTotal = function (lineItemsList) {
         var total = 0.0;
-        angular.forEach(lineItemsList, function(lineItem){
-            total += ( lineItem.UnitPrice * lineItem.Quantity);
+        angular.forEach(lineItemsList, function (lineItem) {
+            total += (lineItem.UnitPrice * lineItem.Quantity);
         });
         return total;
     }
-    
-    vm.getShippingCostByVendor = function(vendorName){
+
+    vm.getShippingCostByVendor = function (vendorName) {
         return VendorShippingCriteria.getShippingCostByVendor(vendorName, vm.vendorLineItemsMap[vendorName]);
     };
-    
-    vm.getTaxCostByVendor = function(vendorName){
-    	if (!$scope.checkout.shippingAddress.xp.Taxcost) {
-    		return 0;
-    	}
-    	var lineItemsList = vm.vendorLineItemsMap[vendorName]
-    	return vm.getSubTotal(lineItemsList) * $scope.checkout.shippingAddress.xp.Taxcost;
+
+    vm.getTaxCostByVendor = function (vendorName) {
+        if (!$scope.checkout.shippingAddress.xp && !$scope.checkout.shippingAddress.xpTaxcost) {
+            return 0;
+        }
+        var lineItemsList = vm.vendorLineItemsMap[vendorName]
+        return vm.getSubTotal(lineItemsList) * $scope.checkout.shippingAddress.xp.Taxcost;
     };
 
-    vm.calculateShippingCost = function() {
+    vm.calculateShippingCost = function () {
         var vendorNames = Object.keys(vm.vendorLineItemsMap);
         var totalShippingCost = 0;
 
-        angular.forEach(vendorNames, function(vendorName){
+        angular.forEach(vendorNames, function (vendorName) {
             totalShippingCost += vm.getShippingCostByVendor(vendorName);
         });
 
         return totalShippingCost;
     };
-    
-    vm.calculateTaxCost = function() {
-    	var vendorNames = Object.keys(vm.vendorLineItemsMap);
+
+    vm.calculateTaxCost = function () {
+        var vendorNames = Object.keys(vm.vendorLineItemsMap);
         var totaTaxCost = 0;
 
-        angular.forEach(vendorNames, function(vendorName){
-        	totaTaxCost += vm.getTaxCostByVendor(vendorName);
+        angular.forEach(vendorNames, function (vendorName) {
+            totaTaxCost += vm.getTaxCostByVendor(vendorName);
         });
 
         return totaTaxCost;
     };
-    
-    
+
+
     //TODO: missing unit tests
-    $rootScope.$on('OC:UpdatePromotions', function(event, orderid) {
-        OrderCloud.Orders.ListPromotions(orderid)
-            .then(function(data) {
+    $rootScope.$on('OC:UpdatePromotions', function (event, orderid) {
+        OrderCloudSDK.Orders.ListPromotions('outgoing', orderid)
+            .then(function (data) {
                 if (data.Meta) {
                     vm.promotions = data.Items;
                 } else {
@@ -199,7 +213,7 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
 
     function createAddress(order) {
         MyAddressesModal.Create()
-            .then(function(address) {
+            .then(function (address) {
                 toastr.success('Address Created', 'Success');
                 order.ShippingAddressID = address.ID;
                 vm.saveShipAddress(order);
@@ -208,7 +222,7 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
 
     function changeShippingAddress(order) {
         AddressSelectModal.Open('shipping')
-            .then(function(address) {
+            .then(function (address) {
                 if (address == 'create') {
                     vm.createAddress(order);
                 } else {
@@ -220,12 +234,14 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
 
     function saveShipAddress(order) {
         if (order && order.ShippingAddressID) {
-            OrderCloud.Orders.Patch(order.ID, {ShippingAddressID: order.ShippingAddressID})
-                .then(function(updatedOrder) {
+            OrderCloudSDK.Orders.Patch('outgoing', order.ID, {
+                    ShippingAddressID: order.ShippingAddressID
+                })
+                .then(function (updatedOrder) {
                     $rootScope.$broadcast('OC:OrderShipAddressUpdated', updatedOrder);
                     vm.getShippingRates(order);
                 })
-                .catch(function(ex){
+                .catch(function (ex) {
                     $exceptionHandler(ex);
                 });
         }
@@ -238,7 +254,7 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     function getShippingRates(order) {
         vm.shippersAreLoading = true;
         vm.shippersLoading = ShippingRates.GetRates(order)
-            .then(function(shipments) {
+            .then(function (shipments) {
                 vm.shippersAreLoading = false;
                 vm.shippingRates = shipments;
                 vm.analyzeShipments(order);
@@ -251,7 +267,7 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
 
     function shipperSelected(order) {
         ShippingRates.ManageShipments(order, vm.shippingRates)
-            .then(function() {
+            .then(function () {
                 $rootScope.$broadcast('OC:UpdateOrder', order.ID);
             });
     }

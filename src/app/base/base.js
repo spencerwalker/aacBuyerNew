@@ -19,15 +19,31 @@ function BaseConfig($stateProvider) {
             }
         },
         resolve: {
-            CurrentUser: function($q, $state, OrderCloud, buyerid) {
-                return OrderCloud.Me.Get()
+            isAuthenticated: function($state, $localForage, OrderCloudSDK, LoginService) {
+                return OrderCloudSDK.Me.Get()
+                    .then(function() {
+                        return true;
+                    })
+                    .catch(function(){
+                        LoginService.Logout();
+                        return false;
+                    });
+            },
+            CurrentUser: function($q, $state, OrderCloudSDK, OrderCloud, buyerid) {
+                return OrderCloudSDK.Me.Get()
                     .then(function(data) {
                         OrderCloud.BuyerID.Set(buyerid);
                         return data;
                     })
             },
-            ExistingOrder: function($q, OrderCloud, CurrentUser) {
-                return OrderCloud.Me.ListOutgoingOrders(null, 1, 1, null, "!DateCreated", {Status:"Unsubmitted"})
+            ExistingOrder: function($q, OrderCloudSDK, CurrentUser) {
+                var opts = {
+                    page: 1,
+                    pageSize: 1,
+                    sortBy: '!DateCreated',
+                    filters: {Status: 'Unsubmitted'}
+                };
+                return OrderCloudSDK.Me.ListOrders(opts)
                     .then(function(data) {
                         return data.Items[0];
                     });
@@ -39,40 +55,36 @@ function BaseConfig($stateProvider) {
                     return ExistingOrder;
                 }
             },
-            AnonymousUser: function($q, OrderCloud, CurrentUser) {
-                CurrentUser.Anonymous = angular.isDefined(JSON.parse(atob(OrderCloud.Auth.ReadToken().split('.')[1])).orderid);
+            AnonymousUser: function($q, OrderCloudSDK, CurrentUser) {
+                CurrentUser.Anonymous = angular.isDefined(JSON.parse(atob(OrderCloudSDK.GetToken().split('.')[1])).orderid);
             }
         }
     });
 }
 
-function BaseController($rootScope, $state, $http, ProductSearch, CurrentUser, CurrentOrder, LoginService, OrderCloud) {
-	console.log('Inside Base Controller');
+function BaseController($rootScope, $state, $http, ProductSearch, CurrentUser, CurrentOrder, LoginService, OrderCloudSDK,buyerid) {
     var vm = this;
     vm.currentUser = CurrentUser;
     vm.currentOrder = CurrentOrder;
     vm.storeUrl = "";
-    
-    vm.getAvailableBalance = function() {
-    	vm.availableFunds = 0;
-    	
-  			OrderCloud.Me.Get().then(function(result) {
-  				var userId = result.ID;
-  				
-  				OrderCloud.SpendingAccounts.ListAssignments(null, userId, null, null,
-  					  null, null).then(function(accountsResult) {
-  					var accountAssignments = accountsResult.Items;
-  					
-  					angular.forEach(accountAssignments, function(a) {
-  						OrderCloud.SpendingAccounts.Get(a.SpendingAccountID).then(
-  						    function(aResult) {
-  							vm.availableFunds += aResult.Balance;
-  						});
-  					});
-  				});
-  			});
-  			console.log('Funds Available' + vm.availableFunds);
-  		}
+
+    vm.getAvailableBalance = function () {
+        vm.availableFunds = 0;
+        OrderCloudSDK.Me.Get().then(function (result) {
+            var userId = result.ID;
+            var opts = {userID: userId};
+            OrderCloudSDK.SpendingAccounts.ListAssignments(buyerid, opts).then(function (accountsResult) {
+                var accountAssignments = accountsResult.Items;
+                angular.forEach(accountAssignments, function (a) {
+                    OrderCloudSDK.SpendingAccounts.Get(buyerid, a.SpendingAccountID).then(
+                        function (aResult) {
+                            vm.availableFunds += aResult.Balance;
+                        });
+                });
+            });
+        });
+        console.log('Funds Available' + vm.availableFunds);
+    };
     
     vm.logout = function() {
         LoginService.Logout();
@@ -95,7 +107,7 @@ function BaseController($rootScope, $state, $http, ProductSearch, CurrentUser, C
         vm.orderLoading = {
             message: message
         };
-        vm.orderLoading.promise = OrderCloud.Orders.Get(OrderID)
+        vm.orderLoading.promise = OrderCloudSDK.Orders.Get('outgoing', OrderID)
             .then(function(data) {
                 vm.currentOrder = data;
             });
@@ -106,7 +118,7 @@ function BaseController($rootScope, $state, $http, ProductSearch, CurrentUser, C
       });
 }
 
-function NewOrderService($q, OrderCloud) {
+function NewOrderService($q, OrderCloudSDK) {
     var service = {
         Create: _create
     };
@@ -114,9 +126,13 @@ function NewOrderService($q, OrderCloud) {
     function _create() {
         var deferred = $q.defer();
         var order = {};
-
+        var opts = {
+            page: 1,
+            pageSize: 100,
+            filters: {Shipping: true}
+        };
         //ShippingAddressID
-        OrderCloud.Me.ListAddresses(null, 1, 100, null, null, {Shipping: true})
+        OrderCloudSDK.Me.ListAddresses(opts)
             .then(function(shippingAddresses) {
                 if (shippingAddresses.Items.length) order.ShippingAddressID = shippingAddresses.Items[0].ID;
                 setBillingAddress();
@@ -124,7 +140,8 @@ function NewOrderService($q, OrderCloud) {
 
         //BillingAddressID
         function setBillingAddress() {
-            OrderCloud.Me.ListAddresses(null, 1, 100, null, null, {Billing: true})
+            opts.filters = {Billing: true};
+            OrderCloudSDK.Me.ListAddresses(opts)
                 .then(function(billingAddresses) {
                     if (billingAddresses.Items.length) order.BillingAddressID = billingAddresses.Items[0].ID;
                     createOrder();
@@ -132,7 +149,7 @@ function NewOrderService($q, OrderCloud) {
         }
 
         function createOrder() {
-            OrderCloud.Orders.Create(order)
+            OrderCloudSDK.Orders.Create('outgoing', order)
                 .then(function(order) {
                     deferred.resolve(order);
                 });

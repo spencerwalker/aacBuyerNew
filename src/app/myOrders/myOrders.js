@@ -1,4 +1,3 @@
-
 angular.module('orderCloud')
     .config(MyOrdersConfig)
     .controller('MyOrdersCtrl', MyOrdersController)
@@ -16,17 +15,17 @@ function MyOrdersConfig($stateProvider) {
             },
             url: '/myorders?from&to&search&page&pageSize&searchOn&sortBy&filters?favorites',
             resolve: {
-                Parameters: function($stateParams, ocParameters) {
+                Parameters: function ($stateParams, ocParameters) {
                     return ocParameters.Get($stateParams);
                 },
-                OrderList: function(OrderCloud, Parameters, CurrentUser) {
+                OrderList: function (OrderCloudSDK, Parameters, CurrentUser) {
                     if (Parameters.favorites && CurrentUser.xp.FavoriteOrders) {
-                        Parameters.filters ? angular.extend(Parameters.filters, Parameters.filters, {ID:CurrentUser.xp.FavoriteOrders.join('|')}) : Parameters.filters = {ID:CurrentUser.xp.FavoriteOrders.join('|')};
+                        Parameters.filters ? angular.extend(Parameters.filters, Parameters.filters, {ID: CurrentUser.xp.FavoriteOrders.join('|')}) : Parameters.filters = {ID: CurrentUser.xp.FavoriteOrders.join('|')};
                     } else if (Parameters.filters) {
                         delete Parameters.filters.ID;
                     }
-                    var showSubmittedOnly = angular.extend({}, Parameters.filters, {Status:'!Unsubmitted'}); 
-                    return OrderCloud.Me.ListOutgoingOrders(Parameters.search, Parameters.page, Parameters.pageSize || 12, Parameters.searchOn, Parameters.sortBy, showSubmittedOnly, Parameters.from, Parameters.to);
+                    var showSubmittedOnly = angular.extend({}, Parameters.filters, {Status: 'Open|AwaitingApproval|Completed|Canceled|Declined'});
+                    return OrderCloudSDK.Me.ListOrders({search:Parameters.search, page: Parameters.page, pageSize: Parameters.pageSize || 12, searchOn: Parameters.searchOn, fitlers: showSubmittedOnly, sortBy: Parameters.sortBy, from: Parameters.from, to:Parameters.to});
                 }
             }
         })
@@ -36,30 +35,30 @@ function MyOrdersConfig($stateProvider) {
             controller: 'MyOrderDetailCtrl',
             controllerAs: 'myOrderDetail',
             resolve: {
-                SelectedOrder: function($stateParams, OrderCloud) {
-                    return OrderCloud.Me.GetOrder($stateParams.orderid);
+                SelectedOrder: function ($stateParams, OrderCloudSDK) {
+                    return OrderCloudSDK.Me.GetOrder($stateParams.orderid);
                 },
-                SelectedPayments: function($stateParams, $q, OrderCloud) {
+                SelectedPayments: function ($stateParams, $q, OrderCloudSDK) {
                     var deferred = $q.defer();
-                    OrderCloud.Payments.List($stateParams.orderid)
-                        .then(function(data) {
+                    OrderCloudSDK.Payments.List('outgoing', $stateParams.orderid)
+                        .then(function (data) {
                             var queue = [];
-                            angular.forEach(data.Items, function(payment, index) {
+                            angular.forEach(data.Items, function (payment, index) {
                                 if (payment.Type === 'CreditCard' && payment.CreditCardID) {
-                                    queue.push((function() {
+                                    queue.push((function () {
                                         var d = $q.defer();
-                                        OrderCloud.Me.GetCreditCard(payment.CreditCardID)
-                                            .then(function(cc) {
+                                        OrderCloudSDK.Me.GetCreditCard(payment.CreditCardID)
+                                            .then(function (cc) {
                                                 data.Items[index].Details = cc;
                                                 d.resolve();
                                             });
                                         return d.promise;
                                     })());
                                 } else if (payment.Type === 'SpendingAccount' && payment.SpendingAccountID) {
-                                    queue.push((function() {
+                                    queue.push((function () {
                                         var d = $q.defer();
-                                        OrderCloud.Me.GetSpendingAccount(payment.SpendingAccountID)
-                                            .then(function(cc) {
+                                        OrderCloudSDK.Me.GetSpendingAccount(payment.SpendingAccountID)
+                                            .then(function (cc) {
                                                 data.Items[index].Details = cc;
                                                 d.resolve();
                                             });
@@ -68,66 +67,76 @@ function MyOrdersConfig($stateProvider) {
                                 }
                             });
                             $q.all(queue)
-                                .then(function() {
+                                .then(function () {
                                     deferred.resolve(data);
                                 })
                         });
 
                     return deferred.promise;
                 },
-                LineItemList: function($q, $stateParams, OrderCloud, ocLineItems) {
+                LineItemList: function ($q, $stateParams, OrderCloudSDK, ocLineItems) {
                     var dfd = $q.defer();
-                    OrderCloud.LineItems.List($stateParams.orderid, null, 1, 100)
-                        .then(function(data) {
+                    var opts = {
+                        page: 1,
+                        pageSize: 100
+                    };
+                    OrderCloudSDK.LineItems.List('outgoing', $stateParams.orderid,opts)
+                        .then(function (data) {
                             ocLineItems.GetProductInfo(data.Items)
-                                .then(function() {
+                                .then(function () {
                                     dfd.resolve(data);
                                 });
                         });
                     return dfd.promise;
                 },
-                
-                LineItemsList: function($q, $state, toastr, OrderCloud, ocLineItems, CurrentOrder) {
-        	  		var dfd = $q.defer();
-        	  		OrderCloud.LineItems.List(CurrentOrder.ID)
-        	  		.then(function(data) {
-        	  			if (!data.Items.length) {
-        	  				dfd.resolve(data);
-        	  				}
-        	  				else {
-        	  					ocLineItems.GetProductInfo(data.Items)
-        	  					.then(function() {
-        	  						dfd.resolve(data);
-        	  					});
-        	  				}
-        	  		})
-        	  		.catch(function() {
-        	  			toastr.error('Your order does not contain any line items.', 'Error');
-        	  			dfd.reject();
-        	  		});
-        	  		return dfd.promise;
-        	  		},
-        	  		CurrentPromotions: function(CurrentOrder, OrderCloud) {
-        	  			return OrderCloud.Orders.ListPromotions(CurrentOrder.ID);
-        	  		},
-        	                
-        	  		CategoryList: function($stateParams, OrderCloud) {
-        	  			var depth = 1;
-        	  			return OrderCloud.Me.ListCategories(null, null, null, null, null, {ParentID: $stateParams.categoryid}, depth);
-        	  		},
-        	  		ProductList: function($stateParams, OrderCloud) {
-        	  			return OrderCloud.Me.ListProducts(null, null, null, null, null, null, $stateParams.categoryid);
 
-        	  		},
-        	  		
-                PromotionList: function($stateParams, OrderCloud){
-                    return OrderCloud.Orders.ListPromotions($stateParams.orderid);
+                LineItemsList: function ($q, $state, toastr, OrderCloudSDK, ocLineItems, CurrentOrder) {
+                    var dfd = $q.defer();
+                    OrderCloudSDK.LineItems.List('outgoing', CurrentOrder.ID)
+                        .then(function (data) {
+                            if (!data.Items.length) {
+                                dfd.resolve(data);
+                            }
+                            else {
+                                ocLineItems.GetProductInfo(data.Items)
+                                    .then(function () {
+                                        dfd.resolve(data);
+                                    });
+                            }
+                        })
+                        .catch(function () {
+                            toastr.error('Your order does not contain any line items.', 'Error');
+                            dfd.reject();
+                        });
+                    return dfd.promise;
+                },
+                CurrentPromotions: function (CurrentOrder, OrderCloudSDK) {
+                    return OrderCloudSDK.Orders.ListPromotions('outgoing', CurrentOrder.ID);
+                },
+
+                CategoryList: function ($stateParams, OrderCloudSDK) {
+                    var opts ={
+                        depth: 1,
+                        filters: {ParentID: $stateParams.categoryid}
+                    };
+                    return OrderCloudSDK.Me.ListCategories(opts);
+                },
+                ProductList: function ($stateParams, OrderCloudSDK) {
+                    var opts = {
+                        categoryID: $stateParams.categoryid
+                    };
+                    return OrderCloudSDK.Me.ListProducts(opts);
+
+                },
+
+                PromotionList: function ($stateParams, OrderCloudSDK) {
+                    return OrderCloudSDK.Orders.ListPromotions('outgoing', $stateParams.orderid);
                 }
             }
         });
 }
 
-function MyOrdersController($state, $ocMedia, OrderCloud, ocParameters, OrderList, Parameters) {
+function MyOrdersController($state, $ocMedia, OrderCloudSDK, ocParameters, OrderList, Parameters) {
     var vm = this;
     vm.list = OrderList;
     vm.parameters = Parameters;
@@ -141,12 +150,12 @@ function MyOrdersController($state, $ocMedia, OrderCloud, ocParameters, OrderLis
     vm.searchResults = Parameters.search && Parameters.search.length > 0;
 
     //Reload the state with new parameters
-    vm.filter = function(resetPage) {
-        if(vm.parameters.filters && vm.parameters.filters.Status === null) delete vm.parameters.filters.Status;
+    vm.filter = function (resetPage) {
+        if (vm.parameters.filters && vm.parameters.filters.Status === null) delete vm.parameters.filters.Status;
         $state.go('.', ocParameters.Create(vm.parameters, resetPage));
     };
 
-    vm.toggleFavorites = function() {
+    vm.toggleFavorites = function () {
         if (vm.parameters.filters && vm.parameters.filters.ID) delete vm.parameters.filters.ID;
         if (vm.parameters.favorites) {
             vm.parameters.favorites = '';
@@ -158,18 +167,18 @@ function MyOrdersController($state, $ocMedia, OrderCloud, ocParameters, OrderLis
     };
 
     //Reload the state with new search parameter & reset the page
-    vm.search = function() {
+    vm.search = function () {
         vm.filter(true);
     };
 
     //Clear the search parameter, reload the state & reset the page
-    vm.clearSearch = function() {
+    vm.clearSearch = function () {
         vm.parameters.search = null;
         vm.filter(true);
     };
 
     //Clear relevant filters, reload the state & reset the page
-    vm.clearFilters = function() {
+    vm.clearFilters = function () {
         vm.parameters.filters = null;
         vm.parameters.favorites = null;
         vm.parameters.from = null;
@@ -179,7 +188,7 @@ function MyOrdersController($state, $ocMedia, OrderCloud, ocParameters, OrderLis
     };
 
     //Conditionally set, reverse, remove the sortBy parameter & reload the state
-    vm.updateSort = function(value) {
+    vm.updateSort = function (value) {
         value ? angular.noop() : value = vm.sortSelection;
         switch (vm.parameters.sortBy) {
             case value:
@@ -195,61 +204,71 @@ function MyOrdersController($state, $ocMedia, OrderCloud, ocParameters, OrderLis
     };
 
     //Used on mobile devices
-    vm.reverseSort = function() {
+    vm.reverseSort = function () {
         Parameters.sortBy.indexOf('!') == 0 ? vm.parameters.sortBy = Parameters.sortBy.split('!')[1] : vm.parameters.sortBy = '!' + Parameters.sortBy;
         vm.filter(false);
     };
 
     //Reload the state with the incremented page parameter
-    vm.pageChanged = function(page) {
+    vm.pageChanged = function (page) {
         $state.go('.', {page: page});
     };
 
     //Load the next page of results with all of the same parameters
-    vm.loadMore = function() {
-        return OrderCloud.Me.ListIncomingOrders(Parameters.from, Parameters.to, Parameters.search, vm.list.Meta.Page + 1, Parameters.pageSize || vm.list.Meta.PageSize, Parameters.searchOn, Parameters.sortBy, Parameters.filters)
-            .then(function(data) {
+    vm.loadMore = function () {
+        var opts = {
+            from: Parameters.from,
+            to: Parameters.to,
+            search: Parameters.search,
+            page: vm.list.Meta.Page + 1,
+            pageSize: Parameters.pageSize || vm.list.Meta.PageSize,
+            searchOn: Parameters.searchOn,
+            sortBy: Parameters.sortBy,
+            filters: Parameters.filters
+        };
+        return OrderCloudSDK.Me.ListOrders(opts)
+            .then(function (data) {
                 vm.list.Items = vm.list.Items.concat(data.Items);
                 vm.list.Meta = data.Meta;
             });
     };
 }
 
-function MyOrderDetailController($state, $exceptionHandler, $scope, toastr, OrderCloud, ocConfirm, SelectedOrder, LineItemsList, SelectedPayments, LineItemList, PromotionList, CategoryList, ProductList, VendorShippingCriteria) {
+function MyOrderDetailController($state, $exceptionHandler, $scope, toastr, OrderCloudSDK, ocConfirm, SelectedOrder, LineItemsList, SelectedPayments, LineItemList, PromotionList, CategoryList, ProductList, VendorShippingCriteria) {
     var vm = this;
     vm.order = SelectedOrder;
     vm.list = LineItemList;
     vm.paymentList = SelectedPayments.Items;
     vm.canCancel = SelectedOrder.Status === 'Unsubmitted' || SelectedOrder.Status === 'AwaitingApproval';
     vm.promotionList = PromotionList.Meta ? PromotionList.Items : PromotionList;
-    
-    OrderCloud.Me.GetAddress(vm.order.ShippingAddressID)
-	    .then(function(address) {
-	        vm.shippingAddress = address;
-	    })
-	    .catch(function(ex) {
-	    	vm.shippingAddress = null;
-	    });
-    
+
+    OrderCloudSDK.Me.GetAddress(vm.order.ShippingAddressID)
+        .then(function (address) {
+            vm.shippingAddress = address;
+        })
+        .catch(function (ex) {
+            vm.shippingAddress = null;
+        });
+
     vm.lineItems = LineItemsList;
     vm.vendorLineItemsMap = {};
-    
+
     console.log('LineItems', vm.lineItems);
     console.log('CategoryList :: ', CategoryList);
     console.log('Products :: ', ProductList);
-    console.log('vm.lineItems ::' , JSON.stringify(vm.lineItems));
-    
+    console.log('vm.lineItems ::', JSON.stringify(vm.lineItems));
+
     vm.vendorLineItemsMap = {};
-	angular.forEach(vm.list.Items, function(lineItem){
-    	var productId = lineItem.ProductID;
-    	var vendorName = productId.split("_")[0]; 
-    	
-    	if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
-    		vm.vendorLineItemsMap[vendorName] = [];
-    	}
-    	vm.vendorLineItemsMap[vendorName].push(lineItem);
+    angular.forEach(vm.list.Items, function (lineItem) {
+        var productId = lineItem.ProductID;
+        var vendorName = productId.split("_")[0];
+
+        if (typeof vm.vendorLineItemsMap[vendorName] === 'undefined') {
+            vm.vendorLineItemsMap[vendorName] = [];
+        }
+        vm.vendorLineItemsMap[vendorName].push(lineItem);
     });
-    
+
     // watcher on vm.lineItems
     // $scope.$watch(function () {
     //    	return vm.lineItems;
@@ -266,31 +285,31 @@ function MyOrderDetailController($state, $exceptionHandler, $scope, toastr, Orde
     //    	vm.vendorLineItemsMap[vendorName].push(lineItem);
     //    });
     // }, true);  
-    
-    
+
+
     console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
-    
-    vm.getShippingCostByVendor = function(vendorName){
+
+    vm.getShippingCostByVendor = function (vendorName) {
         return VendorShippingCriteria.getShippingCostByVendor(vendorName, vm.vendorLineItemsMap[vendorName]);
     };
-    
-    vm.getSubTotal = function(lineItemsList){
-		var total = 0.0;
-		angular.forEach(lineItemsList, function(lineItem){
-			total += ( lineItem.UnitPrice * lineItem.Quantity);
-		});
-		return total;
-		}
-	 
-    vm.cancelOrder = function(orderid) {
+
+    vm.getSubTotal = function (lineItemsList) {
+        var total = 0.0;
+        angular.forEach(lineItemsList, function (lineItem) {
+            total += ( lineItem.UnitPrice * lineItem.Quantity);
+        });
+        return total;
+    }
+
+    vm.cancelOrder = function (orderid) {
         ocConfirm.Confirm('Are you sure you want to cancel this order?')
-            .then(function() {
-                OrderCloud.Orders.Cancel(orderid)
-                    .then(function() {
+            .then(function () {
+                OrderCloudSDK.Orders.Cancel('outgoing', orderid)
+                    .then(function () {
                         $state.go('myOrders', {}, {reload: true});
                         toastr.success('Order Cancelled', 'Success');
                     })
-                    .catch(function(ex) {
+                    .catch(function (ex) {
                         $exceptionHandler(ex);
                     });
             });

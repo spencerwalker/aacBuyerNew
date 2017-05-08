@@ -3,8 +3,8 @@ angular.module('orderCloud')
 ;
 
 function AppRun(OrderCloud, catalogid, uibDatepickerConfig, uibDatepickerPopupConfig, defaultErrorMessageResolver) {
-    //Set Default CatalogID
-    catalogid ? OrderCloud.CatalogID.Set(catalogid) : OrderCloud.CatalogID.Set(OrderCloud.BuyerID.Get());
+    // //Set Default CatalogID
+    // catalogid ? OrderCloud.CatalogID.Set(catalogid) : OrderCloud.CatalogID.Set(OrderCloud.BuyerID.Get());
 
     //Default Datepicker Options
     uibDatepickerConfig.showWeeks = false;

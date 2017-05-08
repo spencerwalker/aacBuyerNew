@@ -35,7 +35,7 @@ function MyAddressesModalFactory($uibModal) {
     }
 }
 
-function CreateAddressModalController($q, $exceptionHandler, $uibModalInstance, OrderCloud, ocGeography) {
+function CreateAddressModalController($q, $exceptionHandler, $uibModalInstance, OrderCloudSDK, ocGeography) {
     var vm = this;
     vm.countries = ocGeography.Countries;
     vm.states = ocGeography.States;
@@ -55,7 +55,7 @@ function CreateAddressModalController($q, $exceptionHandler, $uibModalInstance, 
         vm.loading = {
             message:'Creating Address'
         };
-        vm.loading.promise = OrderCloud.Me.CreateAddress(vm.address)
+        vm.loading.promise = OrderCloudSDK.Me.CreateAddress(vm.address)
             .then(function(address) {
                 $uibModalInstance.close(address);
             })
@@ -65,7 +65,7 @@ function CreateAddressModalController($q, $exceptionHandler, $uibModalInstance, 
     };
 }
 
-function EditAddressModalController($exceptionHandler, $uibModalInstance, OrderCloud, ocGeography, SelectedAddress) {
+function EditAddressModalController($exceptionHandler, $uibModalInstance, OrderCloudSDK, ocGeography, SelectedAddress) {
     var vm = this;
     vm.countries = ocGeography.Countries;
     vm.states = ocGeography.States;
@@ -84,7 +84,7 @@ function EditAddressModalController($exceptionHandler, $uibModalInstance, OrderC
         vm.loading = {
             message:'Saving Address'
         };
-        vm.loading.promise = OrderCloud.Me.UpdateAddress(vm.addressID, vm.address)
+        vm.loading.promise = OrderCloudSDK.Me.UpdateAddress(vm.addressID, vm.address)
             .then(function(address) {
                 $uibModalInstance.close(address);
             })
