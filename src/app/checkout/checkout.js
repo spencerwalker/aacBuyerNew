@@ -6,7 +6,8 @@ angular.module('orderCloud')
     .constant('CheckoutConfig', {
         ShippingRates: true,
         TaxRates: false,
-        AvailablePaymentMethods: ['PurchaseOrder', 'CreditCard', 'SpendingAccount']
+       // AvailablePaymentMethods: ['PurchaseOrder', 'CreditCard', 'SpendingAccount']
+        AvailablePaymentMethods: [ 'SpendingAccount', 'CreditCard']
     })
 ;
 
@@ -21,10 +22,10 @@ function checkoutConfig($urlRouterProvider, $stateProvider) {
 			controller: 'CheckoutCtrl',
 			controllerAs: 'checkout',
 			resolve: {
-                OrderShipAddress: function($q, OrderCloud, CurrentOrder){
+                OrderShipAddress: function($q, OrderCloudSDK, CurrentOrder){
                     var deferred = $q.defer();
                     if (CurrentOrder.ShippingAddressID) {
-                        OrderCloud.Me.GetAddress(CurrentOrder.ShippingAddressID)
+                        OrderCloudSDK.Me.GetAddress(CurrentOrder.ShippingAddressID)
                             .then(function(address) {
                                 deferred.resolve(address);
                             })
@@ -38,14 +39,14 @@ function checkoutConfig($urlRouterProvider, $stateProvider) {
 
                     return deferred.promise;
                 },
-                CurrentPromotions: function(CurrentOrder, OrderCloud) {
-                    return OrderCloud.Orders.ListPromotions(CurrentOrder.ID);
+                CurrentPromotions: function(CurrentOrder, OrderCloudSDK) {
+                    return OrderCloudSDK.Orders.ListPromotions('outgoing', CurrentOrder.ID);
                 },
-                OrderBillingAddress: function($q, OrderCloud, CurrentOrder){
+                OrderBillingAddress: function($q, OrderCloudSDK, CurrentOrder){
                     var deferred = $q.defer();
 
                     if (CurrentOrder.BillingAddressID) {
-                        OrderCloud.Me.GetAddress(CurrentOrder.BillingAddressID)
+                        OrderCloudSDK.Me.GetAddress(CurrentOrder.BillingAddressID)
                             .then(function(address) {
                                 deferred.resolve(address);
                             })
@@ -63,7 +64,7 @@ function checkoutConfig($urlRouterProvider, $stateProvider) {
     ;
 }
 
-function CheckoutController($state, $rootScope, toastr, OrderCloud, OrderShipAddress, CurrentPromotions, OrderBillingAddress, CheckoutConfig) {
+function CheckoutController($state, $rootScope, toastr, OrderCloudSDK, OrderShipAddress, CurrentPromotions, OrderBillingAddress, CheckoutConfig) {
     var vm = this;
     vm.shippingAddress = OrderShipAddress;
     vm.billingAddress = OrderBillingAddress;
@@ -71,7 +72,7 @@ function CheckoutController($state, $rootScope, toastr, OrderCloud, OrderShipAdd
     vm.checkoutConfig = CheckoutConfig;
 
     vm.submitOrder = function(order) {
-        OrderCloud.Orders.Submit(order.ID)
+        OrderCloudSDK.Orders.Submit('outgoing', order.ID)
             .then(function(order) {
                 $state.go('confirmation', {orderid:order.ID}, {reload:'base'});
                 toastr.success('Your order has been submitted', 'Success');
@@ -82,28 +83,28 @@ function CheckoutController($state, $rootScope, toastr, OrderCloud, OrderShipAdd
     };
 
     $rootScope.$on('OC:OrderShipAddressUpdated', function(event, order) {
-        OrderCloud.Me.GetAddress(order.ShippingAddressID)
+        OrderCloudSDK.Me.GetAddress(order.ShippingAddressID)
             .then(function(address){
                 vm.shippingAddress = address;
             });
     });
 
     $rootScope.$on('OC:OrderBillAddressUpdated', function(event, order){
-        OrderCloud.Me.GetAddress(order.BillingAddressID)
+        OrderCloudSDK.Me.GetAddress(order.BillingAddressID)
             .then(function(address){
                 vm.billingAddress = address;
             });
     });
 
     vm.removePromotion = function(order, promotion) {
-        OrderCloud.Orders.RemovePromotion(order.ID, promotion.Code)
+        OrderCloudSDK.Orders.RemovePromotion('outgoing', order.ID, promotion.Code)
             .then(function() {
                 $rootScope.$broadcast('OC:UpdatePromotions', order.ID);
             })
     };
 
     $rootScope.$on('OC:UpdatePromotions', function(event, orderid) {
-        OrderCloud.Orders.ListPromotions(orderid)
+        OrderCloudSDK.Orders.ListPromotions('outgoing', orderid)
             .then(function(data) {
                 if (data.Meta) {
                     vm.promotions = data.Items;
@@ -128,13 +129,20 @@ function AddressSelectModalService($uibModal) {
             backdrop: 'static',
             size: 'md',
             resolve: {
-                Addresses: function(OrderCloud) {
+                Addresses: function(OrderCloudSDK) {
+                    var opts = {
+                        page: 1,
+                        pageSize: 100,
+                        filters:  {Shipping: true}
+                    };
                     if (type == 'shipping') {
-                        return OrderCloud.Me.ListAddresses(null, 1, 100, null, null, {Shipping: true});
+                        return OrderCloudSDK.Me.ListAddresses(opts);
                     } else if (type == 'billing') {
-                        return OrderCloud.Me.ListAddresses(null, 1, 100, null, null, {Billing: true});
+                        opts.filters = {Billing: true};
+                        return OrderCloudSDK.Me.ListAddresses(opts);
                     } else {
-                        return OrderCloud.Me.ListAddresses(null, 1, 100);
+                        opts.filters =  null;
+                        return OrderCloudSDK.Me.ListAddresses(opts);
                     }
                 }
             }

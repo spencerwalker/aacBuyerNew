@@ -23,19 +23,44 @@ function ProductBrowseConfig($urlRouterProvider, $stateProvider) {
                 Parameters: function ($stateParams, ocParameters) {
                     return ocParameters.Get($stateParams);
                 },
-                CategoryList: function(OrderCloud) {
-                    return OrderCloud.Me.ListCategories(null, 1, 100, null, null, null, 'all');
+                CategoryList: function (OrderCloudSDK) {
+                    var page = 1;
+                    var categories = {};
+                    var opts = {
+                        page: page,
+                        pageSize: 100,
+                        depth: 'all'
+                    };
+                    categories.Items = [];
+
+                    function getCategories() {
+                        return OrderCloudSDK.Me.ListCategories(opts)
+                            .then(function (data) {
+                                categories.Items = categories.Items.concat(data.Items);
+                                if (data.Meta.Page < data.Meta.TotalPages) {
+                                    page++;
+                                    opts.page = page;
+                                    return getCategories();
+                                }
+                                else {
+                                    return categories;
+                                }
+                            });
+                    }
+
+                    return getCategories();
+
                 },
-                CategoryTree: function(CategoryList) {
+                CategoryTree: function (CategoryList) {
                     var result = [];
-                    angular.forEach(_.where(CategoryList.Items, {ParentID: null}), function(node) {
+                    angular.forEach(_.where(CategoryList.Items, {ParentID: null}), function (node) {
                         result.push(getnode(node));
                     });
                     function getnode(node) {
                         var children = _.where(CategoryList.Items, {ParentID: node.ID});
                         if (children.length > 0) {
                             node.children = children;
-                            angular.forEach(children, function(child) {
+                            angular.forEach(children, function (child) {
                                 return getnode(child);
                             });
                         } else {
@@ -43,6 +68,7 @@ function ProductBrowseConfig($urlRouterProvider, $stateProvider) {
                         }
                         return node;
                     }
+
                     return result;
                 }
             }
@@ -56,29 +82,38 @@ function ProductBrowseConfig($urlRouterProvider, $stateProvider) {
                 Parameters: function ($stateParams, ocParameters) {
                     return ocParameters.Get($stateParams);
                 },
-                ProductList: function(OrderCloud, CurrentUser, Parameters) {
+                ProductList: function (OrderCloudSDK, CurrentUser, Parameters) {
                     if (Parameters.favorites && CurrentUser.xp.FavoriteProducts) {
-                        Parameters.filters ? angular.extend(Parameters.filters, Parameters.filters, {ID:CurrentUser.xp.FavoriteProducts.join('|')}) : Parameters.filters = {ID:CurrentUser.xp.FavoriteProducts.join('|')};
+                        Parameters.filters ? angular.extend(Parameters.filters, Parameters.filters, {ID: CurrentUser.xp.FavoriteProducts.join('|')}) : Parameters.filters = {ID: CurrentUser.xp.FavoriteProducts.join('|')};
                     } else if (Parameters.filters) {
                         delete Parameters.filters.ID;
                     }
-                    return OrderCloud.Me.ListProducts(Parameters.search, Parameters.page, Parameters.pageSize, Parameters.searchOn, Parameters.sortBy, Parameters.filters, Parameters.categoryid);
+                    var opts = {
+                        search:Parameters.search,
+                        page: Parameters.page,
+                        pageSize: Parameters.pageSize,
+                        searchOn:Parameters.searchOn,
+                        sortBy: Parameters.sortBy,
+                        filters:  Parameters.filters,
+                        categoryID:Parameters.categoryid
+                    };
+                    return OrderCloudSDK.Me.ListProducts(opts);
                 }
             }
         });
 }
 
-function ProductBrowseController($state, $uibModal, CategoryList, CategoryTree, Parameters) {
+function ProductBrowseController($state, $window, $uibModal, ocPunchout, CategoryList, CategoryTree, Parameters, CurrentOrder) {
     var vm = this;
     vm.parameters = Parameters;
     vm.categoryList = CategoryList;
-
+    console.log('CategoryList :: ', CategoryList);
     //Category Tree Setup
     vm.treeConfig = {};
 
     vm.treeConfig.treeData = CategoryTree;
     vm.treeConfig.treeOptions = {
-        equality: function(node1, node2) {
+        equality: function (node1, node2) {
             if (node2 && node1) {
                 return node1.ID === node2.ID;
             } else {
@@ -87,14 +122,23 @@ function ProductBrowseController($state, $uibModal, CategoryList, CategoryTree, 
         }
     };
 
-    vm.treeConfig.selectNode = function(node) {
-        $state.go('productBrowse.products', {categoryid:node.ID, page:''});
+    vm.treeConfig.selectNode = function (node) {
+        var punchoutCategory = ocPunchout.IsPunchoutCategory(node.ID);
+        if (punchoutCategory) {
+            vm.loading = ocPunchout.SetupRequest(punchoutCategory.Name, punchoutCategory.SupplierPartID, CurrentOrder.ID)
+                .then(function(data) {
+                    // $window.location.href = data.StartURL;
+                    $state.go('punchout',{link:data.StartURL })
+                    
+                });
+        } else {
+            $state.go('productBrowse.products', {categoryid: node.ID, page: ''});
+        }
     };
-
     //Initiate breadcrumbs is triggered by product list view (child state "productBrowse.products")
-    vm.treeConfig.initBreadcrumbs = function(activeCategoryID, ignoreSetNode) {
+    vm.treeConfig.initBreadcrumbs = function (activeCategoryID, ignoreSetNode) {
         if (!ignoreSetNode) { //first iteration of initBreadcrumbs(), initiate breadcrumb array, set selected node for tree
-            vm.treeConfig.selectedNode = {ID:activeCategoryID};
+            vm.treeConfig.selectedNode = {ID: activeCategoryID};
             vm.breadcrumb = [];
         }
         if (!activeCategoryID) { //at the catalog root, no expanded nodes
@@ -112,7 +156,7 @@ function ProductBrowseController($state, $uibModal, CategoryList, CategoryTree, 
         }
     };
 
-    vm.toggleFavorites = function() {
+    vm.toggleFavorites = function () {
         if (vm.parameters.filters && vm.parameters.filters.ID) delete vm.parameters.filters.ID;
         if (vm.parameters.favorites) {
             vm.parameters.favorites = '';
@@ -123,10 +167,10 @@ function ProductBrowseController($state, $uibModal, CategoryList, CategoryTree, 
         $state.go('productBrowse.products', vm.parameters);
     };
 
-    vm.openCategoryModal = function(){
+    vm.openCategoryModal = function () {
         $uibModal.open({
             animation: true,
-            backdrop:'static',
+            backdrop: 'static',
             templateUrl: 'productBrowse/templates/mobileCategory.modal.tpl.html',
             controller: 'MobileCategoryModalCtrl',
             controllerAs: 'mobileCategoryModal',
@@ -136,14 +180,14 @@ function ProductBrowseController($state, $uibModal, CategoryList, CategoryTree, 
                     return vm.treeConfig;
                 }
             }
-        })
-        .result.then(function(node){
-            $state.go('productBrowse.products', {categoryid:node.ID, page:''});
+        }).result.then(function (node) {
+            //Check Punchout Here
+            $state.go('productBrowse.products', {categoryid: node.ID, page: ''});
         });
     };
 }
 
-function ProductViewController($state, $ocMedia, ocParameters, OrderCloud, CurrentOrder, ProductList, CategoryList, Parameters){
+function ProductViewController($state, $ocMedia, ocParameters, OrderCloudSDK, CurrentOrder, ProductList, CategoryList, Parameters) {
     var vm = this;
     vm.parameters = Parameters;
     vm.categories = CategoryList;
@@ -158,18 +202,18 @@ function ProductViewController($state, $ocMedia, ocParameters, OrderCloud, Curre
 
 
     //reload the state with new filters
-    vm.filter = function(resetPage) {
+    vm.filter = function (resetPage) {
         $state.go('.', ocParameters.Create(vm.parameters, resetPage));
     };
 
     //clear the relevant filters, reload the state & reset the page
-    vm.clearFilters = function() {
+    vm.clearFilters = function () {
         vm.parameters.filters = null;
         $ocMedia('max-width: 767px') ? vm.parameters.sortBy = null : angular.noop();
         vm.filter(true);
     };
 
-    vm.updateSort = function(value) {
+    vm.updateSort = function (value) {
         value ? angular.noop() : value = vm.sortSelection;
         switch (vm.parameters.sortBy) {
             case value:
@@ -184,47 +228,55 @@ function ProductViewController($state, $ocMedia, ocParameters, OrderCloud, Curre
         vm.filter(false);
     };
 
-    vm.reverseSort = function() {
+    vm.reverseSort = function () {
         Parameters.sortBy.indexOf('!') == 0 ? vm.parameters.sortBy = Parameters.sortBy.split('!')[1] : vm.parameters.sortBy = '!' + Parameters.sortBy;
         vm.filter(false);
     };
 
     //reload the state with the incremented page parameter
-    vm.pageChanged = function() {
+    vm.pageChanged = function () {
         $state.go('.', {
             page: vm.list.Meta.Page
         });
     };
 
     //load the next page of results with all the same parameters
-    vm.loadMore = function() {
-        return OrderCloud.Me.ListProducts(Parameters.search, vm.list.Meta.Page + 1, Parameters.pageSize || vm.list.Meta.PageSize, Parameters.searchOn, Parameters.sortBy, Parameters.filters)
-            .then(function(data) {
+    vm.loadMore = function () {
+        var opts = {
+            search:Parameters.search,
+            page: vm.list.Meta.Page + 1,
+            pageSize: Parameters.pageSize || vm.list.Meta.PageSize,
+            searchOn:Parameters.searchOn,
+            sortBy: Parameters.sortBy,
+            filters:  Parameters.filters
+        };
+        return OrderCloudSDK.Me.ListProducts(opts)
+            .then(function (data) {
                 vm.list.Items = vm.list.Items.concat(data.Items);
                 vm.list.Meta = data.Meta;
             });
     };
 }
 
-function PreventClick(){
+function PreventClick() {
     return {
-        link: function($scope, element) {
-            element.on("click", function(e){
+        link: function ($scope, element) {
+            element.on("click", function (e) {
                 e.stopPropagation();
             });
         }
     };
 }
 
-function MobileCategoryModalController($uibModalInstance, TreeConfig){
+function MobileCategoryModalController($uibModalInstance, TreeConfig) {
     var vm = this;
     vm.treeConfig = TreeConfig;
 
-    vm.cancel = function() {
+    vm.cancel = function () {
         $uibModalInstance.dismiss();
     };
 
-    vm.selectNode = function(node){
+    vm.selectNode = function (node) {
         $uibModalInstance.close(node);
     };
 }

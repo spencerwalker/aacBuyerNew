@@ -3,7 +3,7 @@ angular.module('orderCloud')
     .directive('specSelectField', SpecSelectionDirective)
 ;
 
-function OCSpecForm(OrderCloud) {
+function OCSpecForm(OrderCloudSDK, catalogid) {
     return {
         scope: {
             product: '='
@@ -12,7 +12,8 @@ function OCSpecForm(OrderCloud) {
         replace: true,
         link: function(scope){
             if (scope.product.SpecCount > 0) {
-                OrderCloud.Me.ListSpecs(scope.product.ID, null, 1, 100)
+                var opts = {page: 1, pageSize: 100};
+                OrderCloudSDK.Me.ListSpecs(catalogid, scope.product.ID,opts)
                     .then(function(data){
                         //go through specs array if there is a default value, set the specValue = default value
                         angular.forEach(data.Items, function(obj, key){

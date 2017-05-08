@@ -60,7 +60,7 @@ function RepeatOrderModalCtrl(LineItems, OrderID, $uibModalInstance, $state, Rep
     };
 }
 
-function RepeatOrderFactory($q, $rootScope, toastr, $exceptionHandler, OrderCloud, ocLineItems) {
+function RepeatOrderFactory($q, $rootScope, toastr, $exceptionHandler, OrderCloudSDK, ocLineItems) {
     return {
         GetValidLineItems: getValidLineItems,
         AddLineItemsToCart: addLineItemsToCart
@@ -87,14 +87,16 @@ function RepeatOrderFactory($q, $rootScope, toastr, $exceptionHandler, OrderClou
         function ListAllMeProducts() {
             var dfd = $q.defer();
             var queue = [];
-            OrderCloud.Me.ListProducts(null, 1, 100)
+            var opts = {page: 1, pageSize: 100};
+            OrderCloudSDK.Me.ListProducts(opts)
                 .then(function(data) {
                     var productList = data;
                     if (data.Meta.TotalPages > data.Meta.Page) {
                         var page = data.Meta.Page;
                         while (page < data.Meta.TotalPages) {
                             page += 1;
-                            queue.push(OrderCloud.Me.ListProducts(null, page, 100));
+                            opts.page = page;
+                            queue.push(OrderCloudSDK.Me.ListProducts(opts));
                         }
                     }
                     $q.all(queue)

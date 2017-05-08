@@ -12,17 +12,18 @@ function ProductConfig($stateProvider) {
             controller: 'ProductDetailCtrl',
             controllerAs: 'productDetail',
             resolve: {
-                Product: function ($stateParams, OrderCloud) {
-                    return OrderCloud.Me.GetProduct($stateParams.productid);
+                Product: function ($stateParams, OrderCloudSDK, catalogid) {
+                    return OrderCloudSDK.Me.GetProduct($stateParams.productid);
                 }
             }
         });
 }
 
-
 function ProductDetailController($exceptionHandler, Product, CurrentOrder, ocLineItems, toastr) {
     var vm = this;
     vm.item = Product;
+    console.log('Product :: ', vm.item);
+    
     vm.finalPriceBreak = null;
 
     vm.addToCart = function() {
@@ -36,12 +37,12 @@ function ProductDetailController($exceptionHandler, Product, CurrentOrder, ocLin
     };
 
     vm.findPrice = function(qty){
-        angular.forEach(vm.item.StandardPriceSchedule.PriceBreaks, function(priceBreak) {
+        angular.forEach(vm.item.PriceSchedule.PriceBreaks, function(priceBreak) {
             if (priceBreak.Quantity <= qty)
                 vm.finalPriceBreak = angular.copy(priceBreak);
         });
 
         return vm.finalPriceBreak.Price * qty;
     };
+    
 }
-

@@ -3,13 +3,18 @@
     <div class="c-topnav__group--left">
       <!--BRAND-->
       <div class="c-topnav__item c-topnav__brand">
-        <a ui-sref="home">
+        <a class="top-nav-home" href="{{base.storeUrl}}"
+                   ng-click="application.logout();"
+                   class="exitstore">
           {{application.name}}
         </a>
-      </div>
+      <!-- <div class="c-topnav__item c-topnav__account">
+      	<span>{{base.currentUser.FirstName + ' ' + base.currentUser.LastName}}</span>        	
+      </div> -->
+      </div>     
       <!--PRODUCT / CATEGORY BROWSE-->
       <div class="c-topnav__item c-topnav__browse">
-        <a ui-sref="productBrowse.products({page:'', favorites:'', sortBy:'', categoryid:''})"><i class="fa fa-th"></i> <span class="hidden-xs hidden-sm">Browse</span></a>
+        <a ui-sref="productBrowse.products({page:'', sortBy:'', categoryid:''})"><i class="fa fa-th"></i> <span class="hidden-xs hidden-sm">Home</span></a>
       </div>
       <!--MOBILE PRODUCT SEARCH-->
       <div class="c-topnav__item c-topnav__search hidden-lg hidden-md">
@@ -25,7 +30,7 @@
       </div>
       <!--ACCOUNT-->
       <div class="c-topnav__item c-topnav__account" uib-dropdown ng-if="!base.currentUser.Anonymous">
-        <a uib-dropdown-toggle role="button"><i class="fa fa-user"></i> <span class="hidden-xs hidden-sm">Account</span> <span class="caret hidden-xs"></span></a>
+        <a uib-dropdown-toggle role="button"><i class="fa fa-user"></i> <span class="hidden-xs hidden-sm" >{{base.currentUser.FirstName + ' ' + base.currentUser.LastName}} &nbsp;</span><span class="badge">{{base.availableFunds | currency:'$':2}}</span> <span class="caret hidden-xs"></span></a>
         <ul class="dropdown-menu-right" uib-dropdown-menu>
           <li ui-sref-active="active"><a ui-sref="account">My Account</a></li>
           <li class="divider"></li>
@@ -33,10 +38,11 @@
           <li ui-sref-active="active"><a ui-sref="myPayments">Payment Methods</a></li>
           <li ui-sref-active="active"><a ui-sref="favoriteProducts">Favorite Products</a></li>
           <li ui-sref-active="active"><a ui-sref="myOrders">Order History</a></li>
-          <li class="divider"></li>
-          <li><a ng-click="application.logout()">Log out</a></li>
+          <!-- <li class="divider"></li> -->
+         <!-- <li><a ng-click="application.logout()">Log out</a></li> --> 
         </ul>
       </div>
+ 		<a title="Share on Facebook" href="https://www.facebook.com/adoptaclassroom" class="social-icon"> <i class="fa fa-facebook"></i></a>       
     </div>
   </div>
 </div>

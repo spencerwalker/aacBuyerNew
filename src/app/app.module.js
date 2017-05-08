@@ -13,6 +13,7 @@ angular.module('orderCloud', [
         'jcs-autoValidate',
         'treeControl',
         'hl.sticky',
-        'angularPayments'
+        'angularPayments',
+        'ordercloud-angular-sdk'
     ]
 );

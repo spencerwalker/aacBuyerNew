@@ -34,8 +34,6 @@ switch(env) {
         app.use(express.static(config.root + config.build.replace('.', '')));
         // Host unchanged html files
         app.use(express.static(config.root + config.src.replace('.', '') + 'app/'));
-	app.use(express.static(config.root));
-    	app.use(express.static(config.root + config.components.dir));
         app.get('/*', function(req, res) {
             res.sendFile(config.root + config.build.replace('.', '') + 'index.html');
         });
@@ -51,9 +49,11 @@ function validateTimeHash(t, ts) {
   }
 
   var secret = process.env.HASH_SECRET;
+  console.log('*** secret ***' + secret);
   var hash = crypto.createHmac('sha256', secret)
                  .update(t)
                  .digest('hex');
-
+  console.log('*** ts ***' + ts);
+  console.log('*** hash ***' + hash);
   return ts == hash;
 }

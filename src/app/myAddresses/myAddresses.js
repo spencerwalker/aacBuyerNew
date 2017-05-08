@@ -15,14 +15,15 @@ function MyAddressesConfig($stateProvider) {
                 pageTitle: "Personal Addresses"
             },
             resolve: {
-                AddressList: function(OrderCloud) {
-                    return OrderCloud.Me.ListAddresses(null, null, null, null, null, {Editable:true});
+                AddressList: function(OrderCloudSDK) {
+                    var opts = {filters: {Editable:true}};
+                    return OrderCloudSDK.Me.ListAddresses(opts);
                 }
             }
         });
 }
 
-function MyAddressesController(toastr, OrderCloud, ocConfirm, MyAddressesModal, AddressList) {
+function MyAddressesController(toastr, OrderCloudSDK, ocConfirm, MyAddressesModal, AddressList) {
     var vm = this;
     vm.list = AddressList;
     vm.create = function() {
@@ -45,7 +46,7 @@ function MyAddressesController(toastr, OrderCloud, ocConfirm, MyAddressesModal, 
         vm.loading = [];
         ocConfirm.Confirm("Are you sure you want to delete this address?")
             .then(function() {
-                vm.loading[scope.$index] = OrderCloud.Me.DeleteAddress(scope.address.ID)
+                vm.loading[scope.$index] = OrderCloudSDK.Me.DeleteAddress(scope.address.ID)
                     .then(function() {
                         toastr.success('Address Deleted', 'Success');
                         vm.list.Items.splice(scope.$index, 1);

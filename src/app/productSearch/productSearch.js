@@ -19,8 +19,14 @@ function ProductSearchConfig($stateProvider) {
                 Parameters: function(ocParameters, $stateParams) {
                     return ocParameters.Get($stateParams);
                 },
-                ProductList: function(OrderCloud, Parameters) {
-                    return OrderCloud.Me.ListProducts(Parameters.searchTerm, Parameters.page, Parameters.pageSize || 12, null, Parameters.sortBy);
+                ProductList: function(OrderCloudSDK, Parameters) {
+                    var opts = {
+                        search:Parameters.searchTerm,
+                        page: Parameters.page,
+                        pageSize: Parameters.pageSize ||12,
+                        sortBy: Parameters.sortBy
+                    };
+                    return OrderCloudSDK.Me.ListProducts(opts);
                 }
             }
         });
@@ -79,11 +85,12 @@ function OrderCloudProductSearchComponent() {
     };
 }
 
-function ProductSearchDirectiveController($state, OrderCloud) {
+function ProductSearchDirectiveController($state, OrderCloudSDK) {
     var vm = this;
 
     vm.getSearchResults = function() {
-        return OrderCloud.Me.ListProducts(vm.searchTerm, 1, vm.maxProducts || 5)
+        var opts = {search: vm.searchTerm, page: 1, pageSize:vm.maxProducts || 5 };
+        return OrderCloudSDK.Me.ListProducts(opts)
             .then(function(data) {
                 return data.Items;
             });
@@ -120,7 +127,7 @@ function ProductSearchService($uibModal) {
     return service;
 }
 
-function ProductSearchModalController($uibModalInstance, $timeout, $scope, OrderCloud) {
+function ProductSearchModalController($uibModalInstance, $timeout, $scope, OrderCloudSDK) {
     var vm = this;
 
     $timeout(function() {
@@ -128,7 +135,8 @@ function ProductSearchModalController($uibModalInstance, $timeout, $scope, Order
     }, 300);
 
     vm.getSearchResults = function() {
-        return OrderCloud.Me.ListProducts(vm.searchTerm, 1, vm.maxProducts || 5)
+        var opts = {search: vm.searchTerm, page: 1, pageSize:vm.maxProducts || 5 };
+        return OrderCloudSDK.Me.ListProducts(opts)
             .then(function(data) {
                 return data.Items;
             });

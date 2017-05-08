@@ -1,11 +1,14 @@
 <article id="myPayments">
     <div >
+   	  <div class="panel panel-default"> 
+	   <div class="panel-heading">
         <!--PERSONAL CREDIT CARDS-->
-        <button class="btn btn-primary pull-right" ng-click="myPayments.createCreditCard()"><i
-                class="fa fa-plus-circle"></i> New Credit Card
-        </button>
+	        <!-- <button class="btn btn-primary pull-right" ng-click="myPayments.createCreditCard()"><i
+	                class="fa fa-plus-circle"></i> New Credit Card
+	        </button> -->
         <h3><i class="fa fa-credit-card"></i> Personal Credit Cards</h3>
-        <hr>
+      </div>
+      </div>
         <div class="panel panel-default" ng-repeat="creditCard in myPayments.personalCreditCards.Items" cg-busy="myPayments.loading[$index]">
             <div class="panel-body">
                 <div class="row">
@@ -24,16 +27,24 @@
                 </div>
             </div>
         </div>
-    </div>
+
 
     <div class="no-matches" ng-if="!myPayments.personalCreditCards">
         You have not created any personal credit cards. <br>
         <a href="" ng-click="myPayments.createCreditCard()">Creat one now!</a>
     </div>
-    <br  ng-if="myPayments.personalSpendingAccounts">
-    <div ng-if="myPayments.personalSpendingAccounts">
-        <h3><i class="fa fa-money"></i> Available Spending Accounts</h3>
-        <hr>
+   </div>
+   
+   <hr>
+   
+    <div class="panel panel-default"> 
+		<div class="panel-heading">
+		<!-- <br  ng-if="myPayments.personalSpendingAccounts">  -->
+			<div ng-if="myPayments.personalSpendingAccounts">
+				<h3><i class="fa fa-money"></i> Available Spending Accounts</h3>
+			</div>
+		</div>
+	</div>
         <div class="panel panel-default" ng-repeat="spendingAccount in myPayments.personalSpendingAccounts.Items">
             <div class="panel-body">
                 <div class="row">
@@ -58,11 +69,16 @@
                 </div>
             </div>
         </div>
+    <hr>
+    
+    <div class="panel panel-default"> 
+		<div class="panel-heading">
+		    <!-- <br ng-if="myPayments.giftCards">  -->
+	       <div ng-if="myPayments.giftCards">
+        		<h3><i class="fa fa-gift"></i> Available Gift Cards</h3>
+           </div>
+        </div>
     </div>
-    <br ng-if="myPayments.giftCards">
-    <div ng-if="myPayments.giftCards">
-        <h3><i class="fa fa-gift"></i> Available Gift Cards</h3>
-        <hr>
         <div class="panel panel-default" ng-repeat="giftCard in myPayments.giftCards.Items">
             <div class="panel-body">
                 <div class="row">

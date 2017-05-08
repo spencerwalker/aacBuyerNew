@@ -1,20 +1,26 @@
 <article>
     <!-- Category List -->
     <div ng-if="categoryBrowse.categoryList.Items.length">
-        <h3 class="page-header">{{categoryBrowse.selectedCategory.Name || 'Categories' }}</h3>
-        <b class="pull-right">{{categoryBrowse.getNumberOfResults('categoryList')}}</b><br>
+    	<div>
+        <h3 class="page-header">{{categoryBrowse.selectedCategory.Name || 'Categories' }}
+        <a class="pull-right" style="font-size:23px;color:black" href="" onclick="history.back()" ng-if="categoryBrowse.selectedCategory.Name != null && categoryBrowse.selectedCategory.Name != 'Main Catalog' && categoryBrowse.selectedCategory.Name != 'Categories'">All Vendors</a></h3>
+        </div>
+        <b class="pull-right">{{categoryBrowse.getNumberOfResults('categoryList')}}</b>
+        <b class="pull-left" style="font-size:36px" ng-if="categoryBrowse.selectedCategory.Name != null && categoryBrowse.selectedCategory.Name != 'Main Catalog' && categoryBrowse.selectedCategory.Name != 'Categories'">
+        Product Categories</b><br><br><br>
+    </div>
+    
         <div class="row l-category-grid">
             <div class="col-sm-6 col-md-3 col-lg-2 l-category-grid__item" ng-repeat="category in categoryBrowse.categoryList.Items">
                 <div class="thumbnail c-category-card" ng-click="categoryBrowse.updateCategoryList(category.ID)">
-                    <img class="img-responsive c-category-card__img" ng-src="{{category.xp.image.URL || 'http://placehold.it/300x300?text=' + category.Name}}">
+				<img class="img-responsive c-category-card__img" ng-src="{{category.xp.image.URL || 'http://placehold.it/300x300?text=' + category.Name}}">
                     <div class="caption c-category-card__body">
-                        <h3 class="c-category-card__title">{{category.Name || category.ID}}</h3>
-                        <p class="c-category-card__descrip" ng-if="category.Name">{{category.ID}}</p>
+                        <h3 class="c-category-card__title" style="font-size:18px">{{category.Name || category.ID}}</h3>
+                        <!-- <p class="c-category-card__descrip" ng-if="category.Name">{{category.ID}}</p>  -->
                     </div>
                 </div>
             </div>
         </div>
-    </div>
     <!-- Category List Pagination -->
     <uib-pagination 
         boundary-links="categoryBrowse.categoryList.Meta.TotalPages > 5" 
@@ -26,8 +32,13 @@
     </uib-pagination>
     <!-- Product List -->
     <div ng-if="categoryBrowse.productList.Items.length">
-        <h3 class="page-header">{{categoryBrowse.productList.Items.length > 1 ? 'Products' : 'Product'}}</h3>
-        <b class="pull-right">{{categoryBrowse.getNumberOfResults('productList')}}</b><br>
+    	<div>
+  		<h3 class="page-header">{{categoryBrowse.productList.Items.length > 1 ? 'Products' : 'Product'}}
+  		<a class="pull-right" style="font-size:23px;color:black" href="" onclick="history.back()">All Categories</a></h3>
+  		</div>
+   		 <!--    <h3 class="c-category-card__title">{{category.Name || category.ID}}</h3>  -->
+        <b class="pull-right">{{categoryBrowse.getNumberOfResults('productList')}}</b>
+        <b class="pull-left" style="font-size:36px">{{categoryBrowse.productList.Items.length > 1 ? 'Products' : 'Product'}}</b><br><br><br>
         <div class="row l-product-grid">
             <div class="col-sm-6 col-md-4 col-lg-3 l-product-grid__item"
                  ng-repeat="product in categoryBrowse.productList.Items"

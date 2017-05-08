@@ -1,7 +1,10 @@
 <article id="myAddresses">
-    <button class="btn btn-primary pull-right" ng-click="myAddresses.create()"><i class="fa fa-plus-circle"></i> Create New</button>
-    <h3><i class="fa fa-map-marker"></i> Personal Addresses</h3>
-    <hr>
+	<div class="panel panel-default"> 
+		<div class="panel-heading">
+	<!--    <button class="btn btn-primary pull-right" ng-click="myAddresses.create()"><i class="fa fa-plus-circle"></i> Create New</button>  -->
+		    <h3><i class="fa fa-map-marker"></i> Personal Addresses</h3>
+	    </div>
+	</div>
     <div class="row">
         <div class="col-sm-6" ng-repeat="address in myAddresses.list.Items">
             <div class="panel panel-default" cg-busy="myAddresses.loading[$index]">

@@ -1,10 +1,13 @@
+@import url(http://fonts.googleapis.com/css?family=Lato);
+@import url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css);
+
 .c-header {
   position: relative;
   min-height: @navbar-height; // Ensure a navbar always shows (e.g., without a .navbar-brand in collapsed mode)
   margin-bottom: @navbar-margin-bottom;
   border: 1px solid @navbar-default-border;
   //brought in from .navbar-default
-  background-color: @navbar-default-bg;
+  background-color: #20B2AA;
   // Prevent floats from breaking the navbar
   &:extend(.clearfix all);
   &--fixed-top {
@@ -15,4 +18,25 @@
     border-width: 0 0 1px;
     z-index: @zindex-navbar-fixed;
   }
+  
+.social-icon {
+    color: #fff;
+}
+
+.social-icons a {
+    color: #fff;
+    text-decoration: none;
+}
+.fa-facebook {
+    padding:10px 14px;
+    -o-transition:.5s;
+    -ms-transition:.5s;
+    -moz-transition:.5s;
+    -webkit-transition:.5s;
+    transition: .5s;
+    background-color: #20B2AA;
+}
+.fa-facebook:hover {
+    background-color: #3d5b99;
+}
 }

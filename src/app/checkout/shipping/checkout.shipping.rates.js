@@ -1,8 +1,9 @@
 angular.module('orderCloud')
+	.service('VendorShippingCriteria', VendorShippingCriteria)
     .factory('ShippingRates', ShippingRatesService)
 ;
 
-function ShippingRatesService($q, $resource, OrderCloud, apiurl) {
+function ShippingRatesService($q, $resource, OrderCloudSDK, apiurl, buyerid) {
     var service = {
         GetRates: _getRates,
         GetLineItemRates: _getLineItemRates,
@@ -17,12 +18,12 @@ function ShippingRatesService($q, $resource, OrderCloud, apiurl) {
         var deferred = $q.defer();
 
         var request = {
-            BuyerID: OrderCloud.BuyerID.Get(),
+            BuyerID: buyerid,
             TransactionType: 'GetRates',
             OrderID: order.ID
         };
 
-        $resource(shippingRatesURL, {}, {getrates: {method: 'POST', headers: {'Authorization': 'Bearer ' + OrderCloud.Auth.ReadToken()}}}).getrates(request).$promise
+        $resource(shippingRatesURL, {}, {getrates: {method: 'POST', headers: {'Authorization': 'Bearer ' + OrderCloudSDK.GetToken()}}}).getrates(request).$promise
             .then(function(data) {
                 deferred.resolve(data.ResponseBody.Shipments);
             })
@@ -37,12 +38,12 @@ function ShippingRatesService($q, $resource, OrderCloud, apiurl) {
         var deferred = $q.defer();
 
         var request = {
-            BuyerID: OrderCloud.BuyerID.Get(),
+            BuyerID: buyerid,
             TransactionType: 'GetLineItemRates',
             OrderID: order.ID
         };
 
-        $resource(shippingRatesURL, {}, {getlineitemrates: {method: 'POST', headers: {'Authorization': 'Bearer ' + OrderCloud.Auth.ReadToken()}}}).getlineitemrates(request).$promise
+        $resource(shippingRatesURL, {}, {getlineitemrates: {method: 'POST', headers: {'Authorization': 'Bearer ' + OrderCloudSDK.GetToken()}}}).getlineitemrates(request).$promise
             .then(function(data) {
                 deferred.resolve(data.ResponseBody.Shipments);
             })
@@ -57,13 +58,13 @@ function ShippingRatesService($q, $resource, OrderCloud, apiurl) {
         var deferred = $q.defer();
 
         var request = {
-            BuyerID: OrderCloud.BuyerID.Get(),
+            BuyerID: buyerid,
             TransactionType: 'SetShippingCost',
             OrderID: order.ID,
             ShippingCost: cost
         };
 
-        $resource(shippingRatesURL, {}, {setshippingcost: {method: 'POST', headers: {'Authorization': 'Bearer ' + OrderCloud.Auth.ReadToken()}}}).setshippingcost(request).$promise
+        $resource(shippingRatesURL, {}, {setshippingcost: {method: 'POST', headers: {'Authorization': 'Bearer ' + OrderCloudSDK.GetToken()}}}).setshippingcost(request).$promise
             .then(function(data) {
                 deferred.resolve(data.ResponseBody);
             })
@@ -91,7 +92,7 @@ function ShippingRatesService($q, $resource, OrderCloud, apiurl) {
             }
         });
 
-        OrderCloud.Orders.Patch(order.ID, {xp: xpPatch})
+        OrderCloudSDK.Orders.Patch('outgoing', order.ID, {xp: xpPatch})
             .then(function() {
                 updateShippingCost();
             })
@@ -128,4 +129,269 @@ function ShippingRatesService($q, $resource, OrderCloud, apiurl) {
     }
 
     return service;
+}
+
+
+function VendorShippingCriteria() {
+	var ByVendor = [
+		{
+			name: 'Adventure to Fitness',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {return 0;}
+		},
+		{
+			name: 'AKJEducation',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {
+				return 3 + 0.1*order.amount;
+			}
+		},
+		{
+			name: 'Bazillions',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {
+				return 1.5 + 1*order.itemCount;
+			}
+		},
+		{
+			name: 'Beckers',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {
+				return Math.max(7.5, 0.15*order.amount);
+			}
+		},
+		{
+			name: 'Best Buy',
+			minOrderAmount: 25,
+			shippingCostFunc: function(order) {
+				return 5 + 0.0175*order.amount;
+			}
+		},
+		{
+			name: 'Carson Dellosa',
+			minOrderAmount: 15,
+			shippingCostFunc: function(order) {
+				return 0.15*order.amount;
+			}
+		},
+		{
+			name: 'Edupress',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {
+				return 0.15*order.amount;
+			}
+		},
+		{
+			name: 'HoverCam',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {
+				return 0.15*order.amount;
+			}
+		},
+		{
+			name: 'Kaplan',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {
+				return 0.15*order.amount;
+			}
+		},
+		{
+			name: 'Laser Classroom',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {
+				return 9.99;
+			}
+		},
+		{
+			name: 'Learning A-Z',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {return 0;}
+		},
+		{
+			name: 'Lorenz',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {
+				return 5.95 + 0.15*order.amount;
+			}
+		},
+		{
+			name: "Miss Humblebee's Academy",
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {
+				return 0.15*order.amount;
+			}
+		},
+		{
+			name: 'Office Depot',
+			minOrderAmount: 25,
+			shippingCostFunc: function(order) {
+				return order.amount > 49.99 ? 0 : 5.95;
+			}
+		},
+		{
+			name: 'ReallyGoodStuff',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {
+				return Math.max(9.95, 0.14*order.amount);
+			}
+		},
+		{
+			name: 'Scholastic Teacher Store',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {
+				return 0.15*order.amount;
+			}
+		},
+		{
+			name: 'Scholastic Classroom Magazines',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {return 0;}
+		},
+		{
+			name: 'School Specialty / Frey Scientific',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {
+				return order.amount > 49.99 ? 0 : 9.95;
+			}
+		},
+		{
+			name: 'Science4Us',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {return 0;}
+		},
+		{
+			name: 'Speakaboos',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {return 0;}
+		},
+		{
+			name: 'Spelling City',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {return 0;}
+		},
+		{
+			name: 'West Music',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {
+				return 0.09*order.amount;
+			}
+		},
+		{
+			name: 'WonderWorkshop',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {
+				return order.amount > 99 ? 0 : 10;
+			}
+		},
+		{
+			name: 'YourDollarBuys',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {return 0;}
+		}
+	];
+
+	var ByState = [
+		{
+			name: 'CA',
+			shippingCostFunc: function(order) {
+				var cost = 0;
+				if(order.itemCount < 10) {
+					cost = 13;
+				}else if (order.itemCount <= 20) {
+					cost = 26;
+				}else if (order.itemCount <= 40) {
+					cost = 50;
+				}else if (order.itemCount <= 60) {
+					cost = 80;
+				}else if (order.itemCount <= 80) {
+					cost = 120;
+				}else if (order.itemCount <= 100) {
+					cost = 150;
+				}
+				return cost;
+			}
+		},
+		{
+			name: 'HI',
+			shippingCostFunc: function(order) {
+				var cost = 0;
+				if(order.itemCount < 10) {
+					cost = 40;
+				}else if (order.itemCount <= 20) {
+					cost = 80;
+				}else if (order.itemCount <= 40) {
+					cost = 180;
+				}else if (order.itemCount <= 60) {
+					cost = 280;
+				}else if (order.itemCount <= 80) {
+					cost = 380;
+				}else if (order.itemCount <= 100) {
+					cost = 440;
+				}
+				return cost;
+			}
+		},
+		{
+			name: 'AK',
+			shippingCostFunc: function(order) {
+				var cost = 0;
+				if(order.itemCount < 10) {
+					cost = 40;
+				}else if (order.itemCount <= 20) {
+					cost = 80;
+				}else if (order.itemCount <= 40) {
+					cost = 180;
+				}else if (order.itemCount <= 60) {
+					cost = 280;
+				}else if (order.itemCount <= 80) {
+					cost = 380;
+				}else if (order.itemCount <= 100) {
+					cost = 440;
+				}
+				return cost;
+			}
+		}
+	];
+	
+	var ByDefault = {
+		name: 'Other',
+		shippingCostFunc: function(order) {
+			var cost = 0;
+			if(order.itemCount < 10) {
+				cost = 12;
+			}else if (order.itemCount <= 20) {
+				cost = 20;
+			}else if (order.itemCount <= 40) {
+				cost = 35;
+			}else if (order.itemCount <= 60) {
+				cost = 50;
+			}else if (order.itemCount <= 80) {
+				cost = 80;
+			}else if (order.itemCount <= 100) {
+				cost = 100;
+			}
+			return cost;
+		}
+	};
+	
+	this.getShippingCostByVendor = function(vendorName, vendorLineItems){
+        var itemCount = 0;
+        var amount = 0;
+        var state = '';
+        angular.forEach(vendorLineItems, function(lineItem){
+            amount += ( lineItem.UnitPrice * lineItem.Quantity);
+            itemCount += lineItem.Quantity;
+            state = lineItem.ShippingAddress.State;
+        });
+
+        var vendorShippingCriteria = _.find(ByVendor, {name: vendorName}) || _.find(ByState, {name: state}) || ByDefault;
+
+        var shippingCalculator = vendorShippingCriteria.shippingCostFunc;
+
+        var shippingCost = shippingCalculator({
+            amount: amount,
+            itemCount: itemCount
+        });
+        return shippingCost;
+    };
 }

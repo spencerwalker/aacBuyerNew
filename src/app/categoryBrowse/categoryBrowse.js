@@ -15,21 +15,41 @@ function CategoryBrowseConfig($stateProvider, catalogid){
                 Parameters: function($stateParams, ocParameters) {
                     return ocParameters.Get($stateParams);
                 },
-                CategoryList: function(OrderCloud, Parameters) {
-                    if(Parameters.categoryID) { Parameters.filters ? Parameters.filters.ParentID = Parameters.categoryID : Parameters.filters = {ParentID:Parameters.categoryID}; } 
-                    return OrderCloud.Me.ListCategories(null, Parameters.categoryPage, Parameters.pageSize || 12, null, Parameters.sortBy, Parameters.filters, 1);
+                CategoryList: function(OrderCloudSDK, Parameters) {
+                    if(Parameters.categoryID) { Parameters.filters ? Parameters.filters.ParentID = Parameters.categoryID : Parameters.filters = {ParentID:Parameters.categoryID}; }
+                    var opts = {
+                        page: Parameters.categoryPage,
+                        pageSize: Parameters.pageSize || 12,
+                        sortBy:  Parameters.sortBy,
+                        filters: Parameters.filters,
+                        catalogID: 1
+                    };
+                    return OrderCloudSDK.Me.ListCategories(opts);
                 },
-                ProductList: function(OrderCloud, Parameters) {
+                ProductList: function(OrderCloudSDK, Parameters) {
                     if(Parameters && Parameters.filters && Parameters.filters.ParentID) {
                         delete Parameters.filters.ParentID;
-                        return OrderCloud.Me.ListProducts(null, Parameters.productPage, Parameters.pageSize || 12, null, Parameters.sortBy, Parameters.filters, Parameters.categoryID);
+                        var opts = {
+                            page: Parameters.categoryPage,
+                            pageSize: Parameters.pageSize || 12,
+                            sortBy:  Parameters.sortBy,
+                            filters: Parameters.filters,
+                            categoryID: Parameters.categoryID
+                        };
+                        return OrderCloudSDK.Me.ListProducts(opts);
                     } else {
                         return null;
                     }
                 },
-                SelectedCategory: function(OrderCloud, Parameters){
+                SelectedCategory: function(OrderCloudSDK, Parameters){
                     if(Parameters.categoryID){
-                        return OrderCloud.Me.ListCategories(null, 1, 1, null, null, {ID:Parameters.categoryID}, 'all')
+                        var opts = {
+                            page: 1,
+                            pageSize: 1,
+                            filters: {ID:Parameters.categoryID},
+                            depth: 'all'
+                        };
+                        return OrderCloudSDK.Me.ListCategories(opts)
                             .then(function(data){
                                 return data.Items[0];
                             });
