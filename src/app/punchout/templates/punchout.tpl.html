@@ -2,14 +2,21 @@
     <nav id="BASE_TOP">
         <div class="container">
             <div class="c-topnav">
-                <div class="c-topnav_item c-topnav_brand">
-                    <a href="{{base.storeUrl}}" class="top-nav-home">Back</a>
+                <div class="c-topnav__item c-topnav__brand">
+                    <a class="top-nav-home" href="{{base.storeUrl}}"
+                            ng-click="application.logout();"
+                            class="exitstore">
+                    {{application.name}}
+                    </a>
+                </div> 
+                <div class="c-topnav__item c-topnav__browse">
+                    <a ui-sref="productBrowse.products({page:'', sortBy:'', categoryid:''})"><i class="fa fa-th"></i> <span class="hidden-xs hidden-sm">Home</span></a>
                 </div>
             </div>
         </div>
     </nav>
 </header>
 <div>
-    <iframe ng-src="{{punchout.outboundtURL}}" height='600px' width="100%"></iframe>
+    <iframe ng-src="{{punchout.outboundtURL}}" height="{{punchout.frameHeight}}" width="100%"></iframe>
 
 </div>

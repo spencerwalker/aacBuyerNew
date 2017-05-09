@@ -127,9 +127,7 @@ function ProductBrowseController($state, $window, $uibModal, ocPunchout, Categor
         if (punchoutCategory) {
             vm.loading = ocPunchout.SetupRequest(punchoutCategory.Name, punchoutCategory.SupplierPartID, CurrentOrder.ID)
                 .then(function(data) {
-                    $window.location.href = data.StartURL;
-                    // $state.go('punchout',{link:data.StartURL })
-                    
+                    $state.go('punchout', {link:data.StartURL});
                 });
         } else {
             $state.go('productBrowse.products', {categoryid: node.ID, page: ''});
