@@ -1,67 +1,85 @@
-angular.module('orderCloud')
-    .config(AutoLoginConfig)
-    .factory('AutoLoginService', AutoLoginService)
-    .controller('AutoLoginCtrl', AutoLoginController)
-;
-
-function AutoLoginConfig($stateProvider) {
-    $stateProvider
-        .state('autoLogin', {
-            url: '/autoLogin/:token/:catid/:timestamp/:encryptstamp',
-            //templateUrl: 'autoLogin/templates/autoLogin.tpl.html',
-            controller: 'AutoLoginCtrl',
-            controllerAs: 'autoLogin'
-        })
-    ;
-}
-
-function AutoLoginService($q, $window, $state, toastr, OrderCloud, TokenRefresh, clientid, buyerid, anonymous) {
-    return {
-        SendVerificationCode: _sendVerificationCode,
-        ResetPassword: _resetPassword,
-        RememberMe: _rememberMe,
-        Logout: _logout
-    };
-}
-
-function AutoLoginController($state, $stateParams, $exceptionHandler, OrderCloud, OrderCloudSDK, LoginService, TokenRefresh, buyerid, $http) {
-    var vm = this;
-
-    vm.token = $stateParams.token;
-    vm.timestamp = $stateParams.timestamp;
-    vm.encryptstamp = $stateParams.encryptstamp;
-    vm.catid = $stateParams.catid;
-    console.log('vm.token' + vm.token);
-    console.log('vm.catid' + vm.catid);
-    vm.form = 'login';
-    vm.submit = function() {
-        // OrderCloud.BuyerID.Set(buyerid);
-        OrderCloudSDK.Auth.SetToken(vm.token);
-        /*if(vm.catid){
-        	console.log('Inside if Submit');
-          $state.go('categoryBrowse', {'categoryid':vm.catid});
-        }*/
-        //else {
-        	console.log('Inside else Submit');
-        //  $state.go('categoryBrowse',{'categoryID': 'MainCatalog'});
-        	$state.go('productBrowse.products', {});
-        //	$state.go('productBrowse.products', {'categoryid':vm.catid});
-        //}
-    };
-
-    var loginTest = function(response) {
-      var loginCheck = response.data;
-      console.log('loginCheck' + loginCheck);
-      if(loginCheck){
-        vm.submit();
-      }
-    }
-    console.log('Inside Checklogin block');
-    console.log('loginTest' + loginTest);
-    var OneMinuteAgo = new Date().getTime() - 60000;
-    console.log('Time Stamps' + OneMinuteAgo + '****' + vm.timestamp);
-    if(vm.token && vm.timestamp > OneMinuteAgo){
-      $http.get('/checklogin/' + vm.timestamp + '/' + vm.encryptstamp).then(loginTest);
-    }
-
-}
+<main id="COMPONENT_Login" ng-switch="login.form">
+    <div class="panel panel-default" ng-switch-when="login">
+        <form class="panel-body" name="LoginForm" ng-submit="login.submit()" >
+            <h1 class="text-center">Login</h1>
+            <div class="form-group">
+                <label for="Username">Username</label>
+                <input type="text" class="form-control" id="Username" ng-model="login.credentials.Username" ng-required="true" />
+            </div>
+            <div class="form-group">
+                <label for="Password">Password</label>
+                <input type="password" class="form-control" id="Password" ng-model="login.credentials.Password" ng-required="true" />
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" ng-model="login.rememberStatus">
+                    Remember Me
+                </label>
+            </div>
+            <button id="submit_login" type="submit" class="btn btn-primary" ng-disabled="LoginForm.$invalid">Submit</button>
+            <a id="forgot_password" class="btn btn-link" ng-click="login.setForm('forgot')">Forgot Password?</a> <!--TODO: should this be functional in the Seed Project?-->
+        </form>
+    </div>
+    <div class="panel panel-default" ng-switch-when="forgot">
+        <form class="panel-body" name="ForgotPasswordForm" ng-submit="login.forgotPassword()">
+            <h1 class="text-center">Forgot Password</h1>
+            <div class="form-group">
+                <label for="Email">Email</label>
+                <input type="text" class="form-control" id="Email" ng-model="login.credentials.Email" ng-required="true" />
+            </div>
+            <button type="submit" id="email_submit" class="btn btn-primary" ng-disabled="ForgotPasswordForm.$invalid">Submit</button>
+            <a id="back_to_login" class="btn btn-link" ng-click="login.setForm('login')">Back to Login</a>
+        </form>
+    </div>
+    <div class="panel panel-default" ng-switch-when="reset">
+        <form class="panel-body" name="ResetPasswordForm" ng-submit="login.resetPassword()" >
+            <h1 class="text-center">Reset Password</h1>
+            <div class="form-group">
+                <label for="ResetUsername">Username</label>
+                <input type="text" class="form-control" id="ResetUsername" ng-model="login.credentials.ResetUsername" ng-required="true" />
+            </div>
+            <div class="form-group">
+                <label for="NewPassword">New Password</label>
+                <input type="password" class="form-control" id="NewPassword" ng-model="login.credentials.NewPassword" ng-required="true" />
+            </div>
+            <div class="form-group">
+                <label for="ConfirmPassword">Confirm Password</label>
+                <input type="password" class="form-control" id="ConfirmPassword" ng-model="login.credentials.ConfirmPassword" ng-required="true" />
+            </div>
+            <button type="submit" id="reset_submit" class="btn btn-primary" ng-disabled="ResetPasswordForm.$invalid || login.credentials.NewPassword != login.credentials.ConfirmPassword">Submit</button>
+        </form>
+    </div>
+    <div class="panel panel-default" ng-switch-when="verificationCodeSuccess">
+        <form class="panel-body" name="VerificationCodeSuccessForm">
+            <h1 class="text-center">Forgot Password</h1>
+            <div class="alert alert-info" id="forgot_message">Forgot Password email has been sent. Please check your email in order to reset your password.</div>
+        </form>
+    </div>
+    <div class="panel panel-default" ng-switch-when="resetSuccess">
+        <form class="panel-body" name="ResetSuccessForm">
+            <h1 class="text-center">Reset Password</h1>
+            <div class="alert alert-info">Your password has been reset.</div>
+            <a class="btn btn-link" id="back_to_login2" ng-click="login.setForm('login')">Back to Login</a>
+        </form>
+    </div>
+    <!--RESET PASSWORD BY TOKEN-->
+    <div ng-switch-when="resetByToken">
+        <div class="panel panel-default">
+            <form class="panel-body" name="ResetPasswordForm" ng-submit="login.resetPasswordByToken()" >
+                <h3 class="text-center">Reset Password</h3>
+                <div class="alert alert-info">
+                    Due to a change in how we store password information, <br>as of <b>TBD</b> you must reset your password. <br> You can use the same password as before.
+                </div>
+                <div class="form-group">
+                    <label for="NewPassword" class="sr-only">New Password</label>
+                    <input type="password" class="form-control" id="NewPassword" name="NewPassword" placeholder="New Password" ng-model="login.credentials.NewPassword" ng-required="true" autofocus/>
+                </div>
+                <div class="form-group">
+                    <label for="ConfirmPassword" class="sr-only">Confirm Password</label>
+                    <input type="password" class="form-control" id="ConfirmPassword" placeholder="Confirm New Password" ng-model="login.credentials.ConfirmPassword" ng-required="true" />
+                </div>
+                <button type="submit" id="reset_token_submit" class="btn btn-primary btn-block" ng-disabled="ResetPasswordForm.$invalid || login.credentials.NewPassword != login.credentials.ConfirmPassword">Submit</button>
+            </form>
+        </div>
+    </div>
+</main>
