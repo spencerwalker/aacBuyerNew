@@ -26,6 +26,9 @@ function OCQuantityInput(toastr, OrderCloudSDK, $rootScope) {
                     if (scope.item.Quantity > 0) {
                         OrderCloudSDK.LineItems.Patch('outgoing', scope.order.ID, scope.item.ID, {Quantity: scope.item.Quantity})
                             .then(function (data) {
+                                if(data.ProductID === 'AACPunchoutProduct'){
+                                    data.Punchout = true;
+                                }
                                 data.Product = scope.lineitem.Product;
                                 scope.item = data;
                                 scope.lineitem = data;
