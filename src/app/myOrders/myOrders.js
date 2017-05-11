@@ -36,7 +36,7 @@ function MyOrdersConfig($stateProvider) {
             controllerAs: 'myOrderDetail',
             resolve: {
                 SelectedOrder: function ($stateParams, OrderCloudSDK) {
-                    return OrderCloudSDK.Me.GetOrder($stateParams.orderid);
+                    return OrderCloudSDK.Me.ListOrders({filters: {ID: $stateParams.orderid}});
                 },
                 SelectedPayments: function ($stateParams, $q, OrderCloudSDK) {
                     var deferred = $q.defer();
@@ -236,7 +236,7 @@ function MyOrdersController($state, $ocMedia, OrderCloudSDK, ocParameters, Order
 
 function MyOrderDetailController($state, $exceptionHandler, $scope, toastr, OrderCloudSDK, ocConfirm, SelectedOrder, LineItemsList, SelectedPayments, LineItemList, PromotionList, CategoryList, ProductList, VendorShippingCriteria) {
     var vm = this;
-    vm.order = SelectedOrder;
+    vm.order = SelectedOrder.Items[0];
     vm.list = LineItemList;
     vm.paymentList = SelectedPayments.Items;
     vm.canCancel = SelectedOrder.Status === 'Unsubmitted' || SelectedOrder.Status === 'AwaitingApproval';
