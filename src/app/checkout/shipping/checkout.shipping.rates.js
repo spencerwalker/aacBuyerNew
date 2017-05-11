@@ -20,6 +20,7 @@ function ShippingRatesService($q, $resource, OrderCloudSDK, apiurl, buyerid) {
         var request = {
             BuyerID: buyerid,
             TransactionType: 'GetRates',
+			OrderDirection: 'outgoing', 
             OrderID: order.ID
         };
 

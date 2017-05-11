@@ -310,7 +310,7 @@ function OCPayments() {
     }
 }
 
-function PaymentsController($rootScope, $scope, $exceptionHandler, toastr, OrderCloudSDK, CheckoutPaymentService, CheckoutConfig) {
+function PaymentsController($rootScope, $scope, $exceptionHandler, toastr, OrderCloudSDK, CheckoutPaymentService, CheckoutConfig, buyerid) {
     if (!$scope.methods) $scope.methods = CheckoutConfig.AvailablePaymentMethods;
 
     OrderCloudSDK.Payments.List('outgoing', $scope.order.ID)
@@ -327,8 +327,19 @@ function PaymentsController($rootScope, $scope, $exceptionHandler, toastr, Order
                     });
             }
             else {
-                $scope.payments = data;
-                calculateMaxTotal();
+                debugger;
+                if(data.Items[0].Amount !== $scope.order.Total){
+                    OrderCloudSDK.Payments.Patch('outgoing', $scope.order.ID, data.Items[0].ID, {Amount: $scope.order.Total})
+                        .then(function(updatedPayment){
+                             $scope.payments ={Items: [updatedPayment]} ;
+                             calculateMaxTotal();
+                        });
+                }
+                else{
+                     $scope.payments = data;
+                     calculateMaxTotal();
+                }
+              
             }
         });
 
