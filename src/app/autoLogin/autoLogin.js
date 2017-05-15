@@ -38,7 +38,7 @@ function AutoLoginController($state, $stateParams, $exceptionHandler, OrderCloud
     vm.form = 'login';
     vm.submit = function() {
         // OrderCloud.BuyerID.Set(buyerid);
-        OrderCloudSDK.Auth.SetToken(vm.token);
+        OrderCloudSDK.SetToken(vm.token);
         if(vm.catid){
         	console.log('Inside if Submit');
           $state.go('categoryBrowse', {'categoryid':vm.catid});
