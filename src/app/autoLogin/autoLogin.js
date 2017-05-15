@@ -64,6 +64,9 @@ function AutoLoginController($state, $stateParams, $exceptionHandler, OrderCloud
     console.log('1 minute ago', OneMinuteAgo)
     if(vm.token && (vm.timestamp > OneMinuteAgo)){
         console.log('hello')
-      $http.get('/checklogin/' + vm.timestamp + '/' + vm.encryptstamp).then(loginTest);
+      $http.get('/checklogin/' + vm.timestamp + '/' + vm.encryptstamp)
+        .then(function(){
+            loginTest();
+        });
     }
 }
