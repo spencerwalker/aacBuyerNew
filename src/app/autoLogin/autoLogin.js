@@ -31,39 +31,24 @@ function AutoLoginController($state, $stateParams, $exceptionHandler, OrderCloud
     vm.timestamp = parseInt($stateParams.timestamp);
     vm.encryptstamp = $stateParams.encryptstamp;
     vm.catid = $stateParams.catid;
-    console.log('vm.token' + vm.token);
-    console.log('vm.catid' + vm.catid);
-
 
     vm.form = 'login';
     vm.submit = function() {
-        // OrderCloud.BuyerID.Set(buyerid);
         OrderCloudSDK.SetToken(vm.token);
-        if(vm.catid){
-        	console.log('Inside if Submit');
-          $state.go('categoryBrowse', {'categoryid':vm.catid});
-        }
-        else {
-        	console.log('Inside else Submit');
-        	$state.go('productBrowse.products', {});
-        
-        }
+        $state.go('productBrowse.products', {});
     };
 
     var loginTest = function(response) {
       var loginCheck = response.data;
-      console.log('loginCheck' + loginCheck);
+  
       if(loginCheck){
         vm.submit();
       }
     }
-    console.log('Inside Checklogin block');
-    console.log('loginTest ', loginTest);
+
     var OneMinuteAgo = new Date().getTime() - 120000;
-    console.log('Time Stamps', vm.timestamp);
-    console.log('1 minute ago', OneMinuteAgo)
+ 
     if(vm.token && (vm.timestamp > OneMinuteAgo)){
-        console.log('hello')
       $http.get('/checklogin/' + vm.timestamp + '/' + vm.encryptstamp)
         .then(function(data){
             loginTest(data);
