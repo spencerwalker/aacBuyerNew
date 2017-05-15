@@ -37,6 +37,7 @@ function AutoLoginController($state, $stateParams, $exceptionHandler, OrderCloud
 
     vm.form = 'login';
     vm.submit = function() {
+        console.log("Sumbit function triggered")
         // OrderCloud.BuyerID.Set(buyerid);
         OrderCloudSDK.Auth.SetToken(vm.token);
         if(vm.catid){
