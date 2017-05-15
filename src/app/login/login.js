@@ -2,32 +2,24 @@ angular.module('orderCloud')
     .config(LoginConfig)
     .factory('LoginService', LoginService)
     .controller('LoginCtrl', LoginController)
-    .directive('prettySubmit', function () {
-        return function (scope, element) {
-            $(element).submit(function(event) {
-                event.preventDefault();
-            });
-        };
-    })
 ;
 
 function LoginConfig($stateProvider) {
     $stateProvider
         .state('login', {
             url: '/login/:token',
-            templateUrl: 'login/templates/login.tpl.html',
+              templateUrl: 'login/templates/login.tpl.html',
             controller: 'LoginCtrl',
             controllerAs: 'login'
         })
     ;
 }
 
-function LoginService($q, $window, $state, $cookies, toastr, OrderCloud, clientid, buyerid, anonymous) {
+function LoginService($q, $window, $state, $cookies, toastr, OrderCloudSDK, ocRolesService, clientid, anonymous) {
     return {
         SendVerificationCode: _sendVerificationCode,
         ResetPassword: _resetPassword,
         RememberMe: _rememberMe,
-        AuthAnonymous: _authAnonymous,
         Logout: _logout
     };
 
@@ -40,7 +32,7 @@ function LoginService($q, $window, $state, $cookies, toastr, OrderCloud, clienti
             URL: encodeURIComponent($window.location.href) + '{0}'
         };
 
-        OrderCloud.PasswordResets.SendVerificationCode(passwordResetRequest)
+        OrderCloudSDK.PasswordResets.SendVerificationCode(passwordResetRequest)
             .then(function() {
                 deferred.resolve();
             })
@@ -60,7 +52,7 @@ function LoginService($q, $window, $state, $cookies, toastr, OrderCloud, clienti
             Password: resetPasswordCredentials.NewPassword
         };
 
-        OrderCloud.PasswordResets.ResetPassword(verificationCode, passwordReset).
+        OrderCloudSDK.PasswordResets.ResetPassword(verificationCode, passwordReset).
             then(function() {
                 deferred.resolve();
             })
@@ -71,34 +63,25 @@ function LoginService($q, $window, $state, $cookies, toastr, OrderCloud, clienti
         return deferred.promise;
     }
 
-    function _authAnonymous() {
-        return OrderCloud.Auth.GetToken('')
-            .then(function(data) {
-                OrderCloud.BuyerID.Set(buyerid);
-                OrderCloud.Auth.SetToken(data.access_token);
-                $state.go('home');
-            });
-    }
-
-    function _logout() {
+    function _logout(){
         angular.forEach($cookies.getAll(), function(val, key) {
             $cookies.remove(key);
         });
+        ocRolesService.Remove();
         $state.go(anonymous ? 'home' : 'login', {}, {reload: true});
     }
 
     function _rememberMe() {
-        var availableRefreshToken = OrderCloud.Refresh.ReadToken() || null;
+        var availableRefreshToken = OrderCloudSDK.GetRefreshToken() || null;
 
         if (availableRefreshToken) {
-            OrderCloud.Refresh.GetToken(availableRefreshToken)
+            OrderCloudSDK.Auth.RefreshToken(availableRefreshToken, clientid, scope)
                 .then(function(data) {
-                    OrderCloud.BuyerID.Set(buyerid);
-                    OrderCloud.Auth.SetToken(data.access_token);
+                    OrderCloudSDK.SetToken(data.access_token);
                     $state.go('home');
                 })
                 .catch(function () {
-                    toastr.error('Your token has expired, please log in again.');
+                    toastr.error('Your session has expired, please log in again.');
                     _logout();
                 });
         } else {
@@ -107,7 +90,7 @@ function LoginService($q, $window, $state, $cookies, toastr, OrderCloud, clienti
     }
 }
 
-function LoginController($state, $stateParams, $exceptionHandler, OrderCloud, LoginService, buyerid) {
+function LoginController($state, $stateParams, $exceptionHandler, OrderCloudSDK, OrderCloud, LoginService, ocRolesService, buyerid, clientid, scope, defaultstate) {
     var vm = this;
     vm.credentials = {
         Username: null,
@@ -121,16 +104,20 @@ function LoginController($state, $stateParams, $exceptionHandler, OrderCloud, Lo
     vm.rememberStatus = false;
 
     vm.submit = function() {
-        $('#Username').blur();
-        $('#Password').blur();
-        $('#Remember').blur();
-        $('#submit_login').blur();
-        vm.loading = OrderCloud.Auth.GetToken(vm.credentials)
+        OrderCloudSDK.Auth.Login(vm.credentials.Username, vm.credentials.Password, clientid, scope)
             .then(function(data) {
-                vm.rememberStatus ? OrderCloud.Refresh.SetToken(data['refresh_token']) : angular.noop();
+                OrderCloudSDK.SetToken(data.access_token);
+                if(vm.rememberStatus)OrderCloudSDK.SetRefreshToken(data['refrersh_token']);
+                var roles = ocRolesService.Set(data.access_token);
+                if (roles.length == 1 && roles[0] == 'PasswordReset') {
+                    vm.token = data.access_token;
+                    vm.form = 'resetByToken';
+                } else {
+                    $state.go(defaultstate);
+                }
                 OrderCloud.BuyerID.Set(buyerid);
                 OrderCloud.Auth.SetToken(data['access_token']);
-                $state.go('home');
+                $state.go(defaultstate);
             })
             .catch(function(ex) {
                 $exceptionHandler(ex);
@@ -163,5 +150,19 @@ function LoginController($state, $stateParams, $exceptionHandler, OrderCloud, Lo
                 vm.credentials.NewPassword = null;
                 vm.credentials.ConfirmPassword = null;
             });
+    };
+
+    vm.resetPasswordByToken = function() {
+        vm.loading = OrderCloudSDK.Me.ResetPasswordByToken({NewPassword:vm.credentials.NewPassword})
+            .then(function(data) {
+                vm.setForm('resetSuccess');
+                vm.credentials = {
+                    Username:null,
+                    Password:null
+                }
+            })
+            .catch(function(ex) {
+                $exceptionHandler(ex);
+            })
     };
 }
