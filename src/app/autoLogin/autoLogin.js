@@ -26,7 +26,7 @@ function AutoLoginService($q, $window, $state, toastr, OrderCloud, TokenRefresh,
 
 function AutoLoginController($state, $stateParams, $exceptionHandler, OrderCloud, OrderCloudSDK, LoginService, TokenRefresh, buyerid, $http) {
     var vm = this;
-
+    
     vm.token = $stateParams.token;
     vm.timestamp = $stateParams.timestamp;
     vm.encryptstamp = $stateParams.encryptstamp;
@@ -37,7 +37,8 @@ function AutoLoginController($state, $stateParams, $exceptionHandler, OrderCloud
          OrderCloud.BuyerID.Set(buyerid);
         OrderCloudSDK.Auth.SetToken(vm.token);
     };
-
+    console.log('token', vm.token);
+    console.log('buyerid', buyerid);
     var loginTest = function(response) {
       var loginCheck = response.data;
       

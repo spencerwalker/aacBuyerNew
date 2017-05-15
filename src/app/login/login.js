@@ -103,6 +103,8 @@ function LoginController($state, $stateParams, $exceptionHandler, OrderCloudSDK,
         vm.form = form;
     };
     vm.rememberStatus = false;
+    
+    console.log('token1', vm.token);
 
     vm.submit = function() {
         OrderCloudSDK.Auth.GetToken(vm.credentials)
@@ -116,6 +118,8 @@ function LoginController($state, $stateParams, $exceptionHandler, OrderCloudSDK,
                 $exceptionHandler(ex);
             });
     };
+    
+    console.log('credentials', vm.credentials);
 
     vm.forgotPassword = function() {
         LoginService.SendVerificationCode(vm.credentials.Email)
