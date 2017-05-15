@@ -24,9 +24,9 @@ function AutoLoginService($q, $window, $state, toastr, OrderCloud, TokenRefresh,
     };
 }
 
-function AutoLoginController($state, $stateParams, $exceptionHandler, OrderCloud, OrderCloudSDK, LoginService, TokenRefresh, buyerid, $http) {
+function AutoLoginController($state, $stateParams, $exceptionHandler, OrderCloud, LoginService, TokenRefresh, buyerid, $http) {
     var vm = this;
-    
+
     vm.token = $stateParams.token;
     vm.timestamp = $stateParams.timestamp;
     vm.encryptstamp = $stateParams.encryptstamp;
@@ -34,21 +34,23 @@ function AutoLoginController($state, $stateParams, $exceptionHandler, OrderCloud
 
     vm.form = 'login';
     vm.submit = function() {
-         OrderCloud.BuyerID.Set(buyerid);
-        OrderCloudSDK.Auth.SetToken(vm.token);
+        OrderCloud.BuyerID.Set(buyerid);
+        OrderCloud.Auth.SetToken(vm.token);
+       /* if(vm.catid){
+          $state.go('catalog.category', {'categoryid':vm.catid});
+        } else {
+          $state.go('catalog');
+        }*/
     };
-    console.log('token', vm.token);
-    console.log('buyerid', buyerid);
+
     var loginTest = function(response) {
       var loginCheck = response.data;
-      
       if(loginCheck){
         vm.submit();
       }
     }
-    
-    var OneMinuteAgo = new Date().getTime() - 60000;
 
+    var OneMinuteAgo = new Date().getTime() - 60000;
     if(vm.token && vm.timestamp > OneMinuteAgo){
       $http.get('/checklogin/' + vm.timestamp + '/' + vm.encryptstamp).then(loginTest);
     }
