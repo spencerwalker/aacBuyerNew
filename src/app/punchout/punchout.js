@@ -2,8 +2,10 @@ angular.module('orderCloud')
     .factory('ocPunchout', OrderCloudPunchoutService)
     .provider('$ocPunchout', OrderCloudPunchoutProvider)
     .config(OrderCloudPunchoutConfig)
+    .config(OrderCloudPunchoutStatesConfig)
+    .controller('OCPunchoutCtrl', OrderCloudPunchoutController)
+    .controller('OCPunchoutReturnCtrl', OrderCloudPunchoutReturnController)
     .filter('punchoutProductName', punchoutProductName)
-    .controller('punchoutCtrl', punchoutController)
 ;
 
 function OrderCloudPunchoutService($q, $resource, $ocPunchout, OrderCloudSDK, punchouturl, buyerid) {
@@ -78,7 +80,7 @@ function OrderCloudPunchoutProvider() {
     };
 }
 
-function OrderCloudPunchoutConfig($ocPunchoutProvider, $stateProvider) {
+function OrderCloudPunchoutConfig($ocPunchoutProvider) {
     var punchouts = [
         {Name: 'officedepot', CategoryID: 'TopStores_OfficeDepot', SupplierPartID: 'AAA'}
     ];
@@ -86,21 +88,41 @@ function OrderCloudPunchoutConfig($ocPunchoutProvider, $stateProvider) {
     angular.forEach(punchouts, function(punchout) {
         $ocPunchoutProvider.AddPunchout(punchout);
     });
+}
 
-     $stateProvider
+function OrderCloudPunchoutStatesConfig($stateProvider) {
+    $stateProvider
         .state('punchout', {
             url: '/punchout?link',
             templateUrl: 'punchout/templates/punchout.tpl.html',
-            controller: 'punchoutCtrl',
+            controller: 'OCPunchoutCtrl',
             controllerAs: 'punchout',
             resolve: {
                 Parameters: function ($stateParams, ocParameters) {
                     return ocParameters.Get($stateParams);
                 }
             }
-    })
+        })
+        .state('punchoutreturn', {
+            url: '/punchoutreturn?state',
+            templateUrl: 'common/templates/view.loading.tpl.html',
+            controller: 'OCPunchoutReturnCtrl'
+        })
+    ;
+}
 
+function OrderCloudPunchoutController(Parameters, $sce, $scope){
+    var vm = this;
+    vm.link = Parameters.link;
+    vm.trustSrc = function(src){
+        return $sce.trustAsResourceUrl(src);
+    };
+    vm.frameHeight = $('main').innerHeight();
+    vm.outboundtURL = vm.trustSrc(vm.link);
+}
 
+function OrderCloudPunchoutReturnController($stateParams, $location) {
+    window.top.location.href = '/' + (angular.isDefined($stateParams.state) ? $stateParams.state : 'cart');
 }
 
 function punchoutProductName() {
@@ -114,13 +136,3 @@ function punchoutProductName() {
         return xp[map[punchoutName]];
     }
 }
-
-function punchoutController(Parameters, $sce, $scope){
-    var vm = this;
-    vm.link = Parameters.link;
-    vm.trustSrc = function(src){
-        return $sce.trustAsResourceUrl(src);
-    };
-    vm.outboundtURL = vm.trustSrc(vm.link);
-}
-

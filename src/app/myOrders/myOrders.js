@@ -13,19 +13,25 @@ function MyOrdersConfig($stateProvider) {
             data: {
                 pageTitle: "Order History"
             },
-            url: '/myorders?from&to&search&page&pageSize&searchOn&sortBy&filters?favorites',
+            url: '/myorders?from&to&search&page&pageSize&searchOn&sortBy&filters?status?favorites',
             resolve: {
                 Parameters: function ($stateParams, ocParameters) {
                     return ocParameters.Get($stateParams);
                 },
                 OrderList: function (OrderCloudSDK, Parameters, CurrentUser) {
+                
                     if (Parameters.favorites && CurrentUser.xp.FavoriteOrders) {
                         Parameters.filters ? angular.extend(Parameters.filters, Parameters.filters, {ID: CurrentUser.xp.FavoriteOrders.join('|')}) : Parameters.filters = {ID: CurrentUser.xp.FavoriteOrders.join('|')};
                     } else if (Parameters.filters) {
                         delete Parameters.filters.ID;
                     }
-                    var showSubmittedOnly = angular.extend({}, Parameters.filters, {Status: 'Open|AwaitingApproval|Completed|Canceled|Declined'});
-                    return OrderCloudSDK.Me.ListOrders({search:Parameters.search, page: Parameters.page, pageSize: Parameters.pageSize || 12, searchOn: Parameters.searchOn, fitlers: showSubmittedOnly, sortBy: Parameters.sortBy, from: Parameters.from, to:Parameters.to});
+                    
+                    Parameters.status = Parameters.status || 'Open|AwaitingApproval|Completed|Canceled|Declined';
+                    Parameters.filters ? angular.extend(Parameters.filters, {status: Parameters.status}) : Parameters.filters = {status: Parameters.status}
+
+                    var showSubmittedOnly = angular.extend({}, Parameters.filters, {status: 'Open|AwaitingApproval|Completed|Canceled|Declined'});
+                    return OrderCloudSDK.Me.ListOrders({search:Parameters.search, page: Parameters.page || 1, pageSize: Parameters.pageSize || 12, searchOn: Parameters.searchOn, filters: Parameters.filters, sortBy: Parameters.sortBy, from: Parameters.from, to:Parameters.to})
+              
                 }
             }
         })
@@ -36,7 +42,7 @@ function MyOrdersConfig($stateProvider) {
             controllerAs: 'myOrderDetail',
             resolve: {
                 SelectedOrder: function ($stateParams, OrderCloudSDK) {
-                    return OrderCloudSDK.Me.GetOrder($stateParams.orderid);
+                    return OrderCloudSDK.Me.ListOrders({filters: {ID: $stateParams.orderid}});
                 },
                 SelectedPayments: function ($stateParams, $q, OrderCloudSDK) {
                     var deferred = $q.defer();
@@ -143,7 +149,7 @@ function MyOrdersController($state, $ocMedia, OrderCloudSDK, ocParameters, Order
     vm.sortSelection = Parameters.sortBy ? (Parameters.sortBy.indexOf('!') == 0 ? Parameters.sortBy.split('!')[1] : Parameters.sortBy) : null;
 
     //Check if filters are applied
-    vm.filtersApplied = vm.parameters.filters || vm.parameters.from || vm.parameters.to || ($ocMedia('max-width:767px') && vm.sortSelection); //Sort by is a filter on mobile devices
+    vm.filtersApplied = (vm.parameters.filters.status != 'Open|AwaitingApproval|Completed|Canceled|Declined') ||vm.parameters.filters.ID || vm.parameters.from || vm.parameters.to || ($ocMedia('max-width:767px') && vm.sortSelection); //Sort by is a filter on mobile devices
     vm.showFilters = vm.filtersApplied;
 
     //Check if search was used
@@ -151,7 +157,7 @@ function MyOrdersController($state, $ocMedia, OrderCloudSDK, ocParameters, Order
 
     //Reload the state with new parameters
     vm.filter = function (resetPage) {
-        if (vm.parameters.filters && vm.parameters.filters.Status === null) delete vm.parameters.filters.Status;
+        if (vm.parameters.filters && vm.parameters.status === null) delete vm.parameters.status;
         $state.go('.', ocParameters.Create(vm.parameters, resetPage));
     };
 
@@ -180,6 +186,7 @@ function MyOrdersController($state, $ocMedia, OrderCloudSDK, ocParameters, Order
     //Clear relevant filters, reload the state & reset the page
     vm.clearFilters = function () {
         vm.parameters.filters = null;
+        vm.parameters.status= null;
         vm.parameters.favorites = null;
         vm.parameters.from = null;
         vm.parameters.to = null;
@@ -236,7 +243,7 @@ function MyOrdersController($state, $ocMedia, OrderCloudSDK, ocParameters, Order
 
 function MyOrderDetailController($state, $exceptionHandler, $scope, toastr, OrderCloudSDK, ocConfirm, SelectedOrder, LineItemsList, SelectedPayments, LineItemList, PromotionList, CategoryList, ProductList, VendorShippingCriteria) {
     var vm = this;
-    vm.order = SelectedOrder;
+    vm.order = SelectedOrder.Items[0];
     vm.list = LineItemList;
     vm.paymentList = SelectedPayments.Items;
     vm.canCancel = SelectedOrder.Status === 'Unsubmitted' || SelectedOrder.Status === 'AwaitingApproval';

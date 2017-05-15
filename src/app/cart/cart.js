@@ -96,7 +96,8 @@ function CartController($rootScope, $scope,  $state, toastr, OrderCloudSDK, Line
         vm.lineLoading[scope.$index] = OrderCloudSDK.LineItems.Delete('outgoing', order.ID, scope.lineItem.ID)
             .then(function () {
                 $rootScope.$broadcast('OC:UpdateOrder', order.ID);
-                vm.lineItems.Items.splice(scope.$index, 1);
+                var index = _.findIndex( vm.lineItems.Items, function(lineItem){return lineItem.ID === scope.lineItem.ID;});
+                 vm.lineItems.Items.splice(index, 1);
                 toastr.success('Line Item Removed');
             });
     };
