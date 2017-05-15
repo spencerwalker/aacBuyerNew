@@ -8,14 +8,14 @@ function LoginConfig($stateProvider) {
     $stateProvider
         .state('login', {
             url: '/login/:token',
-              templateUrl: 'login/templates/login.tpl.html',
+             //templateUrl: 'login/templates/login.tpl.html',
             controller: 'LoginCtrl',
             controllerAs: 'login'
         })
     ;
 }
 
-function LoginService($q, $window, $state, $cookies, toastr, OrderCloudSDK, ocRolesService, clientid, anonymous) {
+function LoginService($q, $window, $state, toastr, OrderCloud, OrderCloudSDK, TokenRefresh, clientid, buyerid, anonymous) {
     return {
         SendVerificationCode: _sendVerificationCode,
         ResetPassword: _resetPassword,
@@ -64,33 +64,34 @@ function LoginService($q, $window, $state, $cookies, toastr, OrderCloudSDK, ocRo
     }
 
     function _logout(){
-        angular.forEach($cookies.getAll(), function(val, key) {
-            $cookies.remove(key);
-        });
-        ocRolesService.Remove();
+        OrderCloudSDK.Auth.RemoveToken();
+        OrderCloudSDK.Auth.RemoveImpersonationToken();
+        OrderCloud.BuyerID.Set(null);
+        TokenRefresh.RemoveToken();
         $state.go(anonymous ? 'home' : 'login', {}, {reload: true});
     }
 
     function _rememberMe() {
-        var availableRefreshToken = OrderCloudSDK.GetRefreshToken() || null;
-
-        if (availableRefreshToken) {
-            OrderCloudSDK.Auth.RefreshToken(availableRefreshToken, clientid, scope)
-                .then(function(data) {
-                    OrderCloudSDK.SetToken(data.access_token);
-                    $state.go('home');
-                })
-                .catch(function () {
-                    toastr.error('Your session has expired, please log in again.');
+        TokenRefresh.GetToken()
+            .then(function (refreshToken) {
+                if (refreshToken) {
+                    TokenRefresh.Refresh(refreshToken)
+                        .then(function(token) {
+                            OrderCloud.BuyerID.Set(buyerid);
+                            OrderCloudSDK.Auth.SetToken(token.access_token);
+                            $state.go('home');
+                        })
+                        .catch(function () {
+                            toastr.error('Your token has expired, please log in again.');
+                        });
+                } else {
                     _logout();
-                });
-        } else {
-            _logout();
-        }
+                }
+            });
     }
 }
 
-function LoginController($state, $stateParams, $exceptionHandler, OrderCloudSDK, OrderCloud, LoginService, ocRolesService, buyerid, clientid, scope, defaultstate) {
+function LoginController($state, $stateParams, $exceptionHandler, OrderCloudSDK, OrderCloud, LoginService, ocRolesService, TokenRefresh, buyerid, clientid, scope, defaultstate) {
     var vm = this;
     vm.credentials = {
         Username: null,
@@ -104,20 +105,12 @@ function LoginController($state, $stateParams, $exceptionHandler, OrderCloudSDK,
     vm.rememberStatus = false;
 
     vm.submit = function() {
-        OrderCloudSDK.Auth.Login(vm.credentials.Username, vm.credentials.Password, clientid, scope)
+        OrderCloudSDK.Auth.GetToken(vm.credentials)
             .then(function(data) {
-                OrderCloudSDK.SetToken(data.access_token);
-                if(vm.rememberStatus)OrderCloudSDK.SetRefreshToken(data['refrersh_token']);
-                var roles = ocRolesService.Set(data.access_token);
-                if (roles.length == 1 && roles[0] == 'PasswordReset') {
-                    vm.token = data.access_token;
-                    vm.form = 'resetByToken';
-                } else {
-                    $state.go(defaultstate);
-                }
+                vm.rememberStatus ? TokenRefresh.SetToken(data['refresh_token']) : angular.noop();
                 OrderCloud.BuyerID.Set(buyerid);
-                OrderCloud.Auth.SetToken(data['access_token']);
-                $state.go(defaultstate);
+                OrderCloudSDK.Auth.SetToken(data['access_token']);
+                $state.go('home');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex);
@@ -150,19 +143,5 @@ function LoginController($state, $stateParams, $exceptionHandler, OrderCloudSDK,
                 vm.credentials.NewPassword = null;
                 vm.credentials.ConfirmPassword = null;
             });
-    };
-
-    vm.resetPasswordByToken = function() {
-        vm.loading = OrderCloudSDK.Me.ResetPasswordByToken({NewPassword:vm.credentials.NewPassword})
-            .then(function(data) {
-                vm.setForm('resetSuccess');
-                vm.credentials = {
-                    Username:null,
-                    Password:null
-                }
-            })
-            .catch(function(ex) {
-                $exceptionHandler(ex);
-            })
     };
 }
