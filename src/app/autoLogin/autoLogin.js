@@ -28,7 +28,7 @@ function AutoLoginController($state, $stateParams, $exceptionHandler, OrderCloud
     var vm = this;
 
     vm.token = $stateParams.token;
-    vm.timestamp = $stateParams.timestamp;
+    vm.timestamp = parseInt($stateParams.timestamp);
     vm.encryptstamp = $stateParams.encryptstamp;
     vm.catid = $stateParams.catid;
     console.log('vm.token' + vm.token);
@@ -37,7 +37,6 @@ function AutoLoginController($state, $stateParams, $exceptionHandler, OrderCloud
 
     vm.form = 'login';
     vm.submit = function() {
-        console.log("Sumbit function triggered")
         // OrderCloud.BuyerID.Set(buyerid);
         OrderCloudSDK.Auth.SetToken(vm.token);
         if(vm.catid){
@@ -59,10 +58,12 @@ function AutoLoginController($state, $stateParams, $exceptionHandler, OrderCloud
       }
     }
     console.log('Inside Checklogin block');
-    console.log('loginTest' + loginTest);
-    var OneMinuteAgo = new Date().getTime() - 60000;
-    console.log('Time Stamps' + OneMinuteAgo + '****' + vm.timestamp);
+    console.log('loginTest ', loginTest);
+    var OneMinuteAgo = new Date().getTime() - 120000;
+    console.log('Time Stamps', vm.timestamp);
+    console.log('1 minute ago', OneMinuteAgo)
     if(vm.token && (vm.timestamp > OneMinuteAgo)){
+        console.log('hello')
       $http.get('/checklogin/' + vm.timestamp + '/' + vm.encryptstamp).then(loginTest);
     }
 }
