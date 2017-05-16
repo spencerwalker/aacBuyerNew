@@ -26,8 +26,8 @@
 							}"></ng-pluralize>
 						</b>
                     </p>
-                    <!-- <hr>
-                    <h4>Subtotal:- All Orders <span class="pull-right">{{base.currentOrder.Subtotal | currency}}</span></h4> -->
+                    <hr>
+                    <h4>Subtotal:- All Orders <span class="pull-right">{{base.currentOrder.Subtotal | currency}}</span></h4> 
                 </div>
                 <div class="panel-footer">
                     <button ng-if="cart.lineItems.Items.length > 0" type="button" ui-sref="checkout.shipping" class="btn btn-block btn-primary" ng-disabled="OrderLineItemForm.$invalid">Proceed to Checkout</button>
