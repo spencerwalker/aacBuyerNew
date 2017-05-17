@@ -3,14 +3,14 @@
         <div class="container">
             <div class="c-topnav">
                 <div class="c-topnav__item c-topnav__brand">
-                    <a class="top-nav-home" href="{{base.storeUrl}}"
-                            ng-click="application.logout();"
+                    <a class="top-nav-home"
+                            ng-click="punchout.logout();"
                             class="exitstore">
                     {{application.name}}
                     </a>
                 </div> 
                 <div class="c-topnav__item c-topnav__browse">
-                    <a ui-sref="productBrowse.products({page:'', sortBy:'', categoryid:''})"><i class="fa fa-th"></i> <span class="hidden-xs hidden-sm">Home</span></a>
+                    <a ui-sref="productBrowse.products({})"><i class="fa fa-th"></i> <span class="hidden-xs hidden-sm">Home</span></a>
                 </div>
             </div>
         </div>

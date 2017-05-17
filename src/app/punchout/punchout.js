@@ -111,7 +111,7 @@ function OrderCloudPunchoutStatesConfig($stateProvider) {
     ;
 }
 
-function OrderCloudPunchoutController(Parameters, $sce, $scope){
+function OrderCloudPunchoutController(Parameters, $sce, $scope, LoginService, adoptAClassromURL){
     var vm = this;
     vm.link = Parameters.link;
     vm.trustSrc = function(src){
@@ -119,6 +119,9 @@ function OrderCloudPunchoutController(Parameters, $sce, $scope){
     };
     vm.frameHeight = $('main').innerHeight();
     vm.outboundtURL = vm.trustSrc(vm.link);
+     vm.logout = function() {
+        LoginService.Logout(adoptAClassromURL);    
+    };
 }
 
 function OrderCloudPunchoutReturnController($stateParams, $location) {

@@ -62,11 +62,13 @@ function BaseConfig($stateProvider) {
     });
 }
 
-function BaseController($rootScope, $state, $http, ProductSearch, CurrentUser, CurrentOrder, LoginService, OrderCloudSDK,buyerid) {
+function BaseController($rootScope, $state, $http, ProductSearch, CurrentUser, CurrentOrder, LoginService, OrderCloudSDK, buyerid, adoptAClassromURL) {
     var vm = this;
     vm.currentUser = CurrentUser;
     vm.currentOrder = CurrentOrder;
-    vm.storeUrl = "";
+    vm.storeUrl;
+    vm.teachersDashboard = adoptAClassromURL;
+
 
     vm.getAvailableBalance = function () {
         vm.availableFunds = 0;
@@ -87,7 +89,7 @@ function BaseController($rootScope, $state, $http, ProductSearch, CurrentUser, C
     };
     
     vm.logout = function() {
-        LoginService.Logout();
+        LoginService.Logout(vm.teachersDashboard);    
     };
 
     vm.getAvailableBalance();

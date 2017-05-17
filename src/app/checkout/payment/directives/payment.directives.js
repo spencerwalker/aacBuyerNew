@@ -327,19 +327,11 @@ function PaymentsController($rootScope, $scope, $exceptionHandler, toastr, Order
                     });
             }
             else {
-                debugger;
-                if(data.Items[0].Amount !== $scope.order.Total){
-                    OrderCloudSDK.Payments.Patch('outgoing', $scope.order.ID, data.Items[0].ID, {Amount: $scope.order.Total})
+                    OrderCloudSDK.Payments.Patch('outgoing', $scope.order.ID, data.Items[0].ID, {Amount: null})
                         .then(function(updatedPayment){
                              $scope.payments ={Items: [updatedPayment]} ;
                              calculateMaxTotal();
                         });
-                }
-                else{
-                     $scope.payments = data;
-                     calculateMaxTotal();
-                }
-              
             }
         });
 
