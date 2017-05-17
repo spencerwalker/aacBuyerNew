@@ -154,7 +154,7 @@
 						<small><span class="text-muted">Donation Balance:
 	                    	<span ng-if = "base.availableFunds - base.currentOrder.Subtotal > 0" > ({{base.availableFunds - 
 	                    	 (base.currentOrder.Subtotal + base.currentOrder.ShippingCost +
-	                    	 (base.currentOrder.Subtotal * checkout.shippingAddress.xp.Taxcost)) | currency}}  Available) </span>
+	                    	 (base.currentOrder.Subtotal * (checkout.shippingAddress.xp.Taxcost || 0))) | currency}}  Available) </span>
 	                    	<span ng-if = "base.availableFunds - base.currentOrder.Subtotal <= 0" > ({{0 | currency}} Available) </span>            
                     	</small>
 						</p>
