@@ -138,7 +138,12 @@ function punchoutProductName() {
         if (!xp || !punchoutName) return;
 
         var map = {
-            'officedepot': 'Description'
+            'officedepot': 'Description',
+            'bestbuy': 'Description',
+            'kaplan': 'Description',
+            'reallygoodstuff': 'Description',
+            'schoolspeciality': 'Description',
+            'freyscientific': 'Description'
         };
 
         return xp[map[punchoutName]];
