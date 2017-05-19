@@ -31,7 +31,7 @@
                 <div class="panel-body">
                      <h5>Donation Account: 
 						<span ng-if = "base.availableFunds - (base.currentOrder.Subtotal + base.currentOrder.ShippingCost + (base.currentOrder.Subtotal * (checkout.shippingAddress.xp.Taxcost || 0))) > 0" >
-							({{base.availableFunds - (base.currentOrder.Subtotal + base.currentOrder.ShippingCost + (base.currentOrder.Subtotal * checkout.shippingAddress.xp.Taxcost)) | currency}}  left)
+							({{base.availableFunds - (base.currentOrder.Subtotal + base.currentOrder.ShippingCost + (base.currentOrder.Subtotal * (checkout.shippingAddress.xp.Taxcost || 0))) | currency}}  left)
 						</span> 
 						<span ng-if = "base.availableFunds - (base.currentOrder.Subtotal + base.currentOrder.ShippingCost + (base.currentOrder.Subtotal * (checkout.shippingAddress.xp.Taxcost || 0))) <= 0" >
 							({{0 | currency}} left)
