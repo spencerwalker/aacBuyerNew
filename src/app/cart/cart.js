@@ -56,7 +56,7 @@ function CartConfig($stateProvider) {
         });
 }
 
-function CartController($rootScope, $scope,  $state, toastr, OrderCloudSDK, LineItemsList, CurrentPromotions, ocConfirm, CategoryList, ProductList) {
+function CartController($rootScope, $scope,  $state, $filter, toastr, OrderCloudSDK, LineItemsList, CurrentPromotions, ocConfirm, CategoryList, ProductList) {
     var vm = this;
     vm.vendorLineItemsMap = {};
     
@@ -76,7 +76,9 @@ function CartController($rootScope, $scope,  $state, toastr, OrderCloudSDK, Line
     	vm.vendorLineItemsMap = {};
     	angular.forEach(vm.lineItems.Items, function(lineItem){
         	var productId = lineItem.ProductID;
-        	var vendorName = productId.split("_")[0]; 
+        	var vendorName = (lineItem.Punchout && lineItem.xp && lineItem.xp.PunchoutName) 
+                ? $filter('punchoutLineItemVendor')(lineItem.xp.PunchoutName)
+                : productId.split("_")[0]; 
 
         	if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
         		vm.vendorLineItemsMap[vendorName] = [];

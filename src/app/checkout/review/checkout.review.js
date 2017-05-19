@@ -87,7 +87,7 @@ function checkoutReviewConfig($stateProvider) {
         });
 }
 
-function CheckoutReviewController($exceptionHandler, ocConfirm, OrderCloud, $rootScope, LineItemsList, $scope, $state, toastr, OrderPaymentsDetail, CategoryList, ProductList) {
+function CheckoutReviewController($exceptionHandler, $filter, ocConfirm, OrderCloud, $rootScope, LineItemsList, $scope, $state, toastr, OrderPaymentsDetail, CategoryList, ProductList) {
     var vm = this;
     vm.payments = OrderPaymentsDetail;
     vm.vendorLineItemsMap = {};
@@ -108,7 +108,9 @@ function CheckoutReviewController($exceptionHandler, ocConfirm, OrderCloud, $roo
         var subTotal = 0.0;
         angular.forEach(vm.lineItems.Items, function (lineItem) {
             var productId = lineItem.ProductID;
-            var vendorName = productId.split("_")[0];
+            var vendorName = (lineItem.Punchout && lineItem.xp && lineItem.xp.PunchoutName) 
+                ? $filter('punchoutLineItemVendor')(lineItem.xp.PunchoutName)
+                : productId.split("_")[0]; 
             /*
              if(lineItem.ID.match("^[a-zA-Z\(\)]+$")) {
              } else {

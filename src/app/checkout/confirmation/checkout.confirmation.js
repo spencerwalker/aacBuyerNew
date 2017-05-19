@@ -92,7 +92,7 @@ function checkoutConfirmationConfig($stateProvider) {
 		});
 }
 
-function CheckoutConfirmationController(SubmittedOrder, $scope, OrderShipAddress, OrderPromotions, OrderBillingAddress, OrderPayments, LineItemsList, CategoryList, ProductList, VendorShippingCriteria) {
+function CheckoutConfirmationController(SubmittedOrder, $scope, $filter, OrderShipAddress, OrderPromotions, OrderBillingAddress, OrderPayments, LineItemsList, CategoryList, ProductList, VendorShippingCriteria) {
 	var vm = this;
 	vm.order = SubmittedOrder;
 	vm.shippingAddress = OrderShipAddress;
@@ -116,7 +116,9 @@ function CheckoutConfirmationController(SubmittedOrder, $scope, OrderShipAddress
     	vm.vendorLineItemsMap = {};
     	angular.forEach(vm.lineItems.Items, function(lineItem){
         	var productId = lineItem.ProductID;
-        	var vendorName = productId.split("_")[0]; 
+        	var vendorName = (lineItem.Punchout && lineItem.xp && lineItem.xp.PunchoutName) 
+                ? $filter('punchoutLineItemVendor')(lineItem.xp.PunchoutName)
+                : productId.split("_")[0]; 
         	/*
     	    if(lineItem.ID.match("^[a-zA-Z\(\)]+$")) {  
     	      } else {

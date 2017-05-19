@@ -241,7 +241,7 @@ function MyOrdersController($state, $ocMedia, OrderCloudSDK, ocParameters, Order
     };
 }
 
-function MyOrderDetailController($state, $exceptionHandler, $scope, toastr, OrderCloudSDK, ocConfirm, SelectedOrder, LineItemsList, SelectedPayments, LineItemList, PromotionList, CategoryList, ProductList, VendorShippingCriteria) {
+function MyOrderDetailController($state, $exceptionHandler, $scope, $filter, toastr, OrderCloudSDK, ocConfirm, SelectedOrder, LineItemsList, SelectedPayments, LineItemList, PromotionList, CategoryList, ProductList, VendorShippingCriteria) {
     var vm = this;
     vm.order = SelectedOrder.Items[0];
     vm.list = LineItemList;
@@ -268,7 +268,9 @@ function MyOrderDetailController($state, $exceptionHandler, $scope, toastr, Orde
     vm.vendorLineItemsMap = {};
     angular.forEach(vm.list.Items, function (lineItem) {
         var productId = lineItem.ProductID;
-        var vendorName = productId.split("_")[0];
+        var vendorName = (lineItem.Punchout && lineItem.xp && lineItem.xp.PunchoutName) 
+                ? $filter('punchoutLineItemVendor')(lineItem.xp.PunchoutName)
+                : productId.split("_")[0]; 
 
         if (typeof vm.vendorLineItemsMap[vendorName] === 'undefined') {
             vm.vendorLineItemsMap[vendorName] = [];
@@ -284,7 +286,9 @@ function MyOrderDetailController($state, $exceptionHandler, $scope, toastr, Orde
     //	vm.vendorLineItemsMap = {};
     //	angular.forEach(vm.lineItems.Items, function(lineItem){
     //    	var productId = lineItem.ProductID;
-    //    	var vendorName = productId.split("_")[0]; 
+    //    	var vendorName = (lineItem.Punchout && lineItem.xp && lineItem.xp.PunchoutName) 
+    //            ? $filter('punchoutLineItemVendor')(lineItem.xp.PunchoutName)
+    //            : productId.split("_")[0];  
     //    	
     //    	if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
     //    		vm.vendorLineItemsMap[vendorName] = [];
