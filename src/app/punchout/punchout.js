@@ -82,7 +82,12 @@ function OrderCloudPunchoutProvider() {
 
 function OrderCloudPunchoutConfig($ocPunchoutProvider) {
     var punchouts = [
-        {Name: 'officedepot', CategoryID: 'TopStores_OfficeDepot', SupplierPartID: 'AAA'}
+        {Name: 'officedepot', CategoryID: 'TopStores_OfficeDepot', SupplierPartID: 'AAA'},
+        {Name: 'bestbuy', CategoryID: 'TopStores_BestBuy'},
+        {Name: 'kaplan', CategoryID: 'TopStores_Kaplan'},
+        {Name: 'reallygoodstuff', CategoryID: 'TopStores_ReallyGoodStuff'},
+        {Name: 'schoolspeciality', CategoryID: 'TopStores_SchoolSpecialty'},
+        {Name: 'freyscientific', CategoryID: 'TopStores_FreyScientific'}
     ];
 
     angular.forEach(punchouts, function(punchout) {
