@@ -57,7 +57,8 @@ function CheckoutPaymentController($exceptionHandler, $rootScope, toastr, OrderC
 function CheckoutPaymentService($q, $uibModal, OrderCloudSDK ) {
     var service = {
         PaymentsExceedTotal: _paymentsExceedTotal,
-        RemoveAllPayments: _removeAllPayments
+        RemoveAllPayments: _removeAllPayments,
+        PaymentsMatchTotal: _paymentsMatchTotal
         // SelectPaymentAccount: _selectPaymentAccount,
         // Save: _save
     };
@@ -84,6 +85,14 @@ function CheckoutPaymentService($q, $uibModal, OrderCloudSDK ) {
         });
 
         return deferred.promise;
+    }
+     function _paymentsMatchTotal(payments, orderTotal) {
+        var paymentTotal = 0;
+        angular.forEach(payments.Items, function(payment) {
+            paymentTotal += payment.Amount;
+        });
+
+        return paymentTotal.toFixed(2) === orderTotal;
     }
 
     // function _selectPaymentAccount(payment, order) {
