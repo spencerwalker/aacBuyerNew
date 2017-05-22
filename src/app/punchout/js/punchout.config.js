@@ -10,7 +10,8 @@ function OrderCloudPunchoutConfig($ocPunchoutProvider) {
         {Name: 'kaplan', CategoryID: 'TopStores_Kaplan'},
         {Name: 'reallygoodstuff', CategoryID: 'TopStores_ReallyGoodStuff'},
         {Name: 'schoolspeciality', CategoryID: 'TopStores_SchoolSpecialty'},
-        {Name: 'freyscientific', CategoryID: 'TopStores_FreyScientific'}
+        {Name: 'freyscientific', CategoryID: 'TopStores_FreyScientific'},
+        {Name: 'octest', CategoryID: 'octest', SupplierPartID:'octest'}
     ];
 
     angular.forEach(punchouts, function(punchout) {
