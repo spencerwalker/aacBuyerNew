@@ -101,7 +101,7 @@ function OCPaymentSpendingAccount() {
 }
 
 function PaymentSpendingAccountController($scope, $rootScope, toastr, OrderCloudSDK, $exceptionHandler) {
-    OrderCloudSDK.Me.ListSpendingAccounts({page: 1, pageSize: 100, filters: {RedemptionCode: '!*', AllowAsPaymentMethod: true} })
+    OrderCloudSDK.Me.ListSpendingAccounts({page: 1, pageSize: 100, filters: {RedemptionCode: '!*', AllowAsPaymentMethod: true, Balance: '!0'} })
         .then(function(data) {
             $scope.spendingAccounts = data.Items;
         });
