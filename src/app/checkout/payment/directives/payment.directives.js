@@ -403,7 +403,9 @@ function PaymentsController($rootScope, $scope, $exceptionHandler, toastr, Order
                         calculateMaxTotal();
                     })
                     .catch(function (er) {
-
+                        if (er.response.body.Errors[0].ErrorCode === "Payment.ExceedsBalance"){
+                            $scope.payments = data;
+                        }
                         console.log(er);
                     });
             }
