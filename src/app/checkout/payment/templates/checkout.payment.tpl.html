@@ -42,7 +42,7 @@
                     <h5>Balance Due:
 						<b class="pull-right text-primary">
 							<span ng-if = "base.availableFunds - (base.currentOrder.Subtotal + base.currentOrder.ShippingCost + (base.currentOrder.Subtotal * (checkout.shippingAddress.xp.Taxcost || 0))) > 0" > {{0 | currency}}  </span>
-							<span ng-if = "base.availableFunds - (base.currentOrder.Subtotal + base.currentOrder.ShippingCost + (base.currentOrder.Subtotal * (checkout.shippingAddress.xp.Taxcost || 0))) <= 0" > {{base.currentOrder.Subtotal + base.currentOrder.ShippingCost + (base.currentOrder.Subtotal * checkout.shippingAddress.xp.Taxcost) - base.availableFunds | currency}} </span>
+							<span ng-if = "base.availableFunds - (base.currentOrder.Subtotal + base.currentOrder.ShippingCost + (base.currentOrder.Subtotal * (checkout.shippingAddress.xp.Taxcost || 0))) <= 0" > {{base.currentOrder.Subtotal + base.currentOrder.ShippingCost + (base.currentOrder.Subtotal * (checkout.shippingAddress.xp.Taxcost || 0)) - base.availableFunds | currency}} </span>
 						</b>
 					</h5>
                 </div>
