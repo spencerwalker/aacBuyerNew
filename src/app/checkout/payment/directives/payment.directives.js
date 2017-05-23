@@ -464,9 +464,9 @@ function PaymentsController($rootScope, $scope, $exceptionHandler, toastr, Order
             if (payment.CreditCardID) $scope.excludeOptions.CreditCards.push(payment.CreditCardID);
             maxAmount = ($scope.order.Subtotal + $scope.order.ShippingCost + $scope.order.TaxCost - _.reduce(_.pluck($scope.payments.Items, 'Amount'), function (a, b) {
                 return a + b;
-            })).toFixed(2);
+            }));
 
-            payment.MaxAmount = (payment.Amount + maxAmount).toFixed(2);
+            payment.MaxAmount = Math.round((payment.Amount + maxAmount) * 100) / 100 ;
 
         });
         $scope.canAddPayment = paymentTotal < ($scope.order.Subtotal + $scope.order.ShippingCost + $scope.order.TaxCost).toFixed(2);
