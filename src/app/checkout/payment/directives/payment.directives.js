@@ -465,6 +465,7 @@ function PaymentsController($rootScope, $scope, $exceptionHandler, toastr, Order
 
     function calculateMaxTotal() {
         var paymentTotal = 0;
+        var estimatedTotal;
         $scope.excludeOptions = {
             SpendingAccounts: [],
             CreditCards: []
@@ -481,7 +482,9 @@ function PaymentsController($rootScope, $scope, $exceptionHandler, toastr, Order
             payment.MaxAmount = Math.round((payment.Amount + maxAmount) * 100) / 100 ;
 
         });
-        $scope.canAddPayment = paymentTotal < ($scope.order.Subtotal + $scope.order.ShippingCost + $scope.order.TaxCost).toFixed(2);
+        estimatedTotal = Math.round(($scope.order.Subtotal + $scope.order.ShippingCost + $scope.order.TaxCost) * 100) / 100;
+        
+        $scope.canAddPayment = paymentTotal < estimatedTotal;
         if ($scope.OCPayments) $scope.OCPayments.$setValidity('Insufficient_Payment', !$scope.canAddPayment);
         if ($scope.OCPayments) $scope.OCPayments.$setValidity('AllPaymentsNeedSelection', $scope.payments.Items.length === ($scope.excludeOptions.SpendingAccounts.length + $scope.excludeOptions.CreditCards.length));
     }
