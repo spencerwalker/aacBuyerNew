@@ -52,9 +52,12 @@ function ProductBrowseConfig($urlRouterProvider, $stateProvider) {
 
                 },
                 CategoryTree: function (CategoryList) {
-                    var result = [];
+                    var tree = {};
+                    tree.result = [];
+                    tree.filteredResult = [];
                     angular.forEach(_.where(CategoryList.Items, {ParentID: null}), function (node) {
-                        result.push(getnode(node));
+                        node.ID === 'TopStores' ? tree.filteredResult.push(getnode(node)) : tree.result.push(getnode(node));
+                        
                     });
                     function getnode(node) {
                         var children = _.where(CategoryList.Items, {ParentID: node.ID});
@@ -69,7 +72,7 @@ function ProductBrowseConfig($urlRouterProvider, $stateProvider) {
                         return node;
                     }
 
-                    return result;
+                    return tree;
                 }
             }
         })
@@ -111,7 +114,8 @@ function ProductBrowseController($state, $window, $uibModal, ocPunchout, Categor
     //Category Tree Setup
     vm.treeConfig = {};
 
-    vm.treeConfig.treeData = CategoryTree;
+    vm.treeConfig.treeData = CategoryTree.result;
+    vm.treeConfig.filteredTreeData = CategoryTree.filteredResult[0].children;
     vm.treeConfig.treeOptions = {
         equality: function (node1, node2) {
             if (node2 && node1) {
