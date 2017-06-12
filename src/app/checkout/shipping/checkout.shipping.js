@@ -57,7 +57,7 @@ function checkoutShippingConfig($stateProvider) {
         });
 }
 
-function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $state, $q, toastr, OrderCloudSDK, MyAddressesModal, AddressSelectModal, ShippingRates, VendorShippingCriteria, CheckoutConfig, LineItemsList, CurrentPromotions, ocConfirm, CategoryList, ProductList, CurrentOrder) {
+function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $state, $q, $filter, toastr, OrderCloudSDK, MyAddressesModal, AddressSelectModal, ShippingRates, VendorShippingCriteria, CheckoutConfig, LineItemsList, CurrentPromotions, ocConfirm, CategoryList, ProductList, CurrentOrder) {
     var vm = this;
     vm.createAddress = createAddress;
     vm.changeShippingAddress = changeShippingAddress;
@@ -88,7 +88,9 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
             };
             var ID;
             var productId = lineItem.ProductID;
-            var vendorName = productId.split("_")[0];
+            var vendorName = (lineItem.Punchout && lineItem.xp && lineItem.xp.PunchoutName) 
+                ? $filter('punchoutLineItemVendor')(lineItem.xp.PunchoutName)
+                : productId.split("_")[0]; 
 
             if (typeof vm.vendorLineItemsMap[vendorName] === 'undefined') {
                 vm.vendorLineItemsMap[vendorName] = [];

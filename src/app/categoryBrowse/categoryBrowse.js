@@ -24,6 +24,7 @@ function CategoryBrowseConfig($stateProvider, catalogid){
                         filters: Parameters.filters,
                         catalogID: 1
                     };
+                    
                     return OrderCloudSDK.Me.ListCategories(opts);
                 },
                 ProductList: function(OrderCloudSDK, Parameters) {

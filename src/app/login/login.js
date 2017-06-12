@@ -63,12 +63,13 @@ function LoginService($q, $window, $state, $cookies, toastr, OrderCloudSDK, ocRo
         return deferred.promise;
     }
 
-    function _logout(){
+    function _logout(adoptURL){
         angular.forEach($cookies.getAll(), function(val, key) {
             $cookies.remove(key);
         });
         ocRolesService.Remove();
-        $state.go(anonymous ? 'home' : 'login', {}, {reload: true});
+        adoptURL ?  $window.location.href = adoptURL : $state.go(anonymous ? 'home' : 'login', {}, {reload: true});
+        
     }
 
     function _rememberMe() {
