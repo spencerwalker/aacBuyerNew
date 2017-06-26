@@ -256,6 +256,7 @@ function VendorShippingCriteria() {
 			minOrderAmount: 0,
 			shippingCostFunc: function(order) {return 0;}
 		},
+		
 		{
 			name: 'School Specialy Frey Scientific',
 			minOrderAmount: 0,
