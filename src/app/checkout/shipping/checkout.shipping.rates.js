@@ -169,7 +169,7 @@ function VendorShippingCriteria() {
 			}
 		},
 		{
-			name: 'Carson Dellosa',
+			name: 'Carson',
 			minOrderAmount: 15,
 			shippingCostFunc: function(order) {
 				return 0.15*order.amount;
@@ -237,7 +237,14 @@ function VendorShippingCriteria() {
 			}
 		},
 		{
-			name: 'Scholastic Teacher Store',
+			name: 'Ooly',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {
+				return order.amount > 30.00 ? 0 : 4.95;
+			}
+		},
+		{
+			name: 'Scholastic',
 			minOrderAmount: 0,
 			shippingCostFunc: function(order) {
 				return 0.15*order.amount;
