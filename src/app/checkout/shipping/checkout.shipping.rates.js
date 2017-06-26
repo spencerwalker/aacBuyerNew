@@ -247,7 +247,7 @@ function VendorShippingCriteria() {
 			name: 'Scholastic',
 			minOrderAmount: 0,
 			shippingCostFunc: function(order) {
-				return 0.15*order.amount;
+				return order.amount > 49.99 ? 0 : 9.95;
 			}
 		},
 		{
@@ -256,7 +256,7 @@ function VendorShippingCriteria() {
 			shippingCostFunc: function(order) {return 0;}
 		},
 		{
-			name: 'School Specialty / Frey Scientific',
+			name: 'freyscientific',
 			minOrderAmount: 0,
 			shippingCostFunc: function(order) {
 				return order.amount > 49.99 ? 0 : 9.95;
@@ -292,7 +292,7 @@ function VendorShippingCriteria() {
 			}
 		},
 		{
-			name: 'YourDollarBuys',
+			name: 'Your Dollar',
 			minOrderAmount: 0,
 			shippingCostFunc: function(order) {return 0;}
 		}
