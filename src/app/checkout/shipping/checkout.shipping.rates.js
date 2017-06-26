@@ -236,6 +236,7 @@ function VendorShippingCriteria() {
 				return Math.max(9.95, 0.14*order.amount);
 			}
 		},
+		
 		{
 			name: 'Ooly',
 			minOrderAmount: 0,
