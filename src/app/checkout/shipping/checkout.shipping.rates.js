@@ -278,7 +278,7 @@ function VendorShippingCriteria() {
 			shippingCostFunc: function(order) {return 0;}
 		},
 		{
-			name: 'West Music',
+			name: 'WestMusic',
 			minOrderAmount: 0,
 			shippingCostFunc: function(order) {
 				return 0.09*order.amount;
@@ -292,7 +292,7 @@ function VendorShippingCriteria() {
 			}
 		},
 		{
-			name: 'Your Dollar',
+			name: 'YourDollar',
 			minOrderAmount: 0,
 			shippingCostFunc: function(order) {return 0;}
 		}
