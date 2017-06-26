@@ -256,7 +256,7 @@ function VendorShippingCriteria() {
 			shippingCostFunc: function(order) {return 0;}
 		},
 		{
-			name: 'freyscientific',
+			name: 'School Specialy Frey Scientific',
 			minOrderAmount: 0,
 			shippingCostFunc: function(order) {
 				return order.amount > 49.99 ? 0 : 9.95;
