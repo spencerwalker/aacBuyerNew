@@ -265,6 +265,13 @@ function VendorShippingCriteria() {
 			}
 		},
 		{
+			name: 'School Specialty',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {
+				return order.amount > 49.99 ? 0 : 9.95;
+			}
+		},
+		{
 			name: 'Science4Us',
 			minOrderAmount: 0,
 			shippingCostFunc: function(order) {return 0;}
