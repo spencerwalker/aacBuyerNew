@@ -182,6 +182,7 @@ function VendorShippingCriteria() {
 				return 0.15*order.amount;
 			}
 		},
+		
 		{
 			name: 'Hovercam',
 			minOrderAmount: 0,
