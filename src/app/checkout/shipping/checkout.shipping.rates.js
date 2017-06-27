@@ -182,8 +182,9 @@ function VendorShippingCriteria() {
 				return 0.15*order.amount;
 			}
 		},
+		
 		{
-			name: 'HoverCam',
+			name: 'Hovercam',
 			minOrderAmount: 0,
 			shippingCostFunc: function(order) {
 				return 0.15*order.amount;
