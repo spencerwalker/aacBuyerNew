@@ -169,7 +169,7 @@ function VendorShippingCriteria() {
 			}
 		},
 		{
-			name: 'Carson Dellosa',
+			name: 'Carson',
 			minOrderAmount: 15,
 			shippingCostFunc: function(order) {
 				return 0.15*order.amount;
@@ -236,11 +236,19 @@ function VendorShippingCriteria() {
 				return Math.max(9.95, 0.14*order.amount);
 			}
 		},
+		
 		{
-			name: 'Scholastic Teacher Store',
+			name: 'Ooly',
 			minOrderAmount: 0,
 			shippingCostFunc: function(order) {
-				return 0.15*order.amount;
+				return order.amount > 30.00 ? 0 : 4.95;
+			}
+		},
+		{
+			name: 'Scholastic',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {
+				return order.amount > 49.99 ? 0 : 9.95;
 			}
 		},
 		{
@@ -248,8 +256,16 @@ function VendorShippingCriteria() {
 			minOrderAmount: 0,
 			shippingCostFunc: function(order) {return 0;}
 		},
+		
 		{
-			name: 'School Specialty / Frey Scientific',
+			name: 'School Specialy Frey Scientific',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {
+				return order.amount > 49.99 ? 0 : 9.95;
+			}
+		},
+		{
+			name: 'School Specialty',
 			minOrderAmount: 0,
 			shippingCostFunc: function(order) {
 				return order.amount > 49.99 ? 0 : 9.95;
@@ -271,7 +287,7 @@ function VendorShippingCriteria() {
 			shippingCostFunc: function(order) {return 0;}
 		},
 		{
-			name: 'West Music',
+			name: 'WestMusic',
 			minOrderAmount: 0,
 			shippingCostFunc: function(order) {
 				return 0.09*order.amount;
@@ -285,7 +301,7 @@ function VendorShippingCriteria() {
 			}
 		},
 		{
-			name: 'YourDollarBuys',
+			name: 'YourDollar',
 			minOrderAmount: 0,
 			shippingCostFunc: function(order) {return 0;}
 		}
