@@ -52,7 +52,7 @@ function AuthorizeNet( $q, $resource, OrderCloudSDK, apiurl, ocCreditCardUtility
     }
 
     function _makeApiCall(method, requestBody) {
-        var apiUrl = apiurl +'/v1/integrationproxy/authorizenettest';
+        var apiUrl = apiurl +'/v1/integrationproxy/authorizenet';
         var d = $q.defer();
         $resource(apiUrl, null, {
             callApi: {
