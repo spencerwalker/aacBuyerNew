@@ -107,7 +107,8 @@ function OCPaymentSpendingAccount() {
 }
 
 function PaymentSpendingAccountController($scope, $rootScope, toastr, OrderCloudSDK, $exceptionHandler) {
-    OrderCloudSDK.Me.ListSpendingAccounts({
+
+     OrderCloudSDK.Me.ListSpendingAccounts({
             page: 1,
             pageSize: 100,
             filters: {
@@ -117,9 +118,13 @@ function PaymentSpendingAccountController($scope, $rootScope, toastr, OrderCloud
             }
         })
         .then(function (data) {
-            $scope.spendingAccounts = data.Items;
-        });
-
+            debugger;
+            console.log("this is spending account", data);
+             $scope.spendingAccounts = data.Items;
+        })
+        .catch(function(er){
+            console.log(er);
+        })
     if (!$scope.payment) {
         OrderCloudSDK.Payments.List($scope.order.ID)
             .then(function (data) {
@@ -152,19 +157,22 @@ function PaymentSpendingAccountController($scope, $rootScope, toastr, OrderCloud
                         });
                 }
             });
-    } else {
-        delete $scope.payment.CreditCardID;
+    } else {   
         if ($scope.payment.xp && $scope.payment.xp.PONumber) $scope.payment.xp.PONumber = null;
         if (!$scope.payment.SpendingAccountID) $scope.showPaymentOptions = true;
     }
 
     $scope.changePayment = function () {
         $scope.showPaymentOptions = true;
+       delete $scope.payment.SpendingAccountID;
+        $rootScope.$broadcast('OC:PaymentsUpdated');
     };
 
     $scope.updatePayment = function (scope) {
         var oldSelection = angular.copy($scope.payment.SpendingAccountID);
         $scope.payment.SpendingAccountID = scope.spendingAccount.ID;
+        $scope.payment.SpendingAccount = scope.spendingAccount;
+        if($scope.payment.CreditCardID)  delete $scope.payment.CreditCardID;
         $scope.updatingSpendingAccountPayment = OrderCloudSDK.Payments.Delete('outgoing', $scope.order.ID, $scope.payment.ID)
             .then(function () {
                 OrderCloudSDK.Payments.Create('outgoing', $scope.order.ID, $scope.payment)
@@ -259,13 +267,14 @@ function PaymentCreditCardController($scope, $rootScope, toastr, $filter, OrderC
                 }
             });
     } else {
-        delete $scope.payment.SpendingAccountID;
         if ($scope.payment.xp && $scope.payment.xp.PONumber) $scope.payment.xp.PONumber = null;
         if (!$scope.payment.CreditCardID) $scope.showPaymentOptions = true;
     }
 
     $scope.changePayment = function () {
         $scope.showPaymentOptions = true;
+        delete $scope.payment.CreditCardID;
+        $rootScope.$broadcast('OC:PaymentsUpdated');
     };
 
     $scope.$watch('payment', function (n, o) {
@@ -280,6 +289,7 @@ function PaymentCreditCardController($scope, $rootScope, toastr, $filter, OrderC
     $scope.updatePayment = function (scope) {
         var oldSelection = angular.copy($scope.payment.CreditCardID);
         $scope.payment.CreditCardID = scope.creditCard.ID;
+        if($scope.payment.SpendingAccountID) delete $scope.payment.SpendingAccountID;
         $scope.updatingCreditCardPayment = OrderCloudSDK.Payments.Delete('outgoing', $scope.order.ID, $scope.payment.ID)
             .then(function () {
                 OrderCloudSDK.Payments.Create('outgoing', $scope.order.ID, $scope.payment)
@@ -393,18 +403,18 @@ function PaymentsController($rootScope, $scope, $exceptionHandler, toastr, Order
             } else if (CheckoutPaymentService.PaymentsMatchTotal(data, $scope.order.Total)) {
                 $scope.payments = data;
             } else {
-                OrderCloudSDK.Payments.Patch('outgoing', $scope.order.ID, data.Items[0].ID, {
+                OrderCloudSDK.Payments.Patch('outgoing', $scope.order.ID, data.Items[data.Items.length - 1].ID, {
                         Amount: null
                     })
                     .then(function (updatedPayment) {
-                        $scope.payments = {
-                            Items: [updatedPayment]
-                        };
+                        data.Items[data.Items.length - 1] = updatedPayment;
+                        $scope.payments = data;
                         calculateMaxTotal();
                     })
                     .catch(function (er) {
                         if (er.response.body.Errors[0].ErrorCode === "Payment.ExceedsBalance"){
                             $scope.payments = data;
+                            calculateMaxTotal();
                         }
                         console.log(er);
                     });
@@ -455,6 +465,7 @@ function PaymentsController($rootScope, $scope, $exceptionHandler, toastr, Order
 
     function calculateMaxTotal() {
         var paymentTotal = 0;
+        var estimatedTotal;
         $scope.excludeOptions = {
             SpendingAccounts: [],
             CreditCards: []
@@ -467,11 +478,14 @@ function PaymentsController($rootScope, $scope, $exceptionHandler, toastr, Order
             maxAmount = ($scope.order.Subtotal + $scope.order.ShippingCost + $scope.order.TaxCost - _.reduce(_.pluck($scope.payments.Items, 'Amount'), function (a, b) {
                 return a + b;
             }));
-
+            //round to the nearest 2 decimals
             payment.MaxAmount = Math.round((payment.Amount + maxAmount) * 100) / 100 ;
 
         });
-        $scope.canAddPayment = paymentTotal < ($scope.order.Subtotal + $scope.order.ShippingCost + $scope.order.TaxCost).toFixed(2);
+        estimatedTotal = Math.round(($scope.order.Subtotal + $scope.order.ShippingCost + $scope.order.TaxCost) * 100) / 100;
+        
+        $scope.canAddPayment = paymentTotal < estimatedTotal;
         if ($scope.OCPayments) $scope.OCPayments.$setValidity('Insufficient_Payment', !$scope.canAddPayment);
+        if ($scope.OCPayments) $scope.OCPayments.$setValidity('AllPaymentsNeedSelection', $scope.payments.Items.length === ($scope.excludeOptions.SpendingAccounts.length + $scope.excludeOptions.CreditCards.length));
     }
 }

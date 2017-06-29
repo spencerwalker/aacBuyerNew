@@ -1,7 +1,7 @@
 <!--Single Spending Account Payment View-->
 <div ng-form="OCPaymentSpendingAccount" cg-busy="updatingSpendingAccountPayment">
-	<div class="panel panel-default" ng-repeat="spendingAccount in spendingAccounts" ng-if="payment.SpendingAccountID == spendingAccount.ID || (showPaymentOptions && (!excludedSpendingAccounts || excludedSpendingAccounts.indexOf(spendingAccount.ID) == -1))">
-		<div class="panel-body">
+	<div class="panel panel-default" ng-repeat="spendingAccount in spendingAccounts">
+		<div class="panel-body" ng-if="payment.SpendingAccountID == spendingAccount.ID || (showPaymentOptions && (!excludedSpendingAccounts || excludedSpendingAccounts.indexOf(spendingAccount.ID) == -1))">
 			<div class="row">
 				<div class="col-xs-6">
 					<b>{{spendingAccount.Name}}</b>
@@ -27,5 +27,14 @@
 				</div>
 			</div>
 		</div>
+		
+		<div class="panel-body" ng-if="(excludedSpendingAccounts.indexOf(spendingAccount.ID) !== -1) && (payment.SpendingAccountID !== spendingAccount.ID)">
+			<div class="row">
+				<b>Spending Account is Already Being Used</b>
+			</div>
+		</div>
+
+	</div>
+
 	</div>
 </div>
