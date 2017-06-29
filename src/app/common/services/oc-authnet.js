@@ -7,6 +7,7 @@ function AuthorizeNet( $q, $resource, OrderCloudSDK, apiurl, ocCreditCardUtility
         'CreateCreditCard': _createCreateCard,
         'UpdateCreditCard': _updateCreditCard,
         'DeleteCreditCard' : _deleteCreditCard,
+        'AuthCaptureTransaction': _authCaptureTransaction,
         'MakeAuthnetCall' : _makeApiCall
 
     };
@@ -47,6 +48,20 @@ function AuthorizeNet( $q, $resource, OrderCloudSDK, apiurl, ocCreditCardUtility
             'TransactionType': 'deleteCreditCard',
             'CardDetails': {
                 'CreditCardID': creditCard.ID
+            }
+        });
+    }
+
+    function _authCaptureTransaction(order, payment) {
+        return _makeApiCall('POST', {
+            'BuyerID': order.FromCompanyID || buyerid,
+            'OrderID': order.ID,
+            'OrderDirection': 'outgoing',
+            'Amount': order.Total,
+            'TransactionType': 'authCaptureTransaction',
+            'CardDetails': {
+                'PaymentID': payment.ID,
+                'CreditCardID': payment.CreditCardID
             }
         });
     }

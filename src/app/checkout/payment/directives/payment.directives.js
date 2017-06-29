@@ -118,12 +118,10 @@ function PaymentSpendingAccountController($scope, $rootScope, toastr, OrderCloud
             }
         })
         .then(function (data) {
-            debugger;
-            console.log("this is spending account", data);
-             $scope.spendingAccounts = data.Items;
+            $scope.spendingAccounts = data.Items;
         })
         .catch(function(er){
-            console.log(er);
+            $exceptionHandler(er);
         })
     if (!$scope.payment) {
         OrderCloudSDK.Payments.List($scope.order.ID)
@@ -138,8 +136,8 @@ function PaymentSpendingAccountController($scope, $rootScope, toastr, OrderCloud
                                     },
                                     CreditCardID: null,
                                     SpendingAccountID: null,
-                                    Amount: null,
-                                    Accepted: true
+                                    Amount: null
+                                    // Accepted: true
                                 })
                                 .then(function (payment) {
                                     $scope.payment = payment;
@@ -148,8 +146,8 @@ function PaymentSpendingAccountController($scope, $rootScope, toastr, OrderCloud
                         });
                 } else {
                     OrderCloudSDK.Payments.Create('outgoing', $scope.order.ID, {
-                            Type: 'SpendingAccount',
-                            Accepted: true
+                            Type: 'SpendingAccount'
+                            // Accepted: true
                         })
                         .then(function (data) {
                             $scope.payment = data;
@@ -248,7 +246,7 @@ function PaymentCreditCardController($scope, $rootScope, toastr, $filter, OrderC
                                     CreditCardID: null,
                                     SpendingAccountID: null,
                                     Amount: null,
-                                    Accepted: true
+                                    Accepted: false
                                 })
                                 .then(function (payment) {
                                     $scope.payment = payment;
@@ -258,7 +256,7 @@ function PaymentCreditCardController($scope, $rootScope, toastr, $filter, OrderC
                 } else {
                     OrderCloudSDK.Payments.Create('outgoing', $scope.order.ID, {
                             Type: 'CreditCard',
-                            Accepted: true
+                            Accepted: $scope.payments.Type === 'CreditCard' ? false : true
                         })
                         .then(function (data) {
                             $scope.payment = data;
@@ -292,10 +290,11 @@ function PaymentCreditCardController($scope, $rootScope, toastr, $filter, OrderC
         if($scope.payment.SpendingAccountID) delete $scope.payment.SpendingAccountID;
         $scope.updatingCreditCardPayment = OrderCloudSDK.Payments.Delete('outgoing', $scope.order.ID, $scope.payment.ID)
             .then(function () {
+                $scope.payment.Accepted = false;
                 OrderCloudSDK.Payments.Create('outgoing', $scope.order.ID, $scope.payment)
                     .then(function (payment) {
                         $scope.showPaymentOptions = false;
-                        // $scope.payment = payment;
+                        $scope.payment = payment;
                         toastr.success('Using ' + $filter('humanize')(scope.creditCard.CardType) + ' ending in ' + scope.creditCard.PartialAccountNumber, 'Credit Card Payment');
                         $rootScope.$broadcast('OC:PaymentsUpdated');
                     });
@@ -344,7 +343,7 @@ function PaymentController($scope, $rootScope, OrderCloudSDK, CheckoutConfig, Ch
                         .then(function (data) {
                             OrderCloudSDK.Payments.Create('outgoing', $scope.order.ID, {
                                     Type: CheckoutConfig.AvailablePaymentMethods[0],
-                                    Accepted: true
+                                    Accepted: data.Type === 'CreditCard' ? false : true
                                 })
                                 .then(function (data) {
                                     $scope.payment = data;
@@ -357,7 +356,7 @@ function PaymentController($scope, $rootScope, OrderCloudSDK, CheckoutConfig, Ch
                 } else {
                     OrderCloudSDK.Payments.Create('outgoing', $scope.order.ID, {
                             Type: CheckoutConfig.AvailablePaymentMethods[0],
-                            Accepted: true
+                            Accepted: $scope.payments.Type === 'CreditCard' ? false : true
                         })
                         .then(function (data) {
                             $scope.payment = data;
@@ -424,7 +423,7 @@ function PaymentsController($rootScope, $scope, $exceptionHandler, toastr, Order
     $scope.addNewPayment = function (balance) {
         OrderCloudSDK.Payments.Create('outgoing', $scope.order.ID, {
                 Type: $scope.payments.Items.length >= 1 ? CheckoutConfig.AvailablePaymentMethods[1] : CheckoutConfig.AvailablePaymentMethods[0],
-                Accepted: true
+                Accepted: $scope.payments.Type === 'CreditCard' ? false : true
             })
             .then(function (data) {
                 $scope.payments.Items.push(data);

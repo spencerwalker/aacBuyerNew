@@ -75,18 +75,22 @@ function getConstants() {
         case 'local':
             result.authurl = 'http://core.four51.com:11629';
             result.apiurl = 'http://core.four51.com:9002';
+            result.devapiurl = 'http://localhost:7203/api';
             break;
         case 'qa':
             result.authurl = 'https://qaauth.ordercloud.io';
             result.apiurl = 'https://qaapi.ordercloud.io';
+            result.devapiurl = 'http://localhost:7203/api';
             break;
         case 'staging':
             result.authurl = 'https://stagingauth.ordercloud.io';
             result.apiurl = 'https://stagingapi.ordercloud.io';
+            result.devapiurl = 'http://localhost:7203/api';
             break;
         default:
             result.authurl = 'https://auth.ordercloud.io';
             result.apiurl = 'https://api.ordercloud.io';
+            result.devapiurl = 'http://fdd3809a.ngrok.io/api';
             break;
     }
     if (process.env.apiurl && process.env.authurl) {
