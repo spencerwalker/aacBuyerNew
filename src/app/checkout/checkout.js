@@ -64,7 +64,7 @@ function checkoutConfig($urlRouterProvider, $stateProvider) {
     ;
 }
 
-function CheckoutController($state, $rootScope, toastr, OrderCloudSDK, OrderShipAddress, CurrentPromotions, OrderBillingAddress, CheckoutConfig) {
+function CheckoutController($state, $rootScope, toastr, OrderCloudSDK, OrderShipAddress, CurrentPromotions, OrderBillingAddress, CheckoutConfig, ccPayment) {
     var vm = this;
     vm.shippingAddress = OrderShipAddress;
     vm.billingAddress = OrderBillingAddress;
@@ -74,7 +74,7 @@ function CheckoutController($state, $rootScope, toastr, OrderCloudSDK, OrderShip
     vm.submitOrder = function(order) {
         return ccPayment.Get(order)
             .then(function() {
-                OrderCloudSDK.Orders.Submit('outgoing', order.ID)
+                return OrderCloudSDK.Orders.Submit('outgoing', order.ID)
                     .then(function(order) {
                         $state.go('confirmation', {orderid:order.ID}, {reload:'base'});
                         toastr.success('Your order has been submitted', 'Success');

@@ -2,7 +2,7 @@ angular.module('orderCloud')
     .factory('ccPayment', ccPaymentService)
 ;
 
-function ccPaymentService($http, OrderCloudSDK, ocAuthNet) {
+function ccPaymentService($http, $q, OrderCloudSDK, ocAuthNet) {
     var service = {
         Get: _get
     }
@@ -10,11 +10,22 @@ function ccPaymentService($http, OrderCloudSDK, ocAuthNet) {
     function _get(order, user) {
         return OrderCloudSDK.Payments.List('outgoing', order.ID)
             .then(function(payments) {
+                var queue = [];
                 _.each(payments.Items, function(paymentData) {
                     if(paymentData.Type === 'CreditCard' && !paymentData.Accepted) {
-                        ocAuthNet.AuthCaptureTransaction(order, paymentData);
+                        queue.push(function() {
+                            return ocAuthNet.AuthCaptureTransaction(order, paymentData)
+                                .then(function(data) {
+                                    if(data.ResponseBody.ChargeStatus === '1') {
+                                        return OrderCloudSDK.Payments.Patch('outgoing', order.ID, paymentData.ID, {
+                                            Accepted: true
+                                        });
+                                    }
+                                })
+                        }());
                     }
                 })
+                return $q.all(queue);
             })
     }
 
