@@ -57,7 +57,7 @@ function AuthorizeNet( $q, $resource, OrderCloudSDK, apiurl, ocCreditCardUtility
             'BuyerID': order.FromCompanyID || buyerid,
             'OrderID': order.ID,
             'OrderDirection': 'outgoing',
-            'Amount': order.Total,
+            'Amount': payment.Amount,
             'TransactionType': 'authCaptureTransaction',
             'CardDetails': {
                 'PaymentID': payment.ID,
