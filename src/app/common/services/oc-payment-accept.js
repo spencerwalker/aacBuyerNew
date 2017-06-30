@@ -4,10 +4,10 @@ angular.module('orderCloud')
 
 function ccPaymentService($http, $q, $exceptionHandler, OrderCloudSDK, ocAuthNet) {
     var service = {
-        Get: _get
+        AuthCapture: _authCapture
     }
 
-    function _get(order, user) {
+    function _authCapture(order, user) {
         return OrderCloudSDK.Payments.List('outgoing', order.ID)
             .then(function(payments) {
                 var queue = [];

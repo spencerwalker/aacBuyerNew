@@ -90,7 +90,7 @@ function getConstants() {
         default:
             result.authurl = 'https://auth.ordercloud.io';
             result.apiurl = 'https://api.ordercloud.io';
-            result.devapiurl = 'http://fdd3809a.ngrok.io/api';
+            result.devapiurl = 'https://adoptaclassroom-shop.herokuapp.com/';
             break;
     }
     if (process.env.apiurl && process.env.authurl) {

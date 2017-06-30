@@ -6,7 +6,7 @@ angular.module('orderCloud')
     .constant('CheckoutConfig', {
         ShippingRates: true,
         TaxRates: false,
-        TransactionType: 'AuthorizeNet',
+        TransactionType: 'AuthNet',
         AvailablePaymentMethods: [ 'SpendingAccount', 'CreditCard']
     })
 ;
@@ -72,18 +72,27 @@ function CheckoutController($state, $rootScope, toastr, OrderCloudSDK, OrderShip
     vm.checkoutConfig = CheckoutConfig;
 
     vm.submitOrder = function(order) {
-        return ccPayment.Get(order)
-            .then(function() {
-                return OrderCloudSDK.Orders.Submit('outgoing', order.ID)
-                    .then(function(order) {
-                        $state.go('confirmation', {orderid:order.ID}, {reload:'base'});
-                        toastr.success('Your order has been submitted', 'Success');
-                    })
-                    .catch(function(ex) {
-                        toastr.error('Your order did not submit successfully.', 'Error');
-                    });
-            })
+        if (CheckoutConfig.TransactionType === 'AuthNet') {
+            return ccPayment.AuthCapture(order)
+                .then(function() {
+                    finalSubmit(order);
+                })
+        } else {
+            finalSubmit(order);
+        }
+        
     };
+
+    function finalSubmit(order) {
+        return OrderCloudSDK.Orders.Submit('outgoing', order.ID)
+            .then(function(order) {
+                $state.go('confirmation', {orderid:order.ID}, {reload:'base'});
+                toastr.success('Your order has been submitted', 'Success');
+            })
+            .catch(function(ex) {
+                toastr.error('Your order did not submit successfully.', 'Error');
+            });
+    }
 
     $rootScope.$on('OC:OrderShipAddressUpdated', function(event, order) {
         OrderCloudSDK.Me.GetAddress(order.ShippingAddressID)
