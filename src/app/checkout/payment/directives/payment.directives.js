@@ -76,7 +76,6 @@ function PaymentPurchaseOrderController($scope, $rootScope, toastr, OrderCloudSD
 
     $scope.updatePayment = function () {
         if ($scope.payment.xp && $scope.payment.xp.PONumber && (!$scope.payment.xp.PONumber.length)) $scope.payment.xp.PONumber = null;
-        // OrderCloud.Payments.Update($scope.order.ID, $scope.payment.ID, $scope.payment)
         OrderCloudSDK.Payments.Delete('outgoing', $scope.order.ID, $scope.payment.ID)
             .then(function () {
                 delete $scope.payment.ID;
@@ -137,7 +136,6 @@ function PaymentSpendingAccountController($scope, $rootScope, toastr, OrderCloud
                                     CreditCardID: null,
                                     SpendingAccountID: null,
                                     Amount: null
-                                    // Accepted: true
                                 })
                                 .then(function (payment) {
                                     $scope.payment = payment;
@@ -147,7 +145,6 @@ function PaymentSpendingAccountController($scope, $rootScope, toastr, OrderCloud
                 } else {
                     OrderCloudSDK.Payments.Create('outgoing', $scope.order.ID, {
                             Type: 'SpendingAccount'
-                            // Accepted: true
                         })
                         .then(function (data) {
                             $scope.payment = data;
@@ -190,9 +187,6 @@ function PaymentSpendingAccountController($scope, $rootScope, toastr, OrderCloud
                                     toastr.warning('Not Enough on Spending Account, Please Add an Aditional Payment');
                                     $rootScope.$broadcast('OC:PaymentsUpdated');
                                 })
-
-
-                            // });
                         }
                     });
             })
@@ -415,7 +409,6 @@ function PaymentsController($rootScope, $scope, $exceptionHandler, toastr, Order
                             $scope.payments = data;
                             calculateMaxTotal();
                         }
-                        console.log(er);
                     });
             }
         });
