@@ -2,7 +2,7 @@ angular.module('orderCloud')
     .factory('ccPayment', ccPaymentService)
 ;
 
-function ccPaymentService($http, $q, OrderCloudSDK, ocAuthNet) {
+function ccPaymentService($http, $q, $exceptionHandler, OrderCloudSDK, ocAuthNet) {
     var service = {
         Get: _get
     }
@@ -20,12 +20,20 @@ function ccPaymentService($http, $q, OrderCloudSDK, ocAuthNet) {
                                         return OrderCloudSDK.Payments.Patch('outgoing', order.ID, paymentData.ID, {
                                             Accepted: true
                                         });
+                                    } else {
+                                        
                                     }
+                                })
+                                .catch(function(ex) {
+                                    $exceptionHandler(ex);
                                 })
                         }());
                     }
                 })
                 return $q.all(queue);
+            })
+            .catch(function(ex) {
+                $exceptionHandler(ex);
             })
     }
 
