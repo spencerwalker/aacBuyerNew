@@ -43,7 +43,7 @@ function LineItemFactory($rootScope, $q, $uibModal, OrderCloudSDK, catalogid, bu
             Quantity: product.Quantity,
             Specs: _specConvert(product.Specs)
         };
-        li.ShippingAddressID = isSingleShipping(order) ? getSingleShippingAddressID(order) : null;
+        li.ShippingAddressID = isSingleShipping(order) ? getSingleShippingAddressID(order) : order.ShippingAddressID;
         OrderCloudSDK.LineItems.Create('outgoing', order.ID, li)
             .then(function(lineItem) {
                 $rootScope.$broadcast('OC:UpdateOrder', order.ID);
