@@ -80,12 +80,12 @@ function getConstants() {
         case 'qa':
             result.authurl = 'https://qaauth.ordercloud.io';
             result.apiurl = 'https://qaapi.ordercloud.io';
-            result.devapiurl = 'http://localhost:7203/api';
+            result.devapiurl = 'https://qaapi.ordercloud.io';
             break;
         case 'staging':
             result.authurl = 'https://stagingauth.ordercloud.io';
             result.apiurl = 'https://stagingapi.ordercloud.io';
-            result.devapiurl = 'http://localhost:7203/api';
+            result.devapiurl = 'https://stagingapi.ordercloud.io';
             break;
         default:
             result.authurl = 'https://auth.ordercloud.io';
