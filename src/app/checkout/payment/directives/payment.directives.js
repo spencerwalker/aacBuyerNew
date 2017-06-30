@@ -445,7 +445,7 @@ function PaymentsController($rootScope, $scope, $exceptionHandler, toastr, Order
         OrderCloudSDK.Payments.Patch('outgoing', $scope.order.ID, scope.payment.ID, {
                 Amount: scope.payment.Amount
             })
-            .then(function (data) {
+            .then(function (payment) {
                 toastr.success('Payment Amount Updated');
                 calculateMaxTotal();
             })
@@ -478,7 +478,7 @@ function PaymentsController($rootScope, $scope, $exceptionHandler, toastr, Order
             payment.MaxAmount = Math.round((payment.Amount + maxAmount) * 100) / 100 ;
 
         });
-        estimatedTotal = Math.round(($scope.order.Subtotal + $scope.order.ShippingCost + $scope.order.TaxCost) * 100) / 100;
+        estimatedTotal = Math.round(($scope.order.Subtotal + ($scope.order.ShippingCost ? $scope.order.ShippingCost : 0) + $scope.order.TaxCost) * 100) / 100;
         
         $scope.canAddPayment = paymentTotal < estimatedTotal;
         if ($scope.OCPayments) $scope.OCPayments.$setValidity('Insufficient_Payment', !$scope.canAddPayment);
