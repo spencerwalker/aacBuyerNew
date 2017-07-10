@@ -21,6 +21,7 @@
                     <label for="creditCardNumberInput">Card Number</label>
                     <input type="text"
                            class="form-control"
+                           placeholder="{{'XXXX-XXXX-XXXX-' + editCreditCard.creditCard.PartialAccountNumber}}"
                            ng-model="editCreditCard.creditCard.CardNumber"
                            payments-validate="card"
                            payments-format="card"

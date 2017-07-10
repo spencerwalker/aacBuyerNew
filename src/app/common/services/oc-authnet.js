@@ -52,7 +52,8 @@ function AuthorizeNet( $q, $resource, OrderCloudSDK, apiurl, ocCreditCardUtility
         });
     }
 
-    function _authCaptureTransaction(order, payment) {
+    function _authCaptureTransaction(order, paymentData) {
+        var payment = paymentData[0];
         return _makeApiCall('POST', {
             'BuyerID': order.FromCompanyID || buyerid,
             'OrderID': order.ID,
@@ -61,7 +62,8 @@ function AuthorizeNet( $q, $resource, OrderCloudSDK, apiurl, ocCreditCardUtility
             'TransactionType': 'authCaptureTransaction',
             'CardDetails': {
                 'PaymentID': payment.ID,
-                'CreditCardID': payment.CreditCardID
+                'CreditCardID': payment.CreditCardID,
+                'CardholderName': payment.Details.CardholderName,
             }
         });
     }
