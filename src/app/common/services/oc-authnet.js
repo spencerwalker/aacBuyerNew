@@ -64,6 +64,9 @@ function AuthorizeNet( $q, $resource, OrderCloudSDK, apiurl, ocCreditCardUtility
                 'PaymentID': payment.ID,
                 'CreditCardID': payment.CreditCardID,
                 'CardholderName': payment.Details.CardholderName,
+                'CardType' : payment.Details.CardType,
+                'CardNumber' : 'XXXX'+ payment.Details.PartialAccountNumber,
+                'ExpirationDate' : payment.Details.ExpirationDate
             }
         });
     }
