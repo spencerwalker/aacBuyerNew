@@ -182,6 +182,7 @@ function VendorShippingCriteria() {
 				return 0.15*order.amount;
 			}
 		},
+		
 		{
 			name: 'Hovercam',
 			minOrderAmount: 0,
@@ -392,9 +393,9 @@ function VendorShippingCriteria() {
 	};
 	
 	this.getShippingCostByVendor = function(vendorName, vendorLineItems){
-        var itemCount = 0;
-        var amount = 0;
-        var state = '';
+        var itemCount,
+			amount,
+			state ;
         angular.forEach(vendorLineItems, function(lineItem){
             amount += ( lineItem.UnitPrice * lineItem.Quantity);
             itemCount += lineItem.Quantity;

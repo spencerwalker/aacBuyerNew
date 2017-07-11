@@ -70,10 +70,6 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     vm.vendorLineItemsMap = {};
 
     vm.lineItems = LineItemsList;
-    console.log('LineItems', vm.lineItems);
-    console.log('CategoryList :: ', CategoryList);
-    console.log('Products :: ', ProductList);
-    console.log('vm.lineItems ::', JSON.stringify(vm.lineItems));
 
     // watcher on vm.lineItems
     $scope.$watch(function () {
@@ -123,8 +119,6 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
             TaxCost: $scope.base.currentOrder.TaxCost.toFixed(2)
         })
     }, true);
-
-    console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
 
     vm.promotions = CurrentPromotions.Meta ? CurrentPromotions.Items : CurrentPromotions;
     vm.removeItem = function (order, scope) {

@@ -6,7 +6,7 @@ angular.module('orderCloud')
     .constant('CheckoutConfig', {
         ShippingRates: true,
         TaxRates: false,
-       // AvailablePaymentMethods: ['PurchaseOrder', 'CreditCard', 'SpendingAccount']
+        TransactionType: 'AuthNet',
         AvailablePaymentMethods: [ 'SpendingAccount', 'CreditCard']
     })
 ;
@@ -64,15 +64,28 @@ function checkoutConfig($urlRouterProvider, $stateProvider) {
     ;
 }
 
-function CheckoutController($state, $rootScope, toastr, OrderCloudSDK, OrderShipAddress, CurrentPromotions, OrderBillingAddress, CheckoutConfig) {
+function CheckoutController($state, $rootScope, toastr, OrderCloudSDK, OrderShipAddress, CurrentPromotions, OrderBillingAddress, CheckoutConfig, ccPayment) {
     var vm = this;
     vm.shippingAddress = OrderShipAddress;
     vm.billingAddress = OrderBillingAddress;
     vm.promotions = CurrentPromotions.Items;
     vm.checkoutConfig = CheckoutConfig;
 
-    vm.submitOrder = function(order) {
-        OrderCloudSDK.Orders.Submit('outgoing', order.ID)
+    vm.submitOrder = function(order, payments) {
+        if (CheckoutConfig.TransactionType === 'AuthNet') {
+            var ccPaymentDetails = _.where(payments.Items, {Type: 'CreditCard'})
+            return ccPayment.AuthCapture(order, ccPaymentDetails)
+                .then(function(data) {
+                    finalSubmit(order);
+                })
+        } else {
+            finalSubmit(order);
+        }
+        
+    };
+
+    function finalSubmit(order) {
+        return OrderCloudSDK.Orders.Submit('outgoing', order.ID)
             .then(function(order) {
                 $state.go('confirmation', {orderid:order.ID}, {reload:'base'});
                 toastr.success('Your order has been submitted', 'Success');
@@ -80,7 +93,7 @@ function CheckoutController($state, $rootScope, toastr, OrderCloudSDK, OrderShip
             .catch(function(ex) {
                 toastr.error('Your order did not submit successfully.', 'Error');
             });
-    };
+    }
 
     $rootScope.$on('OC:OrderShipAddressUpdated', function(event, order) {
         OrderCloudSDK.Me.GetAddress(order.ShippingAddressID)
