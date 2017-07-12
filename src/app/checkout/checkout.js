@@ -71,11 +71,10 @@ function CheckoutController($state, $rootScope, toastr, OrderCloudSDK, OrderShip
     vm.promotions = CurrentPromotions.Items;
     vm.checkoutConfig = CheckoutConfig;
 
-    vm.submitOrder = function(order, payments) {
+    vm.submitOrder = function(order) {
         if (CheckoutConfig.TransactionType === 'AuthNet') {
-            var ccPaymentDetails = _.where(payments.Items, {Type: 'CreditCard'})
-            return ccPayment.AuthCapture(order, ccPaymentDetails)
-                .then(function(data) {
+            return ccPayment.AuthCapture(order)
+                .then(function() {
                     finalSubmit(order);
                 })
         } else {
