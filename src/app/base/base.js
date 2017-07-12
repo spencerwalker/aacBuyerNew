@@ -85,7 +85,6 @@ function BaseController($rootScope, $state, $http, ProductSearch, CurrentUser, C
                 });
             });
         });
-        console.log('Funds Available' + vm.availableFunds);
     };
     
     vm.logout = function() {

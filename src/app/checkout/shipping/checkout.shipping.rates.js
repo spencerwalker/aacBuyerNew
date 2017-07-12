@@ -393,9 +393,9 @@ function VendorShippingCriteria() {
 	};
 	
 	this.getShippingCostByVendor = function(vendorName, vendorLineItems){
-        var itemCount,
-			amount,
-			state ;
+        var itemCount = 0;
+		var	amount = 0;
+		var	state = '';
         angular.forEach(vendorLineItems, function(lineItem){
             amount += ( lineItem.UnitPrice * lineItem.Quantity);
             itemCount += lineItem.Quantity;
