@@ -22,6 +22,9 @@ function checkoutConfig($urlRouterProvider, $stateProvider) {
 			controller: 'CheckoutCtrl',
 			controllerAs: 'checkout',
 			resolve: {
+                UpdateOrder: function($rootScope, CurrentOrder){
+                    $rootScope.$broadcast('OC:UpdateOrder', CurrentOrder.ID);
+                },
                 OrderShipAddress: function($q, OrderCloudSDK, CurrentOrder){
                     var deferred = $q.defer();
                     if (CurrentOrder.ShippingAddressID) {
@@ -84,7 +87,10 @@ function CheckoutController($state, $rootScope, toastr, OrderCloudSDK, OrderShip
     };
 
     function finalSubmit(order) {
-        return OrderCloudSDK.Orders.Submit('outgoing', order.ID)
+         vm.submitLoading = {
+            message: 'Submitting Order'
+        };
+        vm.submitLoading.promise = OrderCloudSDK.Orders.Submit('outgoing', order.ID)
             .then(function(order) {
                 $state.go('confirmation', {orderid:order.ID}, {reload:'base'});
                 toastr.success('Your order has been submitted', 'Success');
