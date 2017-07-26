@@ -10,7 +10,12 @@ function checkoutPaymentConfig($stateProvider) {
 			url: '/payment',
 			templateUrl: 'checkout/payment/templates/checkout.payment.tpl.html',
 			controller: 'CheckoutPaymentCtrl',
-			controllerAs: 'checkoutPayment'
+            controllerAs: 'checkoutPayment',
+            resolve: {
+               UpdateOrder: function($rootScope, CurrentOrder){
+                    $rootScope.$broadcast('OC:UpdateOrder', CurrentOrder.ID);
+                }
+            }
 		})
     ;
 }

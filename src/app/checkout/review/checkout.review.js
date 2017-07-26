@@ -10,16 +10,18 @@ function checkoutReviewConfig($stateProvider) {
             controller: 'CheckoutReviewCtrl',
             controllerAs: 'checkoutReview',
             resolve: {
-                LineItemsList: function ($q, $state, toastr, OrderCloudSDK, ocLineItems, CurrentOrder) {
+                LineItemsList: function ($q, $rootScope, toastr, OrderCloudSDK, ocLineItems, CurrentOrder) {
                     var dfd = $q.defer();
                     OrderCloudSDK.LineItems.List('outgoing', CurrentOrder.ID)
                         .then(function (data) {
                             if (!data.Items.length) {
+                                $rootScope.$broadcast('OC:UpdateOrder', CurrentOrder.ID);
                                 dfd.resolve(data);
                             }
                             else {
                                 ocLineItems.GetProductInfo(data.Items)
                                     .then(function () {
+                                        $rootScope.$broadcast('OC:UpdateOrder', CurrentOrder.ID);
                                         dfd.resolve(data);
                                     });
                             }
@@ -91,12 +93,7 @@ function CheckoutReviewController($exceptionHandler, $filter, ocConfirm, OrderCl
     var vm = this;
     vm.payments = OrderPaymentsDetail;
     vm.vendorLineItemsMap = {};
-
     vm.lineItems = LineItemsList;
-    console.log('LineItems', vm.lineItems);
-    console.log('CategoryList :: ', CategoryList);
-    console.log('Products :: ', ProductList);
-    console.log('vm.lineItems ::', JSON.stringify(vm.lineItems));
     vm.total = 0.0;
 
     // watcher on vm.lineItems
@@ -134,7 +131,6 @@ function CheckoutReviewController($exceptionHandler, $filter, ocConfirm, OrderCl
         
     }, true);
 
-    console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
 
     vm.getSubTotal = function (lineItemsList) {
         var total = 0.0;
