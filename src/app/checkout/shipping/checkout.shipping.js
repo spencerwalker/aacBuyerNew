@@ -14,17 +14,15 @@ function checkoutShippingConfig($stateProvider) {
                 pageTitle: "Delivery Address"
             },
             resolve: {
-                LineItemsList: function ($q, $rootScope, toastr, OrderCloudSDK, ocLineItems, CurrentOrder) {
+                LineItemsList: function ($q, toastr, OrderCloudSDK, ocLineItems, CurrentOrder) {
                     var dfd = $q.defer();
                     OrderCloudSDK.LineItems.List('outgoing', CurrentOrder.ID)
                         .then(function (data) {
                             if (!data.Items.length) {
-                                $rootScope.$broadcast('OC:UpdateOrder', CurrentOrder.ID);
                                 dfd.resolve(data);
                             } else {
                                 ocLineItems.GetProductInfo(data.Items)
                                     .then(function () {
-                                        $rootScope.$broadcast('OC:UpdateOrder', CurrentOrder.ID);
                                         dfd.resolve(data);
                                     });
                             }
