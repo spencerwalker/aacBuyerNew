@@ -163,12 +163,13 @@ function PaymentSpendingAccountController($scope, $rootScope, toastr, OrderCloud
 
     $scope.changePayment = function () {
         $scope.showPaymentOptions = true;
-       delete $scope.payment.SpendingAccountID;
+        delete $scope.payment.SpendingAccountID;
         $rootScope.$broadcast('OC:PaymentsUpdated');
     };
 
     $scope.updatePayment = function (scope) {
         var oldSelection = angular.copy($scope.payment.SpendingAccountID);
+        $scope.payment.Accepted = true;
         $scope.payment.SpendingAccountID = scope.spendingAccount.ID;
         $scope.payment.SpendingAccount = scope.spendingAccount;
         if($scope.payment.CreditCardID)  delete $scope.payment.CreditCardID;
