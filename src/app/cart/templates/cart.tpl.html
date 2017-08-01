@@ -1,7 +1,7 @@
 <article>
     <h3>
         <div class="pull-right">
-            <button ng-if="cart.lineItems.Items.length" ng-click="cart.cancelOrder(base.currentOrder)" class="btn btn-default"><span class="text-danger">Cancel Order</span>
+            <button ng-if="cart.lineItems.length" ng-click="cart.cancelOrder(base.currentOrder)" class="btn btn-default"><span class="text-danger">Cancel Order</span>
             </button>
             <button ui-sref="productBrowse.products" class="btn btn-default">Continue Shopping</button>
         </div>
