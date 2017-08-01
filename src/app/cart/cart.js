@@ -24,7 +24,7 @@ function CartConfig($stateProvider) {
                                 dfd.resolve(data);
                             }
                             else {
-                                ocLineItems.GetProductInfo(data.Items)
+                                ocLineItems.GetProductInfo(data)
                                     .then(function() {
                                         $rootScope.$broadcast('OC:UpdateOrder', CurrentOrder.ID);
                                         dfd.resolve(data);
