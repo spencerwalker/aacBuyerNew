@@ -10,7 +10,7 @@ function checkoutReviewConfig($stateProvider) {
             controller: 'CheckoutReviewCtrl',
             controllerAs: 'checkoutReview',
             resolve: {
-                LineItemsList: function ($q, $rootScope, toastr, OrderCloudSDK, ocLineItems, CurrentOrder) {
+                LineItemsList: function ($q, $rootScope, toastr, ocLineItems, CurrentOrder) {
                     var dfd = $q.defer();
                     ocLineItems.ListAll(CurrentOrder.ID)
                         .then(function (data) {
@@ -89,7 +89,7 @@ function checkoutReviewConfig($stateProvider) {
         });
 }
 
-function CheckoutReviewController($exceptionHandler, $filter, ocConfirm, OrderCloud, $rootScope, LineItemsList, $scope, $state, toastr, OrderPaymentsDetail, CategoryList, ProductList) {
+function CheckoutReviewController( $filter, LineItemsList, $scope, OrderPaymentsDetail) {
     var vm = this;
     vm.payments = OrderPaymentsDetail;
     vm.vendorLineItemsMap = {};
