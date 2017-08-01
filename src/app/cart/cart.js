@@ -15,9 +15,9 @@ function CartConfig($stateProvider) {
                 pageTitle: "Shopping Cart"
             },
             resolve: {
-                LineItemsList: function($q, $rootScope, toastr, OrderCloudSDK, ocLineItems, CurrentOrder) {
+                LineItemsList: function($q, $rootScope, toastr, ocLineItems, CurrentOrder) {
                     var dfd = $q.defer();
-                    OrderCloudSDK.LineItems.List('outgoing', CurrentOrder.ID)
+                    ocLineItems.ListAll(CurrentOrder.ID)
                         .then(function(data) {
                             if (!data.Items.length) {
                                 $rootScope.$broadcast('OC:UpdateOrder', CurrentOrder.ID);
