@@ -8,8 +8,8 @@
         Shopping Cart
     </h3>
     <hr>
-    <div class="well text-center" ng-if="!cart.lineItems.Items.length">You do not have any items in your cart.</div>
-    <div class="row" ng-if="cart.lineItems.Items.length">
+    <div class="well text-center" ng-if="!cart.lineItems.length">You do not have any items in your cart.</div>
+    <div class="row" ng-if="cart.lineItems.length">
         <aside class="col-md-4 col-md-push-8">
             <div class="panel panel-default" hl-sticky anchor="top" offset-top="70" media-query="min-width: 992px" cg-busy="base.orderLoading">
                 <div class="panel-heading">
@@ -20,7 +20,7 @@
                 <div class="panel-body">
                     <p>
                     	<b>
-	                        <ng-pluralize count="cart.lineItems.Meta.TotalCount" when="{
+	                        <ng-pluralize count="cart.LineCount" when="{
 								'1': '1 Item in Your Cart',
 								'other': '{} Items in Your Cart'
 							}"></ng-pluralize>
@@ -30,7 +30,7 @@
                     <h4>Subtotal:- All Orders <span class="pull-right">{{base.currentOrder.Subtotal | currency}}</span></h4> 
                 </div>
                 <div class="panel-footer">
-                    <button ng-if="cart.lineItems.Items.length > 0" type="button" ui-sref="checkout.shipping" class="btn btn-block btn-primary" ng-disabled="OrderLineItemForm.$invalid">Proceed to Checkout</button>
+                    <button ng-if="cart.lineItems.length > 0" type="button" ui-sref="checkout.shipping" class="btn btn-block btn-primary" ng-disabled="OrderLineItemForm.$invalid">Proceed to Checkout</button>
                 </div>
             </div>
         </aside>
@@ -145,7 +145,7 @@
 	</aside>	
         </div>
         <div class="form-group">
-            <button ng-if="cart.lineItems.Items.length > 0" type="button" ui-sref="checkout.shipping"
+            <button ng-if="cart.lineItems.length > 0" type="button" ui-sref="checkout.shipping"
                     class="btn btn-block btn-primary hidden-lg hidden-md"
                 ng-disabled="OrderLineItemForm.$invalid">Proceed to Checkout</button>
         </div>

@@ -60,7 +60,7 @@
 			<hr>
 			</div><hr>
 	</div>
-	<div class="row c-line-item" ng-repeat="lineItem in checkoutReview.lineItems.Items track by $index"  cg-busy="checkoutReview.lineLoading[$index]" style="margin-left: 1.5px; margin-right: 1.5px" >
+	<div class="row c-line-item" ng-repeat="lineItem in checkoutReview.lineItems track by $index"  cg-busy="checkoutReview.lineLoading[$index]" style="margin-left: 1.5px; margin-right: 1.5px" >
         <div class="col-xs-3 col-sm-2">
 				<div ng-if="!lineItem.Punchout" class="thumbnail c-line-item__img">
 					<img class="img-responsive" ng-src="{{lineItem.Product.xp.image.URL || 'http://placehold.it/100x100?text=' + (lineItem.Punchout ? lineItem.xp.SupplierPartID : lineItem.Product.Name)}}"

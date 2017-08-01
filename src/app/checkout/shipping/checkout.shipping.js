@@ -14,20 +14,21 @@ function checkoutShippingConfig($stateProvider) {
                 pageTitle: "Delivery Address"
             },
             resolve: {
-                LineItemsList: function ($q, toastr, OrderCloudSDK, ocLineItems, CurrentOrder) {
+                LineItemsList: function($q, toastr, ocLineItems, CurrentOrder) {
                     var dfd = $q.defer();
-                    OrderCloudSDK.LineItems.List('outgoing', CurrentOrder.ID)
-                        .then(function (data) {
-                            if (!data.Items.length) {
+                    ocLineItems.ListAll(CurrentOrder.ID)
+                        .then(function(data) {
+                            if (!data.length) {
                                 dfd.resolve(data);
-                            } else {
-                                ocLineItems.GetProductInfo(data.Items)
-                                    .then(function () {
+                            }
+                            else {
+                                ocLineItems.GetProductInfo(data)
+                                    .then(function() {
                                         dfd.resolve(data);
                                     });
                             }
                         })
-                        .catch(function () {
+                        .catch(function() {
                             toastr.error('Your order does not contain any line items.', 'Error');
                             dfd.reject();
                         });
@@ -78,7 +79,7 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
         //create a queue to hold all the api calls that will be sent out at once
         var lineItemUpdateQueue = [];
         vm.vendorLineItemsMap = {};
-        angular.forEach(vm.lineItems.Items, function (lineItem) {
+        angular.forEach(vm.lineItems, function (lineItem) {
             var xp = {
                 vendorOrderId: []
             };
@@ -126,7 +127,7 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
         vm.lineLoading[scope.$index] = OrderCloudSDK.LineItems.Delete('outgoing', order.ID, scope.lineItem.ID)
             .then(function () {
                 $rootScope.$broadcast('OC:UpdateOrder', order.ID);
-                vm.lineItems.Items.splice(scope.$index, 1);
+                vm.lineItems.splice(scope.$index, 1);
                 toastr.success('Line Item Removed');
             });
     };
