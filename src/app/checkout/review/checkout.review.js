@@ -12,14 +12,14 @@ function checkoutReviewConfig($stateProvider) {
             resolve: {
                 LineItemsList: function ($q, $rootScope, toastr, OrderCloudSDK, ocLineItems, CurrentOrder) {
                     var dfd = $q.defer();
-                    OrderCloudSDK.LineItems.List('outgoing', CurrentOrder.ID)
+                    ocLineItems.ListAll(CurrentOrder.ID)
                         .then(function (data) {
-                            if (!data.Items.length) {
+                            if (!data.length) {
                                 $rootScope.$broadcast('OC:UpdateOrder', CurrentOrder.ID);
                                 dfd.resolve(data);
                             }
                             else {
-                                ocLineItems.GetProductInfo(data.Items)
+                                ocLineItems.GetProductInfo(data)
                                     .then(function () {
                                         $rootScope.$broadcast('OC:UpdateOrder', CurrentOrder.ID);
                                         dfd.resolve(data);
@@ -103,7 +103,7 @@ function CheckoutReviewController($exceptionHandler, $filter, ocConfirm, OrderCl
         console.log('New Val:: ', newVal);
         vm.vendorLineItemsMap = {};
         var subTotal = 0.0;
-        angular.forEach(vm.lineItems.Items, function (lineItem) {
+        angular.forEach(vm.lineItems, function (lineItem) {
             var productId = lineItem.ProductID;
             var vendorName = (lineItem.Punchout && lineItem.xp && lineItem.xp.PunchoutName) 
                 ? $filter('punchoutLineItemVendor')(lineItem.xp.PunchoutName)
@@ -123,8 +123,8 @@ function CheckoutReviewController($exceptionHandler, $filter, ocConfirm, OrderCl
             }
             vm.vendorLineItemsMap[vendorName].push(lineItem);
         });
-        if(vm.lineItems.Items[0].ShippingAddress.xp && vm.lineItems.Items[0].ShippingAddress.xp.Taxcost ){
-              vm.total = subTotal + (subTotal * vm.lineItems.Items[0].ShippingAddress.xp.Taxcost);
+        if(vm.lineItems[0].ShippingAddress.xp && vm.lineItems[0].ShippingAddress.xp.Taxcost ){
+              vm.total = subTotal + (subTotal * vm.lineItems[0].ShippingAddress.xp.Taxcost);
         }else{
             vm.total = subTotal;
         }
