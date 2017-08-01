@@ -65,6 +65,7 @@ function CartController($rootScope, $scope,  $state, $filter, toastr, OrderCloud
     console.log('testing');
     
     vm.lineItems = LineItemsList;
+    vm.LineCount = vm.lineItems.length;
     console.log('LineItems', vm.lineItems);
     console.log('CategoryList :: ', CategoryList);
     console.log('Products :: ', ProductList);
@@ -76,7 +77,7 @@ function CartController($rootScope, $scope,  $state, $filter, toastr, OrderCloud
     	}, function(newVal, oldVal){
     	console.log('New Val:: ', newVal);
     	vm.vendorLineItemsMap = {};
-    	angular.forEach(vm.lineItems.Items, function(lineItem){
+    	angular.forEach(vm.lineItems, function(lineItem){
         	var productId = lineItem.ProductID;
         	var vendorName = (lineItem.Punchout && lineItem.xp && lineItem.xp.PunchoutName) 
                 ? $filter('punchoutLineItemVendor')(lineItem.xp.PunchoutName)
@@ -100,8 +101,8 @@ function CartController($rootScope, $scope,  $state, $filter, toastr, OrderCloud
         vm.lineLoading[scope.$index] = OrderCloudSDK.LineItems.Delete('outgoing', order.ID, scope.lineItem.ID)
             .then(function () {
                 $rootScope.$broadcast('OC:UpdateOrder', order.ID);
-                var index = _.findIndex( vm.lineItems.Items, function(lineItem){return lineItem.ID === scope.lineItem.ID;});
-                 vm.lineItems.Items.splice(index, 1);
+                var index = _.findIndex( vm.lineItems, function(lineItem){return lineItem.ID === scope.lineItem.ID;});
+                 vm.lineItems.splice(index, 1);
                 toastr.success('Line Item Removed');
             });
     };
