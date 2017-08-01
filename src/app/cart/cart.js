@@ -19,7 +19,7 @@ function CartConfig($stateProvider) {
                     var dfd = $q.defer();
                     ocLineItems.ListAll(CurrentOrder.ID)
                         .then(function(data) {
-                            if (!data.Items.length) {
+                            if (!data.length) {
                                 $rootScope.$broadcast('OC:UpdateOrder', CurrentOrder.ID);
                                 dfd.resolve(data);
                             }
