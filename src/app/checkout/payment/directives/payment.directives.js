@@ -427,28 +427,26 @@ function PaymentsController($rootScope, $scope, $exceptionHandler, toastr, Order
         OrderCloudSDK.Me.ListSpendingAccounts()
             .then(function(accounts) {
                 var spendingAccountUsed = _.where($scope.payments.Items, {SpendingAccountID: accounts.Items[0].ID});
-                if (!spendingAccountUsed.length) {
-                    var validAccount = _.filter(accounts.Items, function(account) {
-                        return account.Balance > 0;
-                    })
-                    if (validAccount) {
-                        var amount = validAccount[0].Balance >= $scope.order.Total ? $scope.order.Total : validAccount[0].Balance;
-                        var paymentBody = {
-                            Type: 'SpendingAccount',
-                            SpendingAccountID: validAccount[0].ID,
-                            Amount: amount
-                        }
-                        return OrderCloudSDK.Payments.Create('outgoing', $scope.order.ID, paymentBody)
-                            .then(function(payment) {
-                                if (payment.Amount < $scope.order.Total) {
-                                    $scope.payments.Items.push(payment);
-                                    $scope.addNewPayment();
-                                } else {
-                                    $scope.payments.Items.push(payment);
-                                    calculateMaxTotal();
-                                }
-                            })
+                var validAccount = _.filter(accounts.Items, function(account) {
+                    return account.Balance >= 0;
+                })
+                if (!spendingAccountUsed.length && validAccount) {
+                    var amount = validAccount[0].Balance >= $scope.order.Total ? $scope.order.Total : validAccount[0].Balance;
+                    var paymentBody = {
+                        Type: 'SpendingAccount',
+                        SpendingAccountID: validAccount[0].ID,
+                        Amount: amount
                     }
+                    return OrderCloudSDK.Payments.Create('outgoing', $scope.order.ID, paymentBody)
+                        .then(function(payment) {
+                            if (payment.Amount < $scope.order.Total) {
+                                $scope.payments.Items.push(payment);
+                                $scope.addNewPayment();
+                            } else {
+                                $scope.payments.Items.push(payment);
+                                calculateMaxTotal();
+                            }
+                        })
                 } else {
                     var paymentBody = {
                         Type: 'CreditCard',
