@@ -1,16 +1,13 @@
 <!--Single Payment, Multiple Types View-->
 <div ng-form="{{'OCPayment' + paymentIndex}}" class="clearfix">
-	<fieldset class="form-group" ng-if="methods.length > 1">
+	<!--<fieldset class="form-group" ng-if="order.Total > payment.Amount">
 		<label for="payment_method">Payment Method</label>
 		<select id="payment_method" class="form-control" ng-model="payment.Type" ng-options="method as (method | humanize) for method in methods" required></select>
-	</fieldset>
-<!-- <div ng-if="payment.Type == 'PurchaseOrder'">
-		<oc-payment-po order="order" payment="payment"></oc-payment-po>
-	</div> -->
+	</fieldset>-->
 	<div ng-if="payment.Type == 'SpendingAccount'">
 		<oc-payment-sa order="order" payment="payment" exclude-options="excludeOptions.SpendingAccounts" ></oc-payment-sa>
 	</div>
-	<div ng-if="payment.Type == 'CreditCard'" >
+	<div ng-if="payment.Type == 'CreditCard' && order.Total > payment.Amount">
 		<oc-payment-cc order="order" payment="payment"></oc-payment-cc>
 	</div>
 </div>

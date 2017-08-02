@@ -285,12 +285,17 @@ function PaymentCreditCardController($scope, $rootScope, toastr, $filter, OrderC
 
     $scope.updatePayment = function (scope) {
         var oldSelection = angular.copy($scope.payment.CreditCardID);
+        var amount = angular.copy($scope.payment.Amount);
         $scope.payment.CreditCardID = scope.creditCard.ID;
-        if($scope.payment.SpendingAccountID) delete $scope.payment.SpendingAccountID;
         $scope.updatingCreditCardPayment = OrderCloudSDK.Payments.Delete('outgoing', $scope.order.ID, $scope.payment.ID)
             .then(function () {
-                $scope.payment.Accepted = false;
-                OrderCloudSDK.Payments.Create('outgoing', $scope.order.ID, $scope.payment)
+                var ccPaymentBody = {
+                    Type: 'CreditCard',
+                    CreditCardID: $scope.payment.CreditCardID,
+                    Amount: amount,
+                    Accepted: false
+                }
+                OrderCloudSDK.Payments.Create('outgoing', $scope.order.ID, ccPaymentBody)
                     .then(function (payment) {
                         $scope.showPaymentOptions = false;
                         $scope.payment = payment;
@@ -418,16 +423,44 @@ function PaymentsController($rootScope, $scope, $exceptionHandler, toastr, Order
             }
         });
 
-    $scope.addNewPayment = function (balance) {
-        OrderCloudSDK.Payments.Create('outgoing', $scope.order.ID, {
-                Type: $scope.payments.Items.length >= 1 ? CheckoutConfig.AvailablePaymentMethods[1] : CheckoutConfig.AvailablePaymentMethods[0],
-                Accepted: $scope.payments.Type === 'CreditCard' ? false : true
+    $scope.addNewPayment = function () {
+        OrderCloudSDK.Me.ListSpendingAccounts()
+            .then(function(accounts) {
+                var spendingAccountUsed = _.where($scope.payments.Items, {SpendingAccountID: accounts.Items[0].ID});
+                if (!spendingAccountUsed.length) {
+                    var validAccount = _.filter(accounts.Items, function(account) {
+                        return account.Balance > 0;
+                    })
+                    if (validAccount) {
+                        var amount = validAccount[0].Balance >= $scope.order.Total ? $scope.order.Total : validAccount[0].Balance;
+                        var paymentBody = {
+                            Type: 'SpendingAccount',
+                            SpendingAccountID: validAccount[0].ID,
+                            Amount: amount
+                        }
+                        return OrderCloudSDK.Payments.Create('outgoing', $scope.order.ID, paymentBody)
+                            .then(function(payment) {
+                                if (payment.Amount < $scope.order.Total) {
+                                    $scope.payments.Items.push(payment);
+                                    $scope.addNewPayment();
+                                } else {
+                                    $scope.payments.Items.push(payment);
+                                    calculateMaxTotal();
+                                }
+                            })
+                    }
+                } else {
+                    var paymentBody = {
+                        Type: 'CreditCard',
+                        Accepted: false
+                    }
+                    return OrderCloudSDK.Payments.Create('outgoing', $scope.order.ID, paymentBody)
+                        .then(function(payment) {
+                            $scope.payments.Items.push(payment);
+                            calculateMaxTotal();
+                        })
+                }
             })
-            .then(function (data) {
-                $scope.payments.Items.push(data);
-                calculateMaxTotal();
-
-            });
 
     };
 
@@ -481,6 +514,7 @@ function PaymentsController($rootScope, $scope, $exceptionHandler, toastr, Order
         });
         estimatedTotal = Math.round(($scope.order.Subtotal + ($scope.order.ShippingCost ? $scope.order.ShippingCost : 0) + $scope.order.TaxCost) * 100) / 100;
         
+        paymentTotal = Math.round(paymentTotal * 100) / 100;
         $scope.canAddPayment = paymentTotal < estimatedTotal;
         if ($scope.OCPayments) $scope.OCPayments.$setValidity('Insufficient_Payment', !$scope.canAddPayment);
         if ($scope.OCPayments) $scope.OCPayments.$setValidity('AllPaymentsNeedSelection', $scope.payments.Items.length === ($scope.excludeOptions.SpendingAccounts.length + $scope.excludeOptions.CreditCards.length));
