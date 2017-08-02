@@ -2,7 +2,7 @@ angular.module('orderCloud')
     .factory('ccPayment', ccPaymentService)
 ;
 
-function ccPaymentService($http, $q, $exceptionHandler, OrderCloudSDK, ocAuthNet) {
+function ccPaymentService($http, $q, $exceptionHandler, OrderCloudSDK, ocAuthNet, toastr) {
     var service = {
         AuthCapture: _authCapture
     }
