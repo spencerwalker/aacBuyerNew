@@ -385,12 +385,28 @@ function OCPayments() {
     }
 }
 
-function PaymentsController($rootScope, $scope, $exceptionHandler, toastr, OrderCloudSDK, CheckoutPaymentService, CheckoutConfig, buyerid) {
+function PaymentsController($rootScope, $scope, $exceptionHandler, $q, toastr, OrderCloudSDK, CheckoutPaymentService, CheckoutConfig, buyerid) {
     if (!$scope.methods) $scope.methods = CheckoutConfig.AvailablePaymentMethods;
 
     OrderCloudSDK.Payments.List('outgoing', $scope.order.ID)
         .then(function (data) {
-            if (data.Items.length === 0) {
+            var payments = _.filter(data.Items, function(payment) {
+                return payment.Type == 'SpendingAccount' || 'CreditCard'
+            });
+            if (payments.length) {
+                var queue = [];
+                _.each(payments, function(payment) {
+                    queue.push(OrderCloudSDK.Payments.Delete('outgoing', $scope.order.ID, payment.ID))
+                })
+                return $q.all(queue)
+                    .then(function() {
+                        $scope.payments = {
+                            Items: []
+                        };
+                        $scope.addNewPayment();
+                    })
+            }
+            if (!data.Items.length) {
                 $scope.payments = {
                     Items: []
                 };
