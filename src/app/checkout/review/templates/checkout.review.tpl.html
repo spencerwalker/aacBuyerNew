@@ -151,10 +151,10 @@
 						</p>
 						<p ng-if="payment.Type == 'SpendingAccount'"> 
 						<small><span class="text-muted">Donation Balance:
-	                    	<span ng-if = "base.availableFunds - base.currentOrder.Subtotal > 0" > ({{base.availableFunds - 
+	                    	<span ng-if = "base.availableFunds > payment.Amount"> ({{base.availableFunds - 
 	                    	 (base.currentOrder.Subtotal + base.currentOrder.ShippingCost +
-	                    	 (base.currentOrder.Subtotal * (checkout.shippingAddress.xp.Taxcost || 0))) | currency}}  Available) </span>
-	                    	<span ng-if = "base.availableFunds - base.currentOrder.Subtotal <= 0" > ({{0 | currency}} Available) </span>            
+	                    	 (base.currentOrder.Subtotal * (checkout.shippingAddress.xp.Taxcost || 0))) | currency}}  Available)</span>
+	                    	<span ng-if = "base.availableFunds == payment.Amount" > ({{0 | currency}} Available)</span>            
                     	</small>
 						</p>
 						<hr ng-if="!$last">
