@@ -57,15 +57,19 @@ function BaseConfig($stateProvider) {
             },
             AnonymousUser: function($q, OrderCloudSDK, CurrentUser) {
                 CurrentUser.Anonymous = angular.isDefined(JSON.parse(atob(OrderCloudSDK.GetToken().split('.')[1])).orderid);
+            },
+            LineItemsList: function(OrderCloudSDK, CurrentOrder) {
+                return OrderCloudSDK.LineItems.List('outgoing', CurrentOrder.ID);
             }
         }
     });
 }
 
-function BaseController($rootScope, $state, $http, ProductSearch, CurrentUser, CurrentOrder, LoginService, OrderCloudSDK, buyerid, adoptAClassromURL) {
+function BaseController($rootScope, $state, $http, ProductSearch, CurrentUser, CurrentOrder, LineItemsList, LoginService, OrderCloudSDK, buyerid, adoptAClassromURL) {
     var vm = this;
     vm.currentUser = CurrentUser;
     vm.currentOrder = CurrentOrder;
+    vm.lineItems = LineItemsList;
     vm.storeUrl;
     vm.teachersDashboard = adoptAClassromURL;
 
@@ -111,6 +115,10 @@ function BaseController($rootScope, $state, $http, ProductSearch, CurrentUser, C
         vm.orderLoading.promise = OrderCloudSDK.Orders.Get('outgoing', OrderID)
             .then(function(data) {
                 vm.currentOrder = data;
+                OrderCloudSDK.LineItems.List('outgoing', vm.currentOrder.ID)
+                    .then(function(lineItems) {
+                        vm.lineItems = lineItems;
+                    })
             });
     });
     

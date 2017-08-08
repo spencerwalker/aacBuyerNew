@@ -2,7 +2,7 @@ angular.module('orderCloud')
     .factory('ocLineItems', LineItemFactory)
 ;
 
-function LineItemFactory($rootScope, $q, $uibModal, OrderCloudSDK, catalogid, buyerid) {
+function LineItemFactory($rootScope, $q, $uibModal, OrderCloudSDK, catalogid, buyerid, toastr) {
     return {
         SpecConvert: _specConvert,
         AddItem: _addItem,
@@ -35,23 +35,48 @@ function LineItemFactory($rootScope, $q, $uibModal, OrderCloudSDK, catalogid, bu
         return results;
     }
 
-    function _addItem(order, product){
+    function _addItem(order, product, lineItems) {
         var deferred = $q.defer();
-
         var li = {
             ProductID: product.ID,
             Quantity: product.Quantity,
             Specs: _specConvert(product.Specs)
         };
+        if (lineItems && lineItems.Items && lineItems.Items.length) {
+            preventDuplicateLineItems(order, product, lineItems.Items)
+        } else {
+            createLineItem();
+        }
+
         li.ShippingAddressID = isSingleShipping(order) ? getSingleShippingAddressID(order) : order.ShippingAddressID;
-        OrderCloudSDK.LineItems.Create('outgoing', order.ID, li)
-            .then(function(lineItem) {
-                $rootScope.$broadcast('OC:UpdateOrder', order.ID);
-                deferred.resolve();
-            })
-            .catch(function(error) {
-                deferred.reject(error);
-            });
+
+        function preventDuplicateLineItems(order, product, lineItems) {
+            var existingLI = _.where(lineItems, {ProductID: product.ID});
+                if (existingLI && existingLI.length) {
+                    var newQty = product.Quantity + existingLI[0].Quantity;
+                    OrderCloudSDK.LineItems.Patch('outgoing', order.ID, existingLI[0].ID, {Quantity: newQty})
+                        .then(function(lineItem) {
+                            $rootScope.$broadcast('OC:UpdateOrder', order.ID);
+                            deferred.resolve();
+                        })
+                        .catch(function(error) {
+                            deferred.reject(error);
+                        });
+                } else {
+                    createLineItem();
+                }
+        }
+
+        function createLineItem() {
+            OrderCloudSDK.LineItems.Create('outgoing', order.ID, li)
+                .then(function(lineItem) {
+                    $rootScope.$broadcast('OC:UpdateOrder', order.ID);
+                    deferred.resolve();
+                })
+                .catch(function(error) {
+                    deferred.reject(error);
+                });
+        }
 
         function isSingleShipping(order) {
             return _.pluck(order.LineItems, 'ShippingAddressID').length == 1;
@@ -118,25 +143,85 @@ function LineItemFactory($rootScope, $q, $uibModal, OrderCloudSDK, catalogid, bu
             pageSize: 100
         };
         OrderCloudSDK.LineItems.List('outgoing', orderID, opts)
-            .then(function (data) {
-                li = data;
-                if (data.Meta.TotalPages > data.Meta.Page) {
-                    var page = data.Meta.Page;
-                    while (page < data.Meta.TotalPages) {
+            .then(function (lineItems) {
+                if (lineItems.Meta.TotalPages > lineItems.Meta.Page) {
+                    var page = lineItems.Meta.Page;
+                    while (page < lineItems.Meta.TotalPages) {
                         page += 1;
                         opts.page = page;
                         queue.push(OrderCloudSDK.LineItems.List('outgoing', orderID, opts));
                     }
+                } else {
+                    removeDuplicatePOItems(lineItems.Items)
                 }
                 $q.all(queue)
                     .then(function (results) {
                         angular.forEach(results, function (result) {
-                            li.Items = [].concat(li.Items, result.Items);
-                            li.Meta = result.Meta;
+                            lineItems.Items = [].concat(lineItems.Items, result.Items);
+                            lineItems.Meta = result.Meta;
                         });
-                        dfd.resolve(li.Items);
+                        removeDuplicatePOItems(lineItems.Items);
                     });
             });
+
+        function removeDuplicatePOItems(lineItems) {
+            var queue = [];
+            var duplicateArr = [];
+            _.each(lineItems, function(lineItem) {
+                if (lineItem) {
+                    var duplicateCheck = _.where(lineItems, {ProductID: lineItem.ProductID});
+                    if (duplicateCheck && duplicateCheck.length > 1) {
+                        var quantities = _.pluck(duplicateCheck, 'Quantity');
+                        var newQuantity = quantities.reduce(function(a, b) {
+                            return a + b;
+                        })
+                        var patchLineItem = angular.copy(duplicateCheck[0]);
+                        duplicateCheck.splice(0, 1);
+                        duplicateArr.push(duplicateCheck);
+                        _.each(duplicateCheck, function(duplicate) {
+                            var index = lineItems.indexOf(duplicate);
+                            lineItems.splice(index, 1);
+                        });
+                        queue.push(OrderCloudSDK.LineItems.Patch('outgoing', orderID, patchLineItem.ID, {Quantity: newQuantity}))
+                    } 
+                }
+            })
+            return $q.all(queue)
+                .then(function(updatedLineItems) {
+                    if (updatedLineItems && updatedLineItems.length) {
+                        var newQueue = [];
+                        duplicateArr = _.flatten(duplicateArr);
+                        if (duplicateArr && duplicateArr.length) {
+                            _.each(duplicateArr, function(duplicateLI) {
+                                newQueue.push(OrderCloudSDK.LineItems.Delete('outgoing', orderID, duplicateLI.ID))
+                            })
+                            return $q.all(newQueue)
+                                .then(function() {
+                                    dfd.resolve(updatedLineItems);
+                                })
+                        } else {
+                            dfd.resolve(updatedLineItems);
+                        }
+                    } else {
+                        dfd.resolve(lineItems);
+                    }
+                })
+        }
+
+        function removeItem(lineItem) {
+            return OrderCloudSDK.LineItems.Delete('outgoing', orderID, duplicateLI.ID)
+        }
         return dfd.promise;
+    }
+
+    function preventDuplicateLineItems(order, product, lineItems) {
+        var existingLI = _.where(lineItems, {ProductID: product.ID});
+            if (existingLI && existingLI.length) {
+                var newQty = product.Quantity + existingLI[0].Quantity;
+                OrderCloudSDK.LineItems.Patch('outgoing', order.ID, existingLI[0].ID, {Quantity: newQty})
+                    .then(function(lineItem) {
+                        $rootScope.$broadcast('OC:UpdateOrder', order.ID);
+                    })
+            }
     }
 }
