@@ -71,6 +71,7 @@ function LineItemFactory($rootScope, $q, $uibModal, OrderCloudSDK, catalogid, bu
             OrderCloudSDK.LineItems.Create('outgoing', order.ID, li)
                 .then(function(lineItem) {
                     $rootScope.$broadcast('OC:UpdateOrder', order.ID);
+                    lineItems.Items.push(lineItem);
                     deferred.resolve();
                 })
                 .catch(function(error) {
@@ -190,6 +191,11 @@ function LineItemFactory($rootScope, $q, $uibModal, OrderCloudSDK, catalogid, bu
                 .then(function(updatedLineItems) {
                     if (updatedLineItems && updatedLineItems.length) {
                         var newQueue = [];
+                        _.each(updatedLineItems, function(li) {
+                            var IDs = _.pluck(lineItems, 'ID');
+                            var index = IDs.indexOf(li.ID);
+                            lineItems[index] = li;
+                        })
                         duplicateArr = _.flatten(duplicateArr);
                         if (duplicateArr && duplicateArr.length) {
                             _.each(duplicateArr, function(duplicateLI) {
@@ -197,19 +203,15 @@ function LineItemFactory($rootScope, $q, $uibModal, OrderCloudSDK, catalogid, bu
                             })
                             return $q.all(newQueue)
                                 .then(function() {
-                                    dfd.resolve(updatedLineItems);
+                                    dfd.resolve(lineItems);
                                 })
                         } else {
-                            dfd.resolve(updatedLineItems);
+                            dfd.resolve(lineItems);
                         }
                     } else {
                         dfd.resolve(lineItems);
                     }
                 })
-        }
-
-        function removeItem(lineItem) {
-            return OrderCloudSDK.LineItems.Delete('outgoing', orderID, duplicateLI.ID)
         }
         return dfd.promise;
     }
