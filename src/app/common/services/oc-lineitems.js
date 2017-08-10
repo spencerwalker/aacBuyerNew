@@ -166,48 +166,53 @@ function LineItemFactory($rootScope, $q, $uibModal, OrderCloudSDK, catalogid, bu
             });
 
         function removeDuplicatePOItems(lineItems) {
-            var queue = [];
-            var duplicateArr = [];
+            var lineItemsArr = [];
+            var patchQueue = [];
+            var deleteQueue = [];
+
             _.each(lineItems, function(lineItem) {
-                if (lineItem) {
-                    var duplicateCheck = _.where(lineItems, {ProductID: lineItem.ProductID});
-                    if (duplicateCheck && duplicateCheck.length > 1) {
-                        var quantities = _.pluck(duplicateCheck, 'Quantity');
-                        var newQuantity = quantities.reduce(function(a, b) {
-                            return a + b;
-                        })
-                        var patchLineItem = angular.copy(duplicateCheck[0]);
-                        duplicateCheck.splice(0, 1);
-                        duplicateArr.push(duplicateCheck);
-                        _.each(duplicateCheck, function(duplicate) {
-                            var index = lineItems.indexOf(duplicate);
-                            lineItems.splice(index, 1);
-                        });
-                        queue.push(OrderCloudSDK.LineItems.Patch('outgoing', orderID, patchLineItem.ID, {Quantity: newQuantity}))
-                    } 
+                if (lineItem && lineItem.xp && lineItem.xp.SupplierPartID) {
+                    lineItemsArr.push(lineItem); 
+                } else {
+                    return
                 }
             })
-            return $q.all(queue)
+
+            var supplierPartIDGroup = _.groupBy(lineItemsArr, function(line) {
+                return line.xp.SupplierPartID;
+            })
+            
+            _.each(supplierPartIDGroup, function(IDGroup) {
+                if(IDGroup.length > 1) {
+                    var quantities = _.pluck(IDGroup, 'Quantity');
+                    var newQuantity = quantities.reduce(function(a, b) {
+                        return a + b;
+                    })
+                    var patchLI = angular.copy(IDGroup[0]);
+                    var patchBody = {
+                        Quantity: newQuantity
+                    };
+                    patchQueue.push(OrderCloudSDK.LineItems.Patch('outgoing', orderID, patchLI.ID, patchBody));
+                    IDGroup.splice(0, 1);
+                    _.each(IDGroup, function(group) {
+                        var index = lineItems.indexOf(group);
+                        lineItems.splice(index, 1);
+                        deleteQueue.push(OrderCloudSDK.LineItems.Delete('outgoing', orderID, group.ID));
+                    })
+                }
+            })
+            
+            return $q.all(patchQueue)
                 .then(function(updatedLineItems) {
                     if (updatedLineItems && updatedLineItems.length) {
-                        var newQueue = [];
-                        _.each(updatedLineItems, function(li) {
-                            var IDs = _.pluck(lineItems, 'ID');
-                            var index = IDs.indexOf(li.ID);
-                            lineItems[index] = li;
+                        _.each(updatedLineItems, function(updatedli) {
+                            var oldLineItem = _.findWhere(lineItems, {ID: updatedli.ID});
+                            lineItems[lineItems.indexOf(oldLineItem)] = updatedli;
                         })
-                        duplicateArr = _.flatten(duplicateArr);
-                        if (duplicateArr && duplicateArr.length) {
-                            _.each(duplicateArr, function(duplicateLI) {
-                                newQueue.push(OrderCloudSDK.LineItems.Delete('outgoing', orderID, duplicateLI.ID))
+                        return $q.all(deleteQueue)
+                            .then(function() {
+                                dfd.resolve(lineItems);
                             })
-                            return $q.all(newQueue)
-                                .then(function() {
-                                    dfd.resolve(lineItems);
-                                })
-                        } else {
-                            dfd.resolve(lineItems);
-                        }
                     } else {
                         dfd.resolve(lineItems);
                     }
