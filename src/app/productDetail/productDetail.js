@@ -19,15 +19,14 @@ function ProductConfig($stateProvider) {
         });
 }
 
-function ProductDetailController($exceptionHandler, Product, CurrentOrder, ocLineItems, toastr) {
+function ProductDetailController($exceptionHandler, Product, CurrentOrder, ocLineItems, toastr, LineItemsList) {
     var vm = this;
     vm.item = Product;
-    console.log('Product :: ', vm.item);
-    
+    vm.lineItems = LineItemsList;
     vm.finalPriceBreak = null;
 
     vm.addToCart = function() {
-        ocLineItems.AddItem(CurrentOrder, vm.item)
+        ocLineItems.AddItem(CurrentOrder, vm.item, vm.lineItems)
             .then(function(){
                 toastr.success('Product added to cart', 'Success')
             })

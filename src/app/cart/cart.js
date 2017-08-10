@@ -61,21 +61,13 @@ function CartConfig($stateProvider) {
 function CartController($rootScope, $scope,  $state, $filter, toastr, OrderCloudSDK, LineItemsList, CurrentPromotions, ocConfirm, CategoryList, ProductList) {
     var vm = this;
     vm.vendorLineItemsMap = {};
-    
-    console.log('testing');
-    
     vm.lineItems = LineItemsList;
     vm.LineCount = vm.lineItems.length;
-    console.log('LineItems', vm.lineItems);
-    console.log('CategoryList :: ', CategoryList);
-    console.log('Products :: ', ProductList);
-    console.log('vm.lineItems ::' , JSON.stringify(vm.lineItems));
     
     // watcher on vm.lineItems
     $scope.$watch(function () {
         	return vm.lineItems;
     	}, function(newVal, oldVal){
-    	console.log('New Val:: ', newVal);
     	vm.vendorLineItemsMap = {};
     	angular.forEach(vm.lineItems, function(lineItem){
         	var productId = lineItem.ProductID;
@@ -89,11 +81,6 @@ function CartController($rootScope, $scope,  $state, $filter, toastr, OrderCloud
         	vm.vendorLineItemsMap[vendorName].push(lineItem);
         });
     }, true);
-    
-    
-    
-    
-    console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
     
     vm.promotions = CurrentPromotions.Meta ? CurrentPromotions.Items : CurrentPromotions;
     vm.removeItem = function(order, scope) {
