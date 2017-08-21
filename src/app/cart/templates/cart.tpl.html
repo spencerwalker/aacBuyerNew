@@ -85,7 +85,7 @@
 					<div class="row c-line-item__info c-line-item--centered">
 						<div class="col-sm-5 col-lg-6 c-line-item__info--top">
 							 <h4 class="c-line-item__name">
-								{{lineItem.Punchout ? lineItem.xp.Description : lineItem.Product.Name}}
+								{{lineItem.ProductID === 'AACPunchoutProduct' || lineItem.Product.ID === 'AACPunchoutProduct' ? lineItem.xp.Description : lineItem.Product.Name}}
 							</h4>
 							<small class="text-muted c-line-item__id">{{lineItem.Punchout ? lineItem.xp.SupplierPartID : lineItem.Product.Description}}</small>
 							 <ul class="c-line-item__spec-list" ng-if="lineItem.Specs.length > 0">
