@@ -70,12 +70,11 @@ function CartController($rootScope, $scope,  $state, $filter, toastr, OrderCloud
     	}, function(newVal, oldVal){
     	vm.vendorLineItemsMap = {};
     	angular.forEach(vm.lineItems, function(lineItem){
-        	var productId = lineItem.ProductID;
-        	var vendorName = (lineItem.Punchout && lineItem.xp && lineItem.xp.PunchoutName) 
+        	var vendorName = (lineItem.xp && lineItem.xp.PunchoutName) 
                 ? $filter('punchoutLineItemVendor')(lineItem.xp.PunchoutName)
-                : productId.split("_")[0]; 
+                : lineItem.ProductID.split("_")[0]; 
 
-        	if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
+        	if (typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
         		vm.vendorLineItemsMap[vendorName] = [];
         	}
         	vm.vendorLineItemsMap[vendorName].push(lineItem);
