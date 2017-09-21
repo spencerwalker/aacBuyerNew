@@ -92,19 +92,17 @@ function LineItemFactory($rootScope, $q, $uibModal, OrderCloudSDK, catalogid, bu
 
     function _getProductInfo(LineItems) {
         var li = LineItems.Items || LineItems;
-        var productIDs = _.uniq(_.pluck(li, 'ProductID'));
+        var productIDs = _.uniq(_.pluck(li, 'ProductID')).join('|');
         var dfd = $q.defer();
         var queue = [];
-        angular.forEach(productIDs, function (productid) {
-            queue.push(OrderCloudSDK.Me.GetProduct(productid));
-        });
-        $q.all(queue)
-            .then(function (results) {
-                angular.forEach(li, function (item) {
-                    item.Product = angular.copy(_.where(results, {ID: item.ProductID})[0]);
-                });
-                dfd.resolve(li);
-            });
+
+        OrderCloudSDK.Products.List({ID: productIDs})
+            .then(function(products) {
+                dfd.resolve(products);
+            })
+            .catch(function(ex) {
+                console.log(ex);
+            })
         return dfd.promise;
     }
 
