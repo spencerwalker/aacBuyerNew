@@ -5,7 +5,7 @@
   "buyerid": "AACBuyer",
   "catalogid": "AACBuyer",
   "clientsecret": "myclientsecret",
-  "environment": "qa",
+  "environment": "prod",
   "defaultstate": "productBrowse.products",
   "anonymous": false,
   "bootswatchtheme": null,
