@@ -96,7 +96,7 @@ function LineItemFactory($rootScope, $q, $uibModal, OrderCloudSDK, catalogid, bu
         var dfd = $q.defer();
         var queue = [];
 
-        OrderCloudSDK.Me.ListProducts({ID: productIDs})
+        OrderCloudSDK.Products.List({ID: productIDs})
             .then(function(products) {
                 dfd.resolve(products);
             })
