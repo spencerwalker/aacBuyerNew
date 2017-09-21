@@ -42,7 +42,7 @@ function MyOrdersConfig($stateProvider) {
             controllerAs: 'myOrderDetail',
             resolve: {
                 SelectedOrder: function ($stateParams, OrderCloudSDK) {
-                    return OrderCloudSDK.Me.ListOrders({filters: {ID: $stateParams.orderid}});
+                    return OrderCloudSDK.Orders.Get('outgoing', $stateParams.orderid);
                 },
                 SelectedPayments: function ($stateParams, $q, OrderCloudSDK) {
                     var deferred = $q.defer();
@@ -80,6 +80,16 @@ function MyOrdersConfig($stateProvider) {
 
                     return deferred.promise;
                 },
+                ShippingAddress: function(OrderCloudSDK, SelectedOrder) {
+                    return OrderCloudSDK.Me.GetAddress(SelectedOrder.ShippingAddressID)
+                        .then(function (address) {
+                            return address
+                        })
+                        .catch(function (ex) {
+                            console.log(ex);
+                            return {};
+                        });
+                },
                 LineItemList: function ($q, $stateParams, OrderCloudSDK, ocLineItems) {
                     var dfd = $q.defer();
                     var opts = {
@@ -96,26 +106,6 @@ function MyOrdersConfig($stateProvider) {
                     return dfd.promise;
                 },
 
-                LineItemsList: function ($q, $state, toastr, OrderCloudSDK, ocLineItems, CurrentOrder) {
-                    var dfd = $q.defer();
-                    OrderCloudSDK.LineItems.List('outgoing', CurrentOrder.ID)
-                        .then(function (data) {
-                            if (!data.Items.length) {
-                                dfd.resolve(data);
-                            }
-                            else {
-                                ocLineItems.GetProductInfo(data.Items)
-                                    .then(function () {
-                                        dfd.resolve(data);
-                                    });
-                            }
-                        })
-                        .catch(function () {
-                            toastr.error('Your order does not contain any line items.', 'Error');
-                            dfd.reject();
-                        });
-                    return dfd.promise;
-                },
                 CurrentPromotions: function (CurrentOrder, OrderCloudSDK) {
                     return OrderCloudSDK.Orders.ListPromotions('outgoing', CurrentOrder.ID);
                 },
@@ -126,13 +116,6 @@ function MyOrdersConfig($stateProvider) {
                         filters: {ParentID: $stateParams.categoryid}
                     };
                     return OrderCloudSDK.Me.ListCategories(opts);
-                },
-                ProductList: function ($stateParams, OrderCloudSDK) {
-                    var opts = {
-                        categoryID: $stateParams.categoryid
-                    };
-                    return OrderCloudSDK.Me.ListProducts(opts);
-
                 },
 
                 PromotionList: function ($stateParams, OrderCloudSDK) {
@@ -241,31 +224,17 @@ function MyOrdersController($state, $ocMedia, OrderCloudSDK, ocParameters, Order
     };
 }
 
-function MyOrderDetailController($state, $exceptionHandler, $scope, $filter, toastr, OrderCloudSDK, ocConfirm, SelectedOrder, LineItemsList, SelectedPayments, LineItemList, PromotionList, CategoryList, ProductList, VendorShippingCriteria) {
+function MyOrderDetailController($state, $exceptionHandler, $scope, $filter, toastr, OrderCloudSDK, ocConfirm, SelectedOrder, SelectedPayments, 
+    LineItemList, PromotionList, CategoryList, VendorShippingCriteria, ShippingAddress) {
     var vm = this;
-    vm.order = SelectedOrder.Items[0];
+    vm.order = SelectedOrder;
     vm.list = LineItemList;
     vm.paymentList = SelectedPayments.Items;
     vm.canCancel = SelectedOrder.Status === 'Unsubmitted' || SelectedOrder.Status === 'AwaitingApproval';
     vm.promotionList = PromotionList.Meta ? PromotionList.Items : PromotionList;
-
-    OrderCloudSDK.Me.GetAddress(vm.order.ShippingAddressID)
-        .then(function (address) {
-            vm.shippingAddress = address;
-        })
-        .catch(function (ex) {
-            vm.shippingAddress = null;
-        });
-
-    vm.lineItems = LineItemsList;
+    vm.shippingAddress = ShippingAddress;
     vm.vendorLineItemsMap = {};
 
-    console.log('LineItems', vm.lineItems);
-    console.log('CategoryList :: ', CategoryList);
-    console.log('Products :: ', ProductList);
-    console.log('vm.lineItems ::', JSON.stringify(vm.lineItems));
-
-    vm.vendorLineItemsMap = {};
     angular.forEach(vm.list.Items, function (lineItem) {
         var productId = lineItem.ProductID;
         var vendorName = (lineItem.Punchout && lineItem.xp && lineItem.xp.PunchoutName) 
@@ -277,28 +246,6 @@ function MyOrderDetailController($state, $exceptionHandler, $scope, $filter, toa
         }
         vm.vendorLineItemsMap[vendorName].push(lineItem);
     });
-
-    // watcher on vm.lineItems
-    // $scope.$watch(function () {
-    //    	return vm.lineItems;
-    //	}, function(newVal, oldVal){
-    //	console.log('New Val:: ', newVal);
-    //	vm.vendorLineItemsMap = {};
-    //	angular.forEach(vm.lineItems.Items, function(lineItem){
-    //    	var productId = lineItem.ProductID;
-    //    	var vendorName = (lineItem.Punchout && lineItem.xp && lineItem.xp.PunchoutName) 
-    //            ? $filter('punchoutLineItemVendor')(lineItem.xp.PunchoutName)
-    //            : productId.split("_")[0];  
-    //    	
-    //    	if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
-    //    		vm.vendorLineItemsMap[vendorName] = [];
-    //    	}
-    //    	vm.vendorLineItemsMap[vendorName].push(lineItem);
-    //    });
-    // }, true);  
-
-
-    console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
 
     vm.getShippingCostByVendor = function (vendorName) {
         return VendorShippingCriteria.getShippingCostByVendor(vendorName, vm.vendorLineItemsMap[vendorName]);
