@@ -36,9 +36,26 @@ function checkoutConfig($urlRouterProvider, $stateProvider) {
                                 deferred.resolve(null);
                             });
                     }
-                    else {
-                        deferred.resolve(null);
-                    }
+                    else { 
+                        var opts = {page: 1, pageSize: 100, filters: {Shipping: true}};
+                            OrderCloudSDK.Me.ListAddresses(opts)
+                            .then(function(shippingAddresses) {
+                                if (shippingAddresses.Items.length) {
+                                    CurrentOrder.ShippingAddressID = shippingAddresses.Items[0].ID;
+                                    OrderCloudSDK.Orders.Patch('outgoing', CurrentOrder.ID, {ShippingAddressID: CurrentOrder.ShippingAddressID})
+                                        .then(function(){
+                                            OrderCloudSDK.Me.GetAddress(CurrentOrder.ShippingAddressID)
+                                            .then(function(address) {
+                                                deferred.resolve(address);
+                                            });
+                                        });
+                                }
+                                else{
+                                    deferred.resolve(null);
+                                }
+                            })
+                            .catch(function(){ deferred.resolve(null);});
+                        }
 
                     return deferred.promise;
                 },
@@ -69,6 +86,7 @@ function checkoutConfig($urlRouterProvider, $stateProvider) {
 
 function CheckoutController($state, $rootScope, toastr, OrderCloudSDK, OrderShipAddress, CurrentPromotions, OrderBillingAddress, CheckoutConfig, ccPayment) {
     var vm = this;
+
     vm.shippingAddress = OrderShipAddress;
     vm.billingAddress = OrderBillingAddress;
     vm.promotions = CurrentPromotions.Items;
