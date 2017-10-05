@@ -406,7 +406,7 @@ function VendorShippingCriteria() {
         angular.forEach(vendorLineItems, function(lineItem){
             amount += ( lineItem.UnitPrice * lineItem.Quantity);
             itemCount += lineItem.Quantity;
-            state = lineItem.ShippingAddress.State;
+            state = lineItem.ShippingAddress ? lineItem.ShippingAddress.State : null;
         });
 
         var vendorShippingCriteria = _.find(ByVendor, {name: vendorName}) || _.find(ByState, {name: state}) || ByDefault;
