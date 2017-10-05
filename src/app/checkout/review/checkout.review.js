@@ -10,16 +10,18 @@ function checkoutReviewConfig($stateProvider) {
             controller: 'CheckoutReviewCtrl',
             controllerAs: 'checkoutReview',
             resolve: {
-                LineItemsList: function ($q, $state, toastr, OrderCloudSDK, ocLineItems, CurrentOrder) {
+                LineItemsList: function ($q, $rootScope, toastr, ocLineItems, CurrentOrder) {
                     var dfd = $q.defer();
-                    OrderCloudSDK.LineItems.List('outgoing', CurrentOrder.ID)
+                    ocLineItems.ListAll(CurrentOrder.ID)
                         .then(function (data) {
-                            if (!data.Items.length) {
+                            if (!data.length) {
+                                $rootScope.$broadcast('OC:UpdateOrder', CurrentOrder.ID);
                                 dfd.resolve(data);
                             }
                             else {
-                                ocLineItems.GetProductInfo(data.Items)
+                                ocLineItems.GetProductInfo(data)
                                     .then(function () {
+                                        $rootScope.$broadcast('OC:UpdateOrder', CurrentOrder.ID);
                                         dfd.resolve(data);
                                     });
                             }
@@ -87,16 +89,11 @@ function checkoutReviewConfig($stateProvider) {
         });
 }
 
-function CheckoutReviewController($exceptionHandler, $filter, ocConfirm, OrderCloud, $rootScope, LineItemsList, $scope, $state, toastr, OrderPaymentsDetail, CategoryList, ProductList) {
+function CheckoutReviewController( $filter, LineItemsList, $scope, OrderPaymentsDetail) {
     var vm = this;
     vm.payments = OrderPaymentsDetail;
     vm.vendorLineItemsMap = {};
-
     vm.lineItems = LineItemsList;
-    console.log('LineItems', vm.lineItems);
-    console.log('CategoryList :: ', CategoryList);
-    console.log('Products :: ', ProductList);
-    console.log('vm.lineItems ::', JSON.stringify(vm.lineItems));
     vm.total = 0.0;
 
     // watcher on vm.lineItems
@@ -106,7 +103,7 @@ function CheckoutReviewController($exceptionHandler, $filter, ocConfirm, OrderCl
         console.log('New Val:: ', newVal);
         vm.vendorLineItemsMap = {};
         var subTotal = 0.0;
-        angular.forEach(vm.lineItems.Items, function (lineItem) {
+        angular.forEach(vm.lineItems, function (lineItem) {
             var productId = lineItem.ProductID;
             var vendorName = (lineItem.Punchout && lineItem.xp && lineItem.xp.PunchoutName) 
                 ? $filter('punchoutLineItemVendor')(lineItem.xp.PunchoutName)
@@ -126,15 +123,14 @@ function CheckoutReviewController($exceptionHandler, $filter, ocConfirm, OrderCl
             }
             vm.vendorLineItemsMap[vendorName].push(lineItem);
         });
-        if(vm.lineItems.Items[0].ShippingAddress.xp && vm.lineItems.Items[0].ShippingAddress.xp.Taxcost ){
-              vm.total = subTotal + (subTotal * vm.lineItems.Items[0].ShippingAddress.xp.Taxcost);
+        if(vm.lineItems[0].ShippingAddress.xp && vm.lineItems[0].ShippingAddress.xp.Taxcost ){
+              vm.total = subTotal + (subTotal * vm.lineItems[0].ShippingAddress.xp.Taxcost);
         }else{
             vm.total = subTotal;
         }
         
     }, true);
 
-    console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
 
     vm.getSubTotal = function (lineItemsList) {
         var total = 0.0;

@@ -234,7 +234,14 @@ function VendorShippingCriteria() {
 			name: 'ReallyGoodStuff',
 			minOrderAmount: 0,
 			shippingCostFunc: function(order) {
-				return Math.max(9.95, 0.14*order.amount);
+				if (order.amount < 30)
+					return 4.95;
+				if (order.amount < 49.99)
+					return 9.95;
+				if (order.amount < 99.99)
+					return 10.95;
+				if (order.amount >= 100)
+					return 0.14*order.amount;
 			}
 		},
 		
