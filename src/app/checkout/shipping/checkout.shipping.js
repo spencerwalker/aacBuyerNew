@@ -166,7 +166,7 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     };
 
     vm.getTaxCostByVendor = function (vendorName) {
-        if (!$scope.checkout.shippingAddress.xp && !$scope.checkout.shippingAddress.xpTaxcost) {
+        if ( !$scope.checkout.shippingAddress && !$scope.checkout.shippingAddress.xp && !$scope.checkout.shippingAddress.xpTaxcost) {
             return 0;
         }
         var lineItemsList = vm.vendorLineItemsMap[vendorName]
