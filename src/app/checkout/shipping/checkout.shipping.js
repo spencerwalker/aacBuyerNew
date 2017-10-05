@@ -159,17 +159,17 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
             total += (lineItem.UnitPrice * lineItem.Quantity);
         });
         return total;
-    }
+    };
 
     vm.getShippingCostByVendor = function (vendorName) {
         return VendorShippingCriteria.getShippingCostByVendor(vendorName, vm.vendorLineItemsMap[vendorName]);
     };
 
     vm.getTaxCostByVendor = function (vendorName) {
-        if (!$scope.checkout.shippingAddress && !$scope.checkout.shippingAddress.xp && !$scope.checkout.shippingAddress.xpTaxcost) {
+        if (!$scope.checkout.shippingAddress || !$scope.checkout.shippingAddress.xp && !$scope.checkout.shippingAddress.xpTaxcost) {
             return 0;
         }
-        var lineItemsList = vm.vendorLineItemsMap[vendorName]
+        var lineItemsList = vm.vendorLineItemsMap[vendorName];
         return vm.getSubTotal(lineItemsList) * $scope.checkout.shippingAddress.xp.Taxcost;
     };
 
