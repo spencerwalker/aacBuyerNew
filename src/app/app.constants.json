@@ -11,5 +11,23 @@
   "bootswatchtheme": null,
   "punchoutproduct": "AACPunchoutProduct",
   "punchouturl": "https://vendors.adoptaclassroom.org", 
-  "adoptAClassromURL": "https://stage-adoptaclassroom.cs12.force.com/teachers/s/"
+  "adoptAClassromURL": "https://qa-adoptaclassroom.cs13.force.com/teachers/s/",
+  "vendors": [
+    "AKJ Education",
+    "Adventure to Fitness",
+    "Becker's",
+    "Bazillions",
+    "Board Share",
+    "Carson",
+    "Edupress",
+    "Frey Scientific, Inc.",
+    "HoverCam",
+    "LASER Classroom",
+    "Learning A-Z",
+    "Lorenz",
+    "Humblebees",
+    "OOLY",
+    "Scholastic",
+    "Scholastic Classroom Magazines"
+  ]
 }
