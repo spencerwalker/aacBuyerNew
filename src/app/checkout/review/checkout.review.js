@@ -100,23 +100,13 @@ function CheckoutReviewController( $filter, LineItemsList, $scope, OrderPayments
     $scope.$watch(function () {
         return vm.lineItems;
     }, function (newVal, oldVal) {
-        console.log('New Val:: ', newVal);
         vm.vendorLineItemsMap = {};
         var subTotal = 0.0;
         angular.forEach(vm.lineItems, function (lineItem) {
             var productId = lineItem.ProductID;
             var vendorName = (lineItem.Punchout && lineItem.xp && lineItem.xp.PunchoutName) 
                 ? $filter('punchoutLineItemVendor')(lineItem.xp.PunchoutName)
-                : productId.split("_")[0]; 
-            /*
-             if(lineItem.ID.match("^[a-zA-Z\(\)]+$")) {
-             } else {
-             var number = Math.floor(1000000 + Math.random() * 9000000);
-             lineItem.ID = number;
-             }
-
-             lineItem.vendorName = vendorName;
-             */
+                : productId.split("_")[0];
             subTotal += lineItem.LineTotal;
             if (typeof vm.vendorLineItemsMap[vendorName] === 'undefined') {
                 vm.vendorLineItemsMap[vendorName] = [];

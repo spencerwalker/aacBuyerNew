@@ -77,7 +77,7 @@ function ProductBrowseConfig($urlRouterProvider, $stateProvider) {
             }
         })
         .state('productBrowse.products', {
-            url: '/products?categoryid?favorites?search?page?pageSize?searchOn?sortBy?filters?depth',
+            url: '/products?categoryid?favorites?vendor?search?page?pageSize?searchOn?sortBy?filters?depth',
             templateUrl: 'productBrowse/templates/productView.tpl.html',
             controller: 'ProductViewCtrl',
             controllerAs: 'productView',
@@ -85,11 +85,16 @@ function ProductBrowseConfig($urlRouterProvider, $stateProvider) {
                 Parameters: function ($stateParams, ocParameters) {
                     return ocParameters.Get($stateParams);
                 },
-                ProductList: function (OrderCloudSDK, CurrentUser, Parameters) {
+                ProductList: function (OrderCloudSDK, CurrentUser, Parameters, vendors) {
                     if (Parameters.favorites && CurrentUser.xp.FavoriteProducts) {
                         Parameters.filters ? angular.extend(Parameters.filters, Parameters.filters, {ID: CurrentUser.xp.FavoriteProducts.join('|')}) : Parameters.filters = {ID: CurrentUser.xp.FavoriteProducts.join('|')};
                     } else if (Parameters.filters) {
                         delete Parameters.filters.ID;
+                    }
+
+                    if (Parameters.vendor) {
+                        Parameters.filters ? angular.extend(Parameters.filters, Parameters.filters, {'xp.VendorName': Parameters.vendor}) : Parameters.filters = {'xp.VendorName': Parameters.vendor};
+                        delete Parameters.vendor;
                     }
                     var opts = {
                         search:Parameters.search,
@@ -106,12 +111,11 @@ function ProductBrowseConfig($urlRouterProvider, $stateProvider) {
         });
 }
 
-function ProductBrowseController($state, $window, $uibModal, ocPunchout, CategoryList, CategoryTree, Parameters, CurrentOrder) {
+function ProductBrowseController($state, $window, $uibModal, ocPunchout, CategoryList, CategoryTree, Parameters, CurrentOrder, vendors) {
     var vm = this;
     vm.parameters = Parameters;
     vm.categoryList = CategoryList;
-    console.log('CategoryList :: ', CategoryList);
-    //Category Tree Setup
+    vm.vendors = vendors;
     vm.treeConfig = {};
 
     vm.treeConfig.treeData = CategoryTree.result;
@@ -134,7 +138,7 @@ function ProductBrowseController($state, $window, $uibModal, ocPunchout, Categor
                     $state.go('punchout', {link:data.StartURL});
                 });
         } else {
-            $state.go('productBrowse.products', {categoryid: node.ID, page: ''});
+            $state.go('productBrowse.products', {categoryid: node.ID, page: '', vendor: ''});
         }
     };
     //Initiate breadcrumbs is triggered by product list view (child state "productBrowse.products")
@@ -157,6 +161,10 @@ function ProductBrowseController($state, $window, $uibModal, ocPunchout, Categor
             }
         }
     };
+
+    vm.vendorFilter = function(vendor) {
+        $state.go('productBrowse.products', {page: '', vendor: vendor});
+    }
 
     vm.toggleFavorites = function () {
         if (vm.parameters.filters && vm.parameters.filters.ID) delete vm.parameters.filters.ID;

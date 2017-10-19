@@ -91,8 +91,10 @@ function CheckoutController($state, $rootScope, toastr, OrderCloudSDK, OrderShip
     vm.billingAddress = OrderBillingAddress;
     vm.promotions = CurrentPromotions.Items;
     vm.checkoutConfig = CheckoutConfig;
+    vm.submitBtnDisabled = false;
 
     vm.submitOrder = function(order) {
+        vm.submitBtnDisabled = true;
         if (CheckoutConfig.TransactionType === 'AuthNet') {
             return ccPayment.AuthCapture(order)
                 .then(function() {
