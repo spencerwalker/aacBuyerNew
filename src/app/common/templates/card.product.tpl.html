@@ -1,5 +1,5 @@
 <div class="thumbnail c-product-card" ui-sref="productDetail({productid: product.ID})">
-    <img class="img-responsive c-product-card__img" ng-src="{{product.xp.image.URL || 'http://placehold.it/300x300'}}">
+    <img class="img-responsive c-product-card__img" ng-src="{{product.xp.image.URL || 'http://placehold.it/300x300?text=No+Image+Available'}}">
     <div class="caption c-product-card__body">
         <div class="c-product-card__info clearfix">
             <span class="pull-left c-product-card__id" ng-if="product.Name">{{product.ID | limitTo: 8}}{{product.ID.length > 8 ? '...' : ''}}</span>
