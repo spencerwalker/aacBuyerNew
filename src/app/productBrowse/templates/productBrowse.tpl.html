@@ -1,7 +1,7 @@
 <article>
     <ol class="breadcrumb">
         <li>
-            <a href="" ui-sref="productBrowse.products({categoryid:category.ID})">All Products</a>
+            <a href="" ui-sref="productBrowse.products({categoryid:category.ID, vendor: ''})">All Products</a>
         </li>
         <li ng-repeat="crumb in productBrowse.breadcrumb">
             <a href="" ui-sref="productBrowse.products({categoryid:crumb.ID})">{{crumb.Name}}</a>
@@ -19,7 +19,7 @@
 
         <!--START CATEGORY TREE-->
         <aside class="col-md-3 visible-md visible-lg">
-            <div class="panel panel-default" hl-sticky anchor="top" offset-top="70" stick-limit="true" media-query="min-width: 992px">
+            <div class="panel panel-default">
                 <div class="panel-heading">
                     <b class="panel-title">Top Stores</b>
                 </div>
