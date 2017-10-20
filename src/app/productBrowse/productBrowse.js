@@ -158,6 +158,10 @@ function ProductBrowseController($state, $window, $uibModal, ocPunchout, Categor
         }
     };
 
+    vm.vendorFilter = function(vendor) {
+        $state.go('productBrowse.products', {page: '', vendor: vendor.Value});
+    }
+
     vm.toggleFavorites = function () {
         if (vm.parameters.filters && vm.parameters.filters.ID) delete vm.parameters.filters.ID;
         if (vm.parameters.favorites) {

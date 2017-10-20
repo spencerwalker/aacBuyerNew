@@ -11,5 +11,87 @@
   "bootswatchtheme": null,
   "punchoutproduct": "AACPunchoutProduct",
   "punchouturl": "https://vendors.adoptaclassroom.org", 
-  "adoptAClassromURL": "https://qa-adoptaclassroom.cs13.force.com/teachers/s/"
+  "adoptAClassromURL": "https://qa-adoptaclassroom.cs13.force.com/teachers/s/",
+  "vendors": [
+    {
+      "Name": "AKJ Education",
+      "Value": "AKJ Education"
+    },
+    {
+      "Name": "Adventure to Fitness",
+      "Value": "adventure"
+    },
+    {
+      "Name": "Becker's",
+      "Value": "Becker's"
+    },
+    {
+      "Name": "Bazillions",
+      "Value": "Bazillions"
+    },
+    {
+      "Name": "Board Share",
+      "Value": "Board Share"
+    },
+    {
+      "Name": "Carson",
+      "Value": "Carson"
+    },
+    {
+      "Name": "Edupress",
+      "Value": "Edupress"
+    },
+    {
+      "Name": "HoverCam",
+      "Value": "HoverCam"
+    },
+    {
+      "Name": "LASER Classroom",
+      "Value": "laser"
+    },
+    {
+      "Name": "Learning A-Z",
+      "Value": "learning AZ"
+    },
+    {
+      "Name": "Lorenz Educational Press",
+      "Value": "Lorenz"
+    },
+    {
+      "Name": "Miss Humblebee's Academy",
+      "Value": "Humblebees"
+    },
+    {
+      "Name": "OOLY",
+      "Value": "OOLY"
+    },
+    {
+      "Name": "Scholastic",
+      "Value": "Scholastic"
+    },
+    {
+      "Name": "Scholastic Classroom Magazines",
+      "Value": "Scholastic Classroom Magazines"
+    },
+    {
+      "Name": "Speakaboos",
+      "Value": "Speakaboos"
+    },
+    {
+      "Name": "Spelling City",
+      "Value": "Spelling City"
+    },
+    {
+      "Name": "West Music",
+      "Value": "West Music"
+    },
+    {
+      "Name": "Wonder Workshop",
+      "Value": "Wonder Workshop"
+    },
+    {
+      "Name": "Your Dollar Buyes",
+      "Value": "Your Dollar"
+    }
+  ]
 }
