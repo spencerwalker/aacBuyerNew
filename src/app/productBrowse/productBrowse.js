@@ -163,7 +163,7 @@ function ProductBrowseController($state, $window, $uibModal, ocPunchout, Categor
     };
 
     vm.vendorFilter = function(vendor) {
-        $state.go('productBrowse.products', {page: '', vendor: vendor});
+        $state.go('productBrowse.products', {page: '', vendor: vendor.Value});
     }
 
     vm.toggleFavorites = function () {
