@@ -11,7 +11,7 @@
   "bootswatchtheme": null,
   "punchoutproduct": "AACPunchoutProduct",
   "punchouturl": "https://vendors.adoptaclassroom.org", 
-  "adoptAClassromURL": "https://qa-adoptaclassroom.cs13.force.com/teachers/s/",
+  "adoptAClassromURL": "https://stage-adoptaclassroom.cs12.force.com/teachers/s/",
   "vendors": [
     {
       "Name": "AKJ Education",
