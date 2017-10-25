@@ -136,7 +136,7 @@ function ShippingRatesService($q, $resource, OrderCloudSDK, apiurl, buyerid) {
 function VendorShippingCriteria() {
 	var ByVendor = [
 		{
-			name: 'Adventure to Fitness',
+			name: 'Adventure',
 			minOrderAmount: 0,
 			shippingCostFunc: function(order) {return 0;}
 		},
@@ -205,7 +205,7 @@ function VendorShippingCriteria() {
 			}
 		},
 		{
-			name: 'Learning A-Z',
+			name: 'LearningAZ',
 			minOrderAmount: 0,
 			shippingCostFunc: function(order) {return 0;}
 		},
@@ -260,7 +260,7 @@ function VendorShippingCriteria() {
 			}
 		},
 		{
-			name: 'Scholastic Classroom Magazines',
+			name: 'ScholasticMagazines',
 			minOrderAmount: 0,
 			shippingCostFunc: function(order) {return 0;}
 		},
@@ -280,7 +280,7 @@ function VendorShippingCriteria() {
 			}
 		},
 		{
-			name: 'Science4Us',
+			name: 'Science4us',
 			minOrderAmount: 0,
 			shippingCostFunc: function(order) {return 0;}
 		},
@@ -290,7 +290,7 @@ function VendorShippingCriteria() {
 			shippingCostFunc: function(order) {return 0;}
 		},
 		{
-			name: 'Spelling City',
+			name: 'SpellingCity',
 			minOrderAmount: 0,
 			shippingCostFunc: function(order) {return 0;}
 		},
