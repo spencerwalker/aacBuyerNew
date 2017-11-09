@@ -85,27 +85,25 @@ function ProductBrowseConfig($urlRouterProvider, $stateProvider) {
                 Parameters: function ($stateParams, ocParameters) {
                     return ocParameters.Get($stateParams);
                 },
-                ProductList: function (OrderCloudSDK, CurrentUser, Parameters, vendors) {
-                    if (Parameters.favorites && CurrentUser.xp.FavoriteProducts) {
-                        Parameters.filters ? angular.extend(Parameters.filters, Parameters.filters, {ID: CurrentUser.xp.FavoriteProducts.join('|')}) : Parameters.filters = {ID: CurrentUser.xp.FavoriteProducts.join('|')};
+                ProductList: function(OrderCloudSDK, ocFavoriteProducts, Parameters, CurrentUser, catalogid) {
+                    if (Parameters.favorites) {
+                        return ocFavoriteProducts.Get()
+                            .then(function(favoriteProductIDs) {
+                                Parameters.filters ? angular.extend(Parameters.filters, Parameters.filters, {ID:favoriteProductIDs.join('|')}) : Parameters.filters = {ID:favoriteProductIDs.join('|')};
+                                return _mergeParameters();
+                            });
                     } else if (Parameters.filters) {
                         delete Parameters.filters.ID;
+                        return _mergeParameters();
+                    } else {
+                        return OrderCloudSDK.Me.ListProducts(Parameters);
                     }
 
-                    if (Parameters.vendor) {
-                        Parameters.filters ? angular.extend(Parameters.filters, Parameters.filters, {'xp.VendorName': Parameters.vendor}) : Parameters.filters = {'xp.VendorName': Parameters.vendor};
-                        delete Parameters.vendor;
+                    function _mergeParameters() {
+                        var parameters = angular.extend({catalogID: catalogid, categoryID: Parameters.categoryid, depth: 'all'}, Parameters);
+                        return OrderCloudSDK.Me.ListProducts(parameters);
                     }
-                    var opts = {
-                        search:Parameters.search,
-                        page: Parameters.page,
-                        pageSize: Parameters.pageSize,
-                        searchOn:Parameters.searchOn,
-                        sortBy: Parameters.sortBy,
-                        filters:  Parameters.filters,
-                        categoryID:Parameters.categoryid
-                    };
-                    return OrderCloudSDK.Me.ListProducts(opts);
+                    
                 }
             }
         });
