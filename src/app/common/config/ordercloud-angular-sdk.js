@@ -25,8 +25,7 @@ function OrderCloudSDKDecorators($provide, punchoutproduct) {
             } else if (!originalArguments.filters.ID) {
                 originalArguments = angular.extend(originalArguments, {filters: angular.extend(originalArguments.filters, {ID: '!' + punchoutproduct})})
             } else if(originalArguments.favorites) {
-                var filters = originalArguments.filters.ID;
-                originalArguments = angular.extend(originalArguments, {filters: {ID: filters}})
+                originalArguments = angular.extend(originalArguments, {filters: {ID: originalArguments.filters.ID}})
             } else {
                 originalArguments = angular.extend(originalArguments, {filters: angular.extend(originalArguments.filters, {ID: '!' + punchoutproduct})})
             }
