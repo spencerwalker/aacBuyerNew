@@ -5,7 +5,7 @@
   "buyerid": "aacbuyer",
   "catalogid": "AACBuyer",
   "clientsecret": "myclientsecret",
-  "environment": "prod",
+  "environment": "qa",
   "defaultstate": "productBrowse.products",
   "anonymous": false,
   "bootswatchtheme": null,
@@ -66,12 +66,16 @@
       "Value": "OOLY"
     },
     {
+      "Name": "Really Good Stuff",
+      "Value": "Really Good Stuff"
+    },
+    {
       "Name": "Scholastic",
       "Value": "Scholastic"
     },
     {
       "Name": "Scholastic Classroom Magazines",
-      "Value": "Scholastic Magazines"
+      "Value": "ClassroomMagazines"
     },
     {
       "Name": "Science4us",
