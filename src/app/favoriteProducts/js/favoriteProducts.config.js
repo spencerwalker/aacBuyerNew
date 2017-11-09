@@ -22,6 +22,7 @@ $stateProvider
                     .then(function(favoriteProductIDs) {
                         if (favoriteProductIDs.length) {
                             var parameters = angular.extend(Parameters, {pageSize: Parameters.pageSize || 6, filters: {ID: favoriteProductIDs.join('|')}});
+                            parameters.favorites = true;
                             return OrderCloudSDK.Me.ListProducts(parameters);
                         } else {
                             return null;
