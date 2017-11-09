@@ -17,16 +17,19 @@ function OrderCloudSDKDecorators($provide, punchoutproduct) {
             var df = $q.defer();
 
             var originalArguments = arguments[0];
-            originalArguments = !originalArguments 
-                ? {filters: {ID: '!' + punchoutproduct}} 
-                : !originalArguments.filters 
-                    ? angular.extend(originalArguments, {filters: {ID: '!' + punchoutproduct}} )
-                    : angular.extend(originalArguments, {filters: angular.extend(originalArguments.filters, {ID: '!' + punchoutproduct})})
-
-
-            if (!originalArguments) originalArguments = {filters: {ID: '!' + punchoutproduct}};
-            if (!originalArguments.filters) originalArguments.filters
-            angular.extend(originalArguments.filters, {ID: '!' + punchoutproduct});
+            
+            if (!originalArguments) {
+                originalArguments = {filters: {ID: '!' + punchoutproduct}}
+            } else if(!originalArguments.filters) {
+                originalArguments = angular.extend(originalArguments, {filters: {ID: '!' + punchoutproduct}} )
+            } else if (!originalArguments.filters.ID) {
+                originalArguments = angular.extend(originalArguments, {filters: angular.extend(originalArguments.filters, {ID: '!' + punchoutproduct})})
+            } else if(originalArguments.favorites) {
+                var filters = originalArguments.filters.ID;
+                originalArguments = angular.extend(originalArguments, {filters: {ID: filters}})
+            } else {
+                originalArguments = angular.extend(originalArguments, {filters: angular.extend(originalArguments.filters, {ID: '!' + punchoutproduct})})
+            }
 
             originalMeListProducts.apply($delegate, [originalArguments])
                 .then(function(data) {
