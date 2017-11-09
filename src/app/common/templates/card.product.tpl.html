@@ -11,7 +11,12 @@
         </div>
         <div class="text-right c-product-card__icons hidden-xs" prevent-click>
             <ordercloud-product-quick-view product="product" current-order="base.currentOrder"></ordercloud-product-quick-view>
-            <ordercloud-favorite-product product="product" current-user="base.currentUser"></ordercloud-favorite-product>
+            <button class="btn btn-sm btn-favorite" 
+                    oc-favorite-product
+                    product="product" 
+                    favorite-class="faved" 
+                    non-favorite-class="unfaved">
+            </button>
         </div>
     </div>
 </div>

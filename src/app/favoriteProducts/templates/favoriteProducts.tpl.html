@@ -34,12 +34,7 @@
     </div>
     <div ng-if="favoriteProducts.list.Items.length">
         <div class="row row-flex">
-            <div class="col-xs-6 col-md-4 col-lg-3" ng-repeat="product in favoriteProducts.list.Items">
-                <oc-product-card 
-                    class="c-product-card" 
-                    product="product" 
-                    current-order="base.currentOrder">
-                </oc-product-card>
+            <div class="col-xs-6 col-md-4 col-lg-3" ng-repeat="product in favoriteProducts.list.Items" ng-include="'common/templates/card.product.tpl.html'">
             </div>
         </div>
     </div>
