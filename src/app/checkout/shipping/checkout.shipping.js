@@ -42,14 +42,14 @@ function checkoutShippingConfig($stateProvider) {
                     var opts = {
                         depth: 1,
                         filters: {
-                            ParentID: $stateParams.categoryid
+                            ParentID: $stateParams.categoryID
                         }
                     }
                     return OrderCloudSDK.Me.ListCategories(opts);
                 },
                 ProductList: function ($stateParams, OrderCloudSDK) {
                     var opts = {
-                        categoryID: $stateParams.categoryid
+                        categoryID: $stateParams.categoryID
                     };
                     return OrderCloudSDK.Me.ListProducts(opts);
 
