@@ -45,12 +45,12 @@ function CartConfig($stateProvider) {
                 CategoryList: function($stateParams, OrderCloudSDK) {
                     var opts = {
                         depth: 1,
-                        filters: {ParentID: $stateParams.categoryid}
+                        filters: {ParentID: $stateParams.categoryID}
                     };
                     return OrderCloudSDK.Me.ListCategories(opts);
                 },
                 ProductList: function($stateParams, OrderCloudSDK) {
-                    var opts = {catalogID: $stateParams.categoryid };
+                    var opts = {catalogID: $stateParams.categoryID };
                     return OrderCloudSDK.Me.ListProducts(opts);
 
                 }
