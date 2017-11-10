@@ -64,7 +64,7 @@ describe('Component: ProductBrowse', function(){
         }));
         it('should resolve ProductList', inject(function($injector){
             $injector.invoke(state.resolve.ProductList);
-            expect(oc.Me.ListProducts).toHaveBeenCalledWith(parameters.search, parameters.page, parameters.pageSize, parameters.searchOn, parameters.sortBy, parameters.filters, parameters.categoryid);
+            expect(oc.Me.ListProducts).toHaveBeenCalledWith(parameters.search, parameters.page, parameters.pageSize, parameters.searchOn, parameters.sortBy, parameters.filters, parameters.categoryID);
         }));
     });
     //describe('Controller: ProductViewCtrl', function(){

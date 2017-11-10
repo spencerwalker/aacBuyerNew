@@ -35,11 +35,11 @@ function checkoutReviewConfig($stateProvider) {
 
                 CategoryList: function ($stateParams, OrderCloudSDK) {
                     var depth = 1;
-                    return OrderCloudSDK.Me.ListCategories({fitlers:{ParentID: $stateParams.categoryid}, depth:1});
+                    return OrderCloudSDK.Me.ListCategories({fitlers:{ParentID: $stateParams.categoryID}, depth:1});
                 },
 
                 ProductList: function ($stateParams, OrderCloudSDK) {
-                    return OrderCloudSDK.Me.ListProducts({categoryID:$stateParams.categoryid });
+                    return OrderCloudSDK.Me.ListProducts({categoryID:$stateParams.categoryID });
 
                 },
 
