@@ -77,13 +77,13 @@ function checkoutConfirmationConfig($stateProvider) {
                 CategoryList: function ($stateParams, OrderCloudSDK) {
                     var opts = {
                         depth: 1,
-                        filters: {ParentID: $stateParams.categoryid}
+                        filters: {ParentID: $stateParams.categoryID}
                     };
                     return OrderCloudSDK.Me.ListCategories(opts);
                 },
                 ProductList: function ($stateParams, OrderCloudSDK) {
 					var opts = {
-						categoryID:  $stateParams.categoryid
+						categoryID:  $stateParams.categoryID
 					};
                     return OrderCloudSDK.Me.ListProducts(opts);
 

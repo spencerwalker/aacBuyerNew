@@ -1,10 +1,10 @@
 <article>
     <ol class="breadcrumb">
         <li>
-            <a href="" ui-sref="productBrowse.products({categoryid:category.ID, vendor: ''})">All Products</a>
+            <a href="" ui-sref="productBrowse.products({categoryID:category.ID, vendor: ''})">All Products</a>
         </li>
         <li ng-repeat="crumb in productBrowse.breadcrumb">
-            <a href="" ui-sref="productBrowse.products({categoryid:crumb.ID})">{{crumb.Name}}</a>
+            <a href="" ui-sref="productBrowse.products({categoryID:crumb.ID})">{{crumb.Name}}</a>
         </li>
     </ol>
     <div class="row">

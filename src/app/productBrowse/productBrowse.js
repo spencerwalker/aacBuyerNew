@@ -77,7 +77,7 @@ function ProductBrowseConfig($urlRouterProvider, $stateProvider) {
             }
         })
         .state('productBrowse.products', {
-            url: '/products?categoryid?favorites?vendor?search?page?pageSize?searchOn?sortBy?filters?depth',
+            url: '/products?categoryID?favorites?vendor?search?page?pageSize?searchOn?sortBy?filters?depth',
             templateUrl: 'productBrowse/templates/productView.tpl.html',
             controller: 'ProductViewCtrl',
             controllerAs: 'productView',
@@ -95,12 +95,16 @@ function ProductBrowseConfig($urlRouterProvider, $stateProvider) {
                     } else if (Parameters.filters) {
                         delete Parameters.filters.ID;
                         return _mergeParameters();
+                    } if (Parameters.vendor) {
+                        Parameters.filters ? angular.extend(Parameters.filters, Parameters.filters, {'xp.VendorName': Parameters.vendor}) : Parameters.filters = {'xp.VendorName': Parameters.vendor};
+                        delete Parameters.vendor;
+                        return _mergeParameters();
                     } else {
                         return OrderCloudSDK.Me.ListProducts(Parameters);
                     }
 
                     function _mergeParameters() {
-                        var parameters = angular.extend({catalogID: catalogid, categoryID: Parameters.categoryid, depth: 'all'}, Parameters);
+                        var parameters = angular.extend({catalogID: catalogid, categoryID: Parameters.categoryID, depth: 'all'}, Parameters);
                         return OrderCloudSDK.Me.ListProducts(parameters);
                     }
                     
@@ -136,7 +140,7 @@ function ProductBrowseController($state, $window, $uibModal, ocPunchout, Categor
                     $state.go('punchout', {link:data.StartURL});
                 });
         } else {
-            $state.go('productBrowse.products', {categoryid: node.ID, page: '', vendor: ''});
+            $state.go('productBrowse.products', {categoryID: node.ID, page: '', vendor: ''});
         }
     };
     //Initiate breadcrumbs is triggered by product list view (child state "productBrowse.products")
@@ -190,7 +194,7 @@ function ProductBrowseController($state, $window, $uibModal, ocPunchout, Categor
             }
         }).result.then(function (node) {
             //Check Punchout Here
-            $state.go('productBrowse.products', {categoryid: node.ID, page: ''});
+            $state.go('productBrowse.products', {categoryID: node.ID, page: ''});
         });
     };
 }

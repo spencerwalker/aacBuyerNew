@@ -113,7 +113,7 @@ function MyOrdersConfig($stateProvider) {
                 CategoryList: function ($stateParams, OrderCloudSDK) {
                     var opts ={
                         depth: 1,
-                        filters: {ParentID: $stateParams.categoryid}
+                        filters: {ParentID: $stateParams.categoryID}
                     };
                     return OrderCloudSDK.Me.ListCategories(opts);
                 },
