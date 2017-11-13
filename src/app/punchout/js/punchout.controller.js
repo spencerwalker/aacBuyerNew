@@ -9,7 +9,7 @@ function OrderCloudPunchoutController(Parameters, $sce, $scope, LoginService, ad
     vm.trustSrc = function(src){
         return $sce.trustAsResourceUrl(src);
     };
-    vm.frameHeight = $('main').innerHeight();
+    vm.frameHeight = $(window).height();
     vm.outboundtURL = vm.trustSrc(vm.link);
      vm.logout = function() {
         LoginService.Logout(adoptAClassromURL);    

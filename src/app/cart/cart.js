@@ -15,16 +15,18 @@ function CartConfig($stateProvider) {
                 pageTitle: "Shopping Cart"
             },
             resolve: {
-                LineItemsList: function($q, $state, toastr, OrderCloudSDK, ocLineItems, CurrentOrder) {
+                LineItemsList: function($q, $rootScope, toastr, ocLineItems, CurrentOrder) {
                     var dfd = $q.defer();
-                    OrderCloudSDK.LineItems.List('outgoing', CurrentOrder.ID)
+                    ocLineItems.ListAll(CurrentOrder.ID)
                         .then(function(data) {
-                            if (!data.Items.length) {
+                            if (!data.length) {
+                                $rootScope.$broadcast('OC:UpdateOrder', CurrentOrder.ID);
                                 dfd.resolve(data);
                             }
                             else {
-                                ocLineItems.GetProductInfo(data.Items)
+                                ocLineItems.GetProductInfo(data)
                                     .then(function() {
+                                        $rootScope.$broadcast('OC:UpdateOrder', CurrentOrder.ID);
                                         dfd.resolve(data);
                                     });
                             }
@@ -43,12 +45,12 @@ function CartConfig($stateProvider) {
                 CategoryList: function($stateParams, OrderCloudSDK) {
                     var opts = {
                         depth: 1,
-                        filters: {ParentID: $stateParams.categoryid}
+                        filters: {ParentID: $stateParams.categoryID}
                     };
                     return OrderCloudSDK.Me.ListCategories(opts);
                 },
                 ProductList: function($stateParams, OrderCloudSDK) {
-                    var opts = {catalogID: $stateParams.categoryid };
+                    var opts = {catalogID: $stateParams.categoryID };
                     return OrderCloudSDK.Me.ListProducts(opts);
 
                 }
@@ -59,38 +61,25 @@ function CartConfig($stateProvider) {
 function CartController($rootScope, $scope,  $state, $filter, toastr, OrderCloudSDK, LineItemsList, CurrentPromotions, ocConfirm, CategoryList, ProductList) {
     var vm = this;
     vm.vendorLineItemsMap = {};
-    
-    console.log('testing');
-    
     vm.lineItems = LineItemsList;
-    console.log('LineItems', vm.lineItems);
-    console.log('CategoryList :: ', CategoryList);
-    console.log('Products :: ', ProductList);
-    console.log('vm.lineItems ::' , JSON.stringify(vm.lineItems));
+    vm.LineCount = vm.lineItems.length;
     
     // watcher on vm.lineItems
     $scope.$watch(function () {
         	return vm.lineItems;
     	}, function(newVal, oldVal){
-    	console.log('New Val:: ', newVal);
     	vm.vendorLineItemsMap = {};
-    	angular.forEach(vm.lineItems.Items, function(lineItem){
-        	var productId = lineItem.ProductID;
-        	var vendorName = (lineItem.Punchout && lineItem.xp && lineItem.xp.PunchoutName) 
+    	angular.forEach(vm.lineItems, function(lineItem){
+        	var vendorName = (lineItem.xp && lineItem.xp.PunchoutName) 
                 ? $filter('punchoutLineItemVendor')(lineItem.xp.PunchoutName)
-                : productId.split("_")[0]; 
+                : lineItem.ProductID.split("_")[0]; 
 
-        	if(typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
+        	if (typeof vm.vendorLineItemsMap[vendorName] === 'undefined'){
         		vm.vendorLineItemsMap[vendorName] = [];
         	}
         	vm.vendorLineItemsMap[vendorName].push(lineItem);
         });
     }, true);
-    
-    
-    
-    
-    console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
     
     vm.promotions = CurrentPromotions.Meta ? CurrentPromotions.Items : CurrentPromotions;
     vm.removeItem = function(order, scope) {
@@ -98,8 +87,8 @@ function CartController($rootScope, $scope,  $state, $filter, toastr, OrderCloud
         vm.lineLoading[scope.$index] = OrderCloudSDK.LineItems.Delete('outgoing', order.ID, scope.lineItem.ID)
             .then(function () {
                 $rootScope.$broadcast('OC:UpdateOrder', order.ID);
-                var index = _.findIndex( vm.lineItems.Items, function(lineItem){return lineItem.ID === scope.lineItem.ID;});
-                 vm.lineItems.Items.splice(index, 1);
+                var index = _.findIndex( vm.lineItems, function(lineItem){return lineItem.ID === scope.lineItem.ID;});
+                 vm.lineItems.splice(index, 1);
                 toastr.success('Line Item Removed');
             });
     };

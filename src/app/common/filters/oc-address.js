@@ -9,7 +9,7 @@ function AddressFilter() {
             var result = [];
 
             //address name
-            if (address.AddressName) result.push('<b>' + address.AddressName + '</b>');
+            // if (address.AddressName) result.push('<b>' + address.AddressName + '</b>');
 
             //address first/last
             if (address.FirstName || address.LastName) {

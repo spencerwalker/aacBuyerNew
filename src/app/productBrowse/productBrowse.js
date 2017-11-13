@@ -77,7 +77,7 @@ function ProductBrowseConfig($urlRouterProvider, $stateProvider) {
             }
         })
         .state('productBrowse.products', {
-            url: '/products?categoryid?favorites?search?page?pageSize?searchOn?sortBy?filters?depth',
+            url: '/products?categoryID?favorites?vendor?search?page?pageSize?searchOn?sortBy?filters?depth',
             templateUrl: 'productBrowse/templates/productView.tpl.html',
             controller: 'ProductViewCtrl',
             controllerAs: 'productView',
@@ -85,33 +85,39 @@ function ProductBrowseConfig($urlRouterProvider, $stateProvider) {
                 Parameters: function ($stateParams, ocParameters) {
                     return ocParameters.Get($stateParams);
                 },
-                ProductList: function (OrderCloudSDK, CurrentUser, Parameters) {
-                    if (Parameters.favorites && CurrentUser.xp.FavoriteProducts) {
-                        Parameters.filters ? angular.extend(Parameters.filters, Parameters.filters, {ID: CurrentUser.xp.FavoriteProducts.join('|')}) : Parameters.filters = {ID: CurrentUser.xp.FavoriteProducts.join('|')};
+                ProductList: function(OrderCloudSDK, ocFavoriteProducts, Parameters, CurrentUser, catalogid) {
+                    if (Parameters.favorites) {
+                        return ocFavoriteProducts.Get()
+                            .then(function(favoriteProductIDs) {
+                                Parameters.filters ? angular.extend(Parameters.filters, Parameters.filters, {ID:favoriteProductIDs.join('|')}) : Parameters.filters = {ID:favoriteProductIDs.join('|')};
+                                return _mergeParameters();
+                            });
                     } else if (Parameters.filters) {
                         delete Parameters.filters.ID;
+                        return _mergeParameters();
+                    } if (Parameters.vendor) {
+                        Parameters.filters ? angular.extend(Parameters.filters, Parameters.filters, {'xp.VendorName': Parameters.vendor}) : Parameters.filters = {'xp.VendorName': Parameters.vendor};
+                        delete Parameters.vendor;
+                        return _mergeParameters();
+                    } else {
+                        return OrderCloudSDK.Me.ListProducts(Parameters);
                     }
-                    var opts = {
-                        search:Parameters.search,
-                        page: Parameters.page,
-                        pageSize: Parameters.pageSize,
-                        searchOn:Parameters.searchOn,
-                        sortBy: Parameters.sortBy,
-                        filters:  Parameters.filters,
-                        categoryID:Parameters.categoryid
-                    };
-                    return OrderCloudSDK.Me.ListProducts(opts);
+
+                    function _mergeParameters() {
+                        var parameters = angular.extend({catalogID: catalogid, categoryID: Parameters.categoryID, depth: 'all'}, Parameters);
+                        return OrderCloudSDK.Me.ListProducts(parameters);
+                    }
+                    
                 }
             }
         });
 }
 
-function ProductBrowseController($state, $window, $uibModal, ocPunchout, CategoryList, CategoryTree, Parameters, CurrentOrder) {
+function ProductBrowseController($state, $window, $uibModal, ocPunchout, CategoryList, CategoryTree, Parameters, CurrentOrder, vendors) {
     var vm = this;
     vm.parameters = Parameters;
     vm.categoryList = CategoryList;
-    console.log('CategoryList :: ', CategoryList);
-    //Category Tree Setup
+    vm.vendors = vendors;
     vm.treeConfig = {};
 
     vm.treeConfig.treeData = CategoryTree.result;
@@ -134,7 +140,7 @@ function ProductBrowseController($state, $window, $uibModal, ocPunchout, Categor
                     $state.go('punchout', {link:data.StartURL});
                 });
         } else {
-            $state.go('productBrowse.products', {categoryid: node.ID, page: ''});
+            $state.go('productBrowse.products', {categoryID: node.ID, page: '', vendor: ''});
         }
     };
     //Initiate breadcrumbs is triggered by product list view (child state "productBrowse.products")
@@ -157,6 +163,10 @@ function ProductBrowseController($state, $window, $uibModal, ocPunchout, Categor
             }
         }
     };
+
+    vm.vendorFilter = function(vendor) {
+        $state.go('productBrowse.products', {page: '', vendor: vendor.Value});
+    }
 
     vm.toggleFavorites = function () {
         if (vm.parameters.filters && vm.parameters.filters.ID) delete vm.parameters.filters.ID;
@@ -184,7 +194,7 @@ function ProductBrowseController($state, $window, $uibModal, ocPunchout, Categor
             }
         }).result.then(function (node) {
             //Check Punchout Here
-            $state.go('productBrowse.products', {categoryid: node.ID, page: ''});
+            $state.go('productBrowse.products', {categoryID: node.ID, page: ''});
         });
     };
 }

@@ -6,7 +6,7 @@ angular.module('orderCloud')
     .constant('CheckoutConfig', {
         ShippingRates: true,
         TaxRates: false,
-       // AvailablePaymentMethods: ['PurchaseOrder', 'CreditCard', 'SpendingAccount']
+        TransactionType: 'AuthNet',
         AvailablePaymentMethods: [ 'SpendingAccount', 'CreditCard']
     })
 ;
@@ -22,6 +22,9 @@ function checkoutConfig($urlRouterProvider, $stateProvider) {
 			controller: 'CheckoutCtrl',
 			controllerAs: 'checkout',
 			resolve: {
+                UpdateOrder: function($rootScope, CurrentOrder){
+                    $rootScope.$broadcast('OC:UpdateOrder', CurrentOrder.ID);
+                },
                 OrderShipAddress: function($q, OrderCloudSDK, CurrentOrder){
                     var deferred = $q.defer();
                     if (CurrentOrder.ShippingAddressID) {
@@ -33,9 +36,26 @@ function checkoutConfig($urlRouterProvider, $stateProvider) {
                                 deferred.resolve(null);
                             });
                     }
-                    else {
-                        deferred.resolve(null);
-                    }
+                    else { 
+                        var opts = {page: 1, pageSize: 100, filters: {Shipping: true}};
+                            OrderCloudSDK.Me.ListAddresses(opts)
+                            .then(function(shippingAddresses) {
+                                if (shippingAddresses.Items.length) {
+                                    CurrentOrder.ShippingAddressID = shippingAddresses.Items[0].ID;
+                                    OrderCloudSDK.Orders.Patch('outgoing', CurrentOrder.ID, {ShippingAddressID: CurrentOrder.ShippingAddressID})
+                                        .then(function(){
+                                            OrderCloudSDK.Me.GetAddress(CurrentOrder.ShippingAddressID)
+                                            .then(function(address) {
+                                                deferred.resolve(address);
+                                            });
+                                        });
+                                }
+                                else{
+                                    deferred.resolve(null);
+                                }
+                            })
+                            .catch(function(){ deferred.resolve(null);});
+                        }
 
                     return deferred.promise;
                 },
@@ -64,15 +84,33 @@ function checkoutConfig($urlRouterProvider, $stateProvider) {
     ;
 }
 
-function CheckoutController($state, $rootScope, toastr, OrderCloudSDK, OrderShipAddress, CurrentPromotions, OrderBillingAddress, CheckoutConfig) {
+function CheckoutController($state, $rootScope, toastr, OrderCloudSDK, OrderShipAddress, CurrentPromotions, OrderBillingAddress, CheckoutConfig, ccPayment) {
     var vm = this;
+
     vm.shippingAddress = OrderShipAddress;
     vm.billingAddress = OrderBillingAddress;
     vm.promotions = CurrentPromotions.Items;
     vm.checkoutConfig = CheckoutConfig;
+    vm.submitBtnDisabled = false;
 
     vm.submitOrder = function(order) {
-        OrderCloudSDK.Orders.Submit('outgoing', order.ID)
+        vm.submitBtnDisabled = true;
+        if (CheckoutConfig.TransactionType === 'AuthNet') {
+            return ccPayment.AuthCapture(order)
+                .then(function() {
+                    finalSubmit(order);
+                })
+        } else {
+            finalSubmit(order);
+        }
+        
+    };
+
+    function finalSubmit(order) {
+         vm.submitLoading = {
+            message: 'Submitting Order'
+        };
+        vm.submitLoading.promise = OrderCloudSDK.Orders.Submit('outgoing', order.ID)
             .then(function(order) {
                 $state.go('confirmation', {orderid:order.ID}, {reload:'base'});
                 toastr.success('Your order has been submitted', 'Success');
@@ -80,7 +118,7 @@ function CheckoutController($state, $rootScope, toastr, OrderCloudSDK, OrderShip
             .catch(function(ex) {
                 toastr.error('Your order did not submit successfully.', 'Error');
             });
-    };
+    }
 
     $rootScope.$on('OC:OrderShipAddressUpdated', function(event, order) {
         OrderCloudSDK.Me.GetAddress(order.ShippingAddressID)

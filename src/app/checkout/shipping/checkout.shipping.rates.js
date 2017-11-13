@@ -136,7 +136,7 @@ function ShippingRatesService($q, $resource, OrderCloudSDK, apiurl, buyerid) {
 function VendorShippingCriteria() {
 	var ByVendor = [
 		{
-			name: 'Adventure to Fitness',
+			name: 'Adventure',
 			minOrderAmount: 0,
 			shippingCostFunc: function(order) {return 0;}
 		},
@@ -182,6 +182,7 @@ function VendorShippingCriteria() {
 				return 0.15*order.amount;
 			}
 		},
+		
 		{
 			name: 'Hovercam',
 			minOrderAmount: 0,
@@ -204,7 +205,7 @@ function VendorShippingCriteria() {
 			}
 		},
 		{
-			name: 'Learning A-Z',
+			name: 'LearningAZ',
 			minOrderAmount: 0,
 			shippingCostFunc: function(order) {return 0;}
 		},
@@ -233,7 +234,14 @@ function VendorShippingCriteria() {
 			name: 'ReallyGoodStuff',
 			minOrderAmount: 0,
 			shippingCostFunc: function(order) {
-				return Math.max(9.95, 0.14*order.amount);
+				if (order.amount < 30)
+					return 4.95;
+				if (order.amount < 49.99)
+					return 9.95;
+				if (order.amount < 99.99)
+					return 10.95;
+				if (order.amount >= 100)
+					return 0.14*order.amount;
 			}
 		},
 		
@@ -252,7 +260,7 @@ function VendorShippingCriteria() {
 			}
 		},
 		{
-			name: 'Scholastic Classroom Magazines',
+			name: 'ScholasticMagazines',
 			minOrderAmount: 0,
 			shippingCostFunc: function(order) {return 0;}
 		},
@@ -272,7 +280,7 @@ function VendorShippingCriteria() {
 			}
 		},
 		{
-			name: 'Science4Us',
+			name: 'Science4us',
 			minOrderAmount: 0,
 			shippingCostFunc: function(order) {return 0;}
 		},
@@ -282,7 +290,7 @@ function VendorShippingCriteria() {
 			shippingCostFunc: function(order) {return 0;}
 		},
 		{
-			name: 'Spelling City',
+			name: 'SpellingCity',
 			minOrderAmount: 0,
 			shippingCostFunc: function(order) {return 0;}
 		},
@@ -393,12 +401,12 @@ function VendorShippingCriteria() {
 	
 	this.getShippingCostByVendor = function(vendorName, vendorLineItems){
         var itemCount = 0;
-        var amount = 0;
-        var state = '';
+		var	amount = 0;
+		var	state = '';
         angular.forEach(vendorLineItems, function(lineItem){
             amount += ( lineItem.UnitPrice * lineItem.Quantity);
             itemCount += lineItem.Quantity;
-            state = lineItem.ShippingAddress.State;
+            state = lineItem.ShippingAddress ? lineItem.ShippingAddress.State : null;
         });
 
         var vendorShippingCriteria = _.find(ByVendor, {name: vendorName}) || _.find(ByState, {name: state}) || ByDefault;

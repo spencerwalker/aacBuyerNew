@@ -15,8 +15,7 @@
                     </div>
                 </div>
                 <div class="well text-center" ng-if="!checkout.shippingAddress">
-                    You currently do not have a shipping address selected. <br />
-                    <a href="" ng-click="checkoutShipping.changeShippingAddress(base.currentOrder)">Select one now</a>
+                    Please note: orders can only be shipped to the school address on your classroom page. If you have not yet created a classroom page, you will not be able to complete your order. <br />
                 </div>
                 <div ng-if="checkoutShipping.shippingRates.length">
                     <hr>
@@ -115,7 +114,10 @@
 				</div><br>
 				<div class="row text-right">
 					<h4>Subtotal:<span style="margin-left: 150px; margin-right:50px">{{checkoutShipping.getSubTotal(lineItemsList) | currency}}</span></h4>	 							
-	 				<h4>Shipping: <span style="margin-left: 150px; margin-right:50px">{{checkoutShipping.getShippingCostByVendor(vendorName) | currency}}</span></h4>
+					 <h4>Shipping:
+						<span style="margin-left: 150px; margin-right:50px" ng-if="checkout.shippingAddress.xp.Taxcost">{{(checkoutShipping.getShippingCostByVendor(vendorName)) || 0 | currency}}</span>
+						<span style="margin-left: 150px; margin-right:50px" ng-if="!checkout.shippingAddress.xp.Taxcost">{{0.00 | currency}}</span>
+					</h4>
 	 				<h4>Processing Fee: 
 	 					<span style="margin-left: 150px; margin-right:50px" ng-if="checkout.shippingAddress.xp.Taxcost > 0" >{{ ((checkoutShipping.getSubTotal(lineItemsList) * checkout.shippingAddress.xp.Taxcost)) | currency}}</span>
 	 					<span style="margin-left: 150px; margin-right:50px" ng-if="!checkout.shippingAddress.xp.Taxcost">{{0.00 | currency}}</span>
@@ -128,7 +130,7 @@
 	 							* checkout.shippingAddress.xp.Taxcost)) | currency}}
 	 					</span>
 	 					<span style="margin-left: 150px; margin-right:50px" ng-if="!checkout.shippingAddress.xp.Taxcost">
-	 						{{checkoutShipping.getSubTotal(lineItemsList) + checkoutShipping.getShippingCostByVendor(vendorName) | currency}}
+	 						{{0.00 | currency}}
 	 					</span>
 	 				</b></h4>
 				</div>
@@ -155,7 +157,7 @@
                     </p>
                     <hr>
                     <h5>Subtotal: All Orders <span class="pull-right">{{base.currentOrder.Subtotal | currency}}</span></h5>
-                    <h5>Shipping: All Orders <span class="pull-right">{{base.currentOrder.ShippingCost | currency}}</span></h5>
+                    <h5>Shipping: All Orders <span class="pull-right">{{base.currentOrder.ShippingCost || 0 | currency}}</span></h5>
                     <h5>Processing Fee: All Orders 
                     	<span class="pull-right" ng-if="checkout.shippingAddress.xp.Taxcost > 0">
                     		{{base.currentOrder.Subtotal * checkout.shippingAddress.xp.Taxcost | currency}}
@@ -167,10 +169,10 @@
                     <hr>
                     <h4>Estimated Total <b class="pull-right text-primary">
                     	<span class="pull-right" ng-if="checkout.shippingAddress.xp.Taxcost > 0">
-                    	{{base.currentOrder.Subtotal + base.currentOrder.ShippingCost + (base.currentOrder.Subtotal * checkout.shippingAddress.xp.Taxcost) | currency}}
+                    	{{base.currentOrder.Subtotal + (base.currentOrder.ShippingCost || 0) + (base.currentOrder.Subtotal * checkout.shippingAddress.xp.Taxcost) | currency}}
 	 					</span>
 	 					<span class="pull-right" ng-if="!checkout.shippingAddress.xp.Taxcost">
-                		{{base.currentOrder.Subtotal + base.currentOrder.ShippingCost | currency}}
+                		{{base.currentOrder.Subtotal + (base.currentOrder.ShippingCost || 0) | currency}}
 	 					</span>
 	 					</b>
                     </h4>

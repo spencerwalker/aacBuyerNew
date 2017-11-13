@@ -10,13 +10,19 @@ function checkoutPaymentConfig($stateProvider) {
 			url: '/payment',
 			templateUrl: 'checkout/payment/templates/checkout.payment.tpl.html',
 			controller: 'CheckoutPaymentCtrl',
-			controllerAs: 'checkoutPayment'
+            controllerAs: 'checkoutPayment',
+            resolve: {
+               UpdateOrder: function($rootScope, CurrentOrder){
+                    $rootScope.$broadcast('OC:UpdateOrder', CurrentOrder.ID);
+                }
+            }
 		})
     ;
 }
 
 function CheckoutPaymentController($exceptionHandler, $rootScope, toastr, OrderCloudSDK, AddressSelectModal, MyAddressesModal) {
-	var vm = this;
+    var vm = this;
+    vm.displayInfo = false;
     vm.createAddress = createAddress;
     vm.changeBillingAddress = changeBillingAddress;
 
@@ -59,8 +65,6 @@ function CheckoutPaymentService($q, $uibModal, OrderCloudSDK ) {
         PaymentsExceedTotal: _paymentsExceedTotal,
         RemoveAllPayments: _removeAllPayments,
         PaymentsMatchTotal: _paymentsMatchTotal
-        // SelectPaymentAccount: _selectPaymentAccount,
-        // Save: _save
     };
 
     function _paymentsExceedTotal(payments, orderTotal) {
@@ -94,59 +98,6 @@ function CheckoutPaymentService($q, $uibModal, OrderCloudSDK ) {
 
         return paymentTotal.toFixed(2) === orderTotal;
     }
-
-    // function _selectPaymentAccount(payment, order) {
-    //     return $uibModal.open({
-    //         templateUrl: 'checkout/payment/directives/templates/selectPaymentAccount.modal.html',
-    //         controller: 'SelectPaymentAccountModalCtrl',
-    //         controllerAs: 'selectPaymentAccount',
-    //         size: 'md',
-    //         resolve: {
-    //             Accounts: function(OrderCloudSDK) {
-    //                 var options = {page: 1, pageSize: 100};
-    //                 if (payment.Type == 'SpendingAccount') {
-    //                     options.filters = {RedemptionCode: '!*', AllowAsPaymentMethod: true};
-    //                     return OrderCloudSDK.Me.ListSpendingAccounts(options);
-    //                 } else {
-    //                     return OrderCloudSDK.Me.ListCreditCards(options);
-    //                 }
-    //             },
-    //             Payment: function() {
-    //                 return payment;
-    //             },
-    //             Order: function() {
-    //                 return order;
-    //             }
-    //         }
-    //     }).result;
-    // }
-    //
-    // function _save(payment, order, account) {
-    //     var df = $q.defer();
-    //
-    //     if (payment.ID) {
-    //         OrderCloudSDK.Payments.Delete('outgoing', order.ID, payment.ID)
-    //             .then(function() {
-    //                 delete payment.ID;
-    //                 createPayment(payment);
-    //             });
-    //     } else {
-    //         createPayment(payment);
-    //     }
-    //
-    //     function createPayment(newPayment) {
-    //         if (angular.isDefined(newPayment.Accepted)) delete newPayment.Accepted;
-    //         OrderCloudSDK.Payments.Create('outgoing', order.ID, newPayment)
-    //             .then(function(data) {
-    //                 if (data.SpendingAccountID) data.SpendingAccount = account;
-    //                 if (data.CreditCardID) data.CreditCard = account;
-    //
-    //                 df.resolve(data);
-    //             });
-    //     }
-    //
-    //     return df.promise;
-    // }
 
     return service;
 }

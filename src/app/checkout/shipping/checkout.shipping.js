@@ -14,20 +14,21 @@ function checkoutShippingConfig($stateProvider) {
                 pageTitle: "Delivery Address"
             },
             resolve: {
-                LineItemsList: function ($q, $state, toastr, OrderCloudSDK, ocLineItems, CurrentOrder) {
+                LineItemsList: function($q, toastr, ocLineItems, CurrentOrder) {
                     var dfd = $q.defer();
-                    OrderCloudSDK.LineItems.List('outgoing', CurrentOrder.ID)
-                        .then(function (data) {
-                            if (!data.Items.length) {
+                    ocLineItems.ListAll(CurrentOrder.ID)
+                        .then(function(data) {
+                            if (!data.length) {
                                 dfd.resolve(data);
-                            } else {
-                                ocLineItems.GetProductInfo(data.Items)
-                                    .then(function () {
+                            }
+                            else {
+                                ocLineItems.GetProductInfo(data)
+                                    .then(function() {
                                         dfd.resolve(data);
                                     });
                             }
                         })
-                        .catch(function () {
+                        .catch(function() {
                             toastr.error('Your order does not contain any line items.', 'Error');
                             dfd.reject();
                         });
@@ -41,14 +42,14 @@ function checkoutShippingConfig($stateProvider) {
                     var opts = {
                         depth: 1,
                         filters: {
-                            ParentID: $stateParams.categoryid
+                            ParentID: $stateParams.categoryID
                         }
                     }
                     return OrderCloudSDK.Me.ListCategories(opts);
                 },
                 ProductList: function ($stateParams, OrderCloudSDK) {
                     var opts = {
-                        categoryID: $stateParams.categoryid
+                        categoryID: $stateParams.categoryID
                     };
                     return OrderCloudSDK.Me.ListProducts(opts);
 
@@ -70,10 +71,6 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
     vm.vendorLineItemsMap = {};
 
     vm.lineItems = LineItemsList;
-    console.log('LineItems', vm.lineItems);
-    console.log('CategoryList :: ', CategoryList);
-    console.log('Products :: ', ProductList);
-    console.log('vm.lineItems ::', JSON.stringify(vm.lineItems));
 
     // watcher on vm.lineItems
     $scope.$watch(function () {
@@ -82,7 +79,7 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
         //create a queue to hold all the api calls that will be sent out at once
         var lineItemUpdateQueue = [];
         vm.vendorLineItemsMap = {};
-        angular.forEach(vm.lineItems.Items, function (lineItem) {
+        angular.forEach(vm.lineItems, function (lineItem) {
             var xp = {
                 vendorOrderId: []
             };
@@ -124,15 +121,13 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
         })
     }, true);
 
-    console.log('vm.vendorLineItemsMap :: ', vm.vendorLineItemsMap);
-
     vm.promotions = CurrentPromotions.Meta ? CurrentPromotions.Items : CurrentPromotions;
     vm.removeItem = function (order, scope) {
         vm.lineLoading = [];
         vm.lineLoading[scope.$index] = OrderCloudSDK.LineItems.Delete('outgoing', order.ID, scope.lineItem.ID)
             .then(function () {
                 $rootScope.$broadcast('OC:UpdateOrder', order.ID);
-                vm.lineItems.Items.splice(scope.$index, 1);
+                vm.lineItems.splice(scope.$index, 1);
                 toastr.success('Line Item Removed');
             });
     };
@@ -164,17 +159,17 @@ function CheckoutShippingController($exceptionHandler, $rootScope, $scope, $stat
             total += (lineItem.UnitPrice * lineItem.Quantity);
         });
         return total;
-    }
+    };
 
     vm.getShippingCostByVendor = function (vendorName) {
         return VendorShippingCriteria.getShippingCostByVendor(vendorName, vm.vendorLineItemsMap[vendorName]);
     };
 
     vm.getTaxCostByVendor = function (vendorName) {
-        if (!$scope.checkout.shippingAddress.xp && !$scope.checkout.shippingAddress.xpTaxcost) {
+        if (!$scope.checkout.shippingAddress || !$scope.checkout.shippingAddress.xp && !$scope.checkout.shippingAddress.xpTaxcost) {
             return 0;
         }
-        var lineItemsList = vm.vendorLineItemsMap[vendorName]
+        var lineItemsList = vm.vendorLineItemsMap[vendorName];
         return vm.getSubTotal(lineItemsList) * $scope.checkout.shippingAddress.xp.Taxcost;
     };
 

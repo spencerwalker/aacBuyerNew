@@ -60,7 +60,7 @@
 			<hr>
 			</div><hr>
 	</div>
-	<div class="row c-line-item" ng-repeat="lineItem in checkoutReview.lineItems.Items track by $index"  cg-busy="checkoutReview.lineLoading[$index]" style="margin-left: 1.5px; margin-right: 1.5px" >
+	<div class="row c-line-item" ng-repeat="lineItem in checkoutReview.lineItems track by $index"  cg-busy="checkoutReview.lineLoading[$index]" style="margin-left: 1.5px; margin-right: 1.5px" >
         <div class="col-xs-3 col-sm-2">
 				<div ng-if="!lineItem.Punchout" class="thumbnail c-line-item__img">
 					<img class="img-responsive" ng-src="{{lineItem.Product.xp.image.URL || 'http://placehold.it/100x100?text=' + (lineItem.Punchout ? lineItem.xp.SupplierPartID : lineItem.Product.Name)}}"
@@ -127,7 +127,12 @@
 					</p>
 					 <hr>
 					<h5>Subtotal: All Orders<span class="pull-right">{{base.currentOrder.Subtotal | currency}}</span></h5>
-					<h5>Shipping: All Orders<span class="pull-right">{{base.currentOrder.ShippingCost | currency}}</span></h5>
+					<h5>Shipping: All Orders
+						<a popover-placement="top" popover-trigger="mouseenter" uib-popover="This is the shipping cost as determined by our vendor partners.">
+							<i class="fa fa-question-circle-o" aria-hidden="true"></i>
+						</a>
+						<span class="pull-right">{{base.currentOrder.ShippingCost | currency}}</span>
+					</h5>
 					<h5>Processing Fee: All Orders
 	 					<span span class="pull-right" ng-if="checkout.shippingAddress.xp.Taxcost > 0" >{{((base.currentOrder.Subtotal * (checkout.shippingAddress.xp.Taxcost || 0))) | currency}}</span>
 	 					<span span class="pull-right" ng-if="!checkout.shippingAddress.xp.Taxcost">{{0.00 | currency}}</span>
@@ -147,22 +152,21 @@
 						<p ng-if="payment.Type == 'CreditCard'">{{payment.Details.CardholderName}}
 							<i style="font-size:1.3em;" class="fa {{payment.Details.CardType | faCreditCard}} pull-left"></i><br>
 							<span class="text-muted">XXXX-XXXX-XXXX-</span>{{payment.Details.PartialAccountNumber}}<br>
-							Expires On: {{payment.Details.ExpirationDate | date:'MM/yy'}}
+							Expires On: {{payment.Details.ExpirationDate | date:'MM/yy' : 'UTC'}}
 						</p>
-
 						<p ng-if="payment.Type == 'SpendingAccount'"> 
 						<small><span class="text-muted">Donation Balance:
-	                    	<span ng-if = "base.availableFunds - base.currentOrder.Subtotal > 0" > ({{base.availableFunds - 
+	                    	<span ng-if = "base.availableFunds > payment.Amount"> ({{base.availableFunds - 
 	                    	 (base.currentOrder.Subtotal + base.currentOrder.ShippingCost +
-	                    	 (base.currentOrder.Subtotal * (checkout.shippingAddress.xp.Taxcost || 0))) | currency}}  Available) </span>
-	                    	<span ng-if = "base.availableFunds - base.currentOrder.Subtotal <= 0" > ({{0 | currency}} Available) </span>            
+	                    	 (base.currentOrder.Subtotal * (checkout.shippingAddress.xp.Taxcost || 0))) | currency}}  Available)</span>
+	                    	<span ng-if = "base.availableFunds == payment.Amount" > ({{0 | currency}} Available)</span>            
                     	</small>
 						</p>
 						<hr ng-if="!$last">
 					</div>
 				</div>
 				<div class="panel-footer">
-					<button type="button" class="btn btn-primary form-control" ng-disabled="false" ng-click="checkout.submitOrder(base.currentOrder)">Submit Order</button>
+					<button type="button" class="btn btn-primary form-control" ng-disabled="checkout.submitBtnDisabled" ng-click="checkout.submitOrder(base.currentOrder)">Submit Order</button>
 				</div>
 			</div>
 		</div>

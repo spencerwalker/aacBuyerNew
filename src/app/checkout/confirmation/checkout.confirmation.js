@@ -64,9 +64,9 @@ function checkoutConfirmationConfig($stateProvider) {
 				},
 				LineItemsList: function($q, $state, toastr, ocLineItems, SubmittedOrder, OrderCloudSDK) {
 					var dfd = $q.defer();
-					OrderCloudSDK.LineItems.List('outgoing', SubmittedOrder.ID)
+					ocLineItems.ListAll(SubmittedOrder.ID)
 						.then(function(data) {
-							ocLineItems.GetProductInfo(data.Items)
+							ocLineItems.GetProductInfo(data)
 								.then(function() {
 									dfd.resolve(data);
 								});
@@ -77,13 +77,13 @@ function checkoutConfirmationConfig($stateProvider) {
                 CategoryList: function ($stateParams, OrderCloudSDK) {
                     var opts = {
                         depth: 1,
-                        filters: {ParentID: $stateParams.categoryid}
+                        filters: {ParentID: $stateParams.categoryID}
                     };
                     return OrderCloudSDK.Me.ListCategories(opts);
                 },
                 ProductList: function ($stateParams, OrderCloudSDK) {
 					var opts = {
-						categoryID:  $stateParams.categoryid
+						categoryID:  $stateParams.categoryID
 					};
                     return OrderCloudSDK.Me.ListProducts(opts);
 
@@ -114,7 +114,7 @@ function CheckoutConfirmationController(SubmittedOrder, $scope, $filter, OrderSh
     	}, function(newVal, oldVal){
     	console.log('New Val:: ', newVal);
     	vm.vendorLineItemsMap = {};
-    	angular.forEach(vm.lineItems.Items, function(lineItem){
+    	angular.forEach(vm.lineItems, function(lineItem){
         	var productId = lineItem.ProductID;
         	var vendorName = (lineItem.Punchout && lineItem.xp && lineItem.xp.PunchoutName) 
                 ? $filter('punchoutLineItemVendor')(lineItem.xp.PunchoutName)
