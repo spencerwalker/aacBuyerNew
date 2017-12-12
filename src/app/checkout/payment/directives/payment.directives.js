@@ -444,9 +444,9 @@ function PaymentsController($rootScope, $scope, $exceptionHandler, $q, toastr, O
             .then(function(accounts) {
                 var spendingAccountUsed = _.where($scope.payments.Items, {SpendingAccountID: accounts.Items[0].ID});
                 var validAccount = _.filter(accounts.Items, function(account) {
-                    return account.Balance >= 0;
+                    return account.Balance > 0;
                 })
-                if (!spendingAccountUsed.length && validAccount) {
+                if (!spendingAccountUsed.length && validAccount && !_.isEmpty(validAccount[0])) {
                     var amount = validAccount[0].Balance >= $scope.order.Total ? $scope.order.Total : validAccount[0].Balance;
                     var paymentBody = {
                         Type: 'SpendingAccount',
