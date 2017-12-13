@@ -182,7 +182,13 @@ function VendorShippingCriteria() {
 				return 0.15*order.amount;
 			}
 		},
-		
+		{
+			name: 'Rocketbook',
+			minOrderAmount: 0,
+			shippingCostFunc: function(order) {
+				return 7;
+			}
+		},
 		{
 			name: 'Hovercam',
 			minOrderAmount: 0,
