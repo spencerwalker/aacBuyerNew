@@ -7,7 +7,7 @@
 	<div ng-if="payment.Type == 'SpendingAccount'">
 		<oc-payment-sa order="order" payment="payment" exclude-options="excludeOptions.SpendingAccounts" ></oc-payment-sa>
 	</div>
-	<div ng-if="payment.Type == 'CreditCard' && order.Total > payment.Amount">
+	<div ng-if="payment.Type == 'CreditCard'">
 		<oc-payment-cc order="order" payment="payment"></oc-payment-cc>
 	</div>
 </div>
