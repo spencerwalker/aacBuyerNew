@@ -388,157 +388,160 @@ function OCPayments() {
 function PaymentsController($rootScope, $scope, $exceptionHandler, $q, $state, toastr, OrderCloudSDK, CheckoutPaymentService, CheckoutConfig, buyerid) {
     if (!$scope.methods) $scope.methods = CheckoutConfig.AvailablePaymentMethods;
 
-    if ($scope.order.Status == 'Unsubmitted') {
-        OrderCloudSDK.Payments.List('outgoing', $scope.order.ID)
-            .then(function (data) {
-                var payments = _.filter(data.Items, function(payment) {
-                    return payment.Type == 'SpendingAccount' || 'CreditCard'
-                });
-                if (payments.length) {
-                    var queue = [];
-                    _.each(payments, function(payment) {
-                        queue.push(OrderCloudSDK.Payments.Delete('outgoing', $scope.order.ID, payment.ID))
-                    })
-                    return $q.all(queue)
-                        .then(function() {
-                            $scope.payments = {
-                                Items: []
-                            };
-                            $scope.addNewPayment();
+    OrderCloudSDK.Orders.Get('outgoing', $scope.order.ID).then(function(orderData) {
+        if (orderData.Status == 'Unsubmitted') {
+            OrderCloudSDK.Payments.List('outgoing', $scope.order.ID)
+                .then(function (data) {
+                    var payments = _.filter(data.Items, function(payment) {
+                        return payment.Type == 'SpendingAccount' || 'CreditCard'
+                    });
+                    if (payments.length) {
+                        var queue = [];
+                        _.each(payments, function(payment) {
+                            queue.push(OrderCloudSDK.Payments.Delete('outgoing', $scope.order.ID, payment.ID))
                         })
-                }
-                if (!data.Items.length) {
-                    $scope.payments = {
-                        Items: []
-                    };
-                    $scope.addNewPayment();
-                } else if (CheckoutPaymentService.PaymentsExceedTotal(data, $scope.order.Total)) {
-                    CheckoutPaymentService.RemoveAllPayments(data, $scope.order)
-                        .then(function (data) {
-                            $scope.payments = {
-                                Items: []
-                            };
-                            $scope.addNewPayment();
-                        });
-                } else if (CheckoutPaymentService.PaymentsMatchTotal(data, $scope.order.Total)) {
-                    $scope.payments = data;
-                } else {
-                    OrderCloudSDK.Payments.Patch('outgoing', $scope.order.ID, data.Items[data.Items.length - 1].ID, {
-                            Amount: null
-                        })
-                        .then(function (updatedPayment) {
-                            data.Items[data.Items.length - 1] = updatedPayment;
-                            $scope.payments = data;
-                            calculateMaxTotal();
-                        })
-                        .catch(function (er) {
-                            if (er.response.body.Errors[0].ErrorCode === "Payment.ExceedsBalance"){
-                                $scope.payments = data;
-                                calculateMaxTotal();
-                            }
-                        });
-                }
-            });
-
-        $scope.addNewPayment = function () {
-            OrderCloudSDK.Me.ListSpendingAccounts()
-                .then(function(accounts) {
-                    var spendingAccountUsed = _.where($scope.payments.Items, {SpendingAccountID: accounts.Items[0].ID});
-                    var validAccount = _.filter(accounts.Items, function(account) {
-                        return account.Balance > 0;
-                    })
-                    if (!spendingAccountUsed.length && validAccount && !_.isEmpty(validAccount[0])) {
-                        var amount = validAccount[0].Balance >= $scope.order.Total ? $scope.order.Total : validAccount[0].Balance;
-                        var paymentBody = {
-                            Type: 'SpendingAccount',
-                            SpendingAccountID: validAccount[0].ID,
-                            Amount: amount
-                        }
-                        return OrderCloudSDK.Payments.Create('outgoing', $scope.order.ID, paymentBody)
-                            .then(function(payment) {
-                                if (payment.Amount < $scope.order.Total) {
-                                    $scope.payments.Items.push(payment);
-                                    $scope.addNewPayment();
-                                } else {
-                                    $scope.payments.Items.push(payment);
-                                    calculateMaxTotal();
-                                }
-                            })
-                    } else {
-                        var paymentBody = {
-                            Type: 'CreditCard',
-                            Accepted: false
-                        }
-                        return OrderCloudSDK.Payments.Create('outgoing', $scope.order.ID, paymentBody)
-                            .then(function(payment) {
-                                $scope.payments.Items.push(payment);
-                                calculateMaxTotal();
+                        return $q.all(queue)
+                            .then(function() {
+                                $scope.payments = {
+                                    Items: []
+                                };
+                                $scope.addNewPayment();
                             })
                     }
-                })
-
-        };
-
-        $scope.removePayment = function (scope) {
-            OrderCloudSDK.Payments.Delete('outgoing', $scope.order.ID, scope.payment.ID)
-                .then(function () {
-                    $scope.payments.Items.splice(scope.$index, 1);
-                    calculateMaxTotal();
-                    toastr.success('Payment Removed');
+                    if (!data.Items.length) {
+                        $scope.payments = {
+                            Items: []
+                        };
+                        $scope.addNewPayment();
+                    } else if (CheckoutPaymentService.PaymentsExceedTotal(data, $scope.order.Total)) {
+                        CheckoutPaymentService.RemoveAllPayments(data, $scope.order)
+                            .then(function (data) {
+                                $scope.payments = {
+                                    Items: []
+                                };
+                                $scope.addNewPayment();
+                            });
+                    } else if (CheckoutPaymentService.PaymentsMatchTotal(data, $scope.order.Total)) {
+                        $scope.payments = data;
+                    } else {
+                        OrderCloudSDK.Payments.Patch('outgoing', $scope.order.ID, data.Items[data.Items.length - 1].ID, {
+                                Amount: null
+                            })
+                            .then(function (updatedPayment) {
+                                data.Items[data.Items.length - 1] = updatedPayment;
+                                $scope.payments = data;
+                                calculateMaxTotal();
+                            })
+                            .catch(function (er) {
+                                if (er.response.body.Errors[0].ErrorCode === "Payment.ExceedsBalance"){
+                                    $scope.payments = data;
+                                    calculateMaxTotal();
+                                }
+                            });
+                    }
                 });
-        };
-
-
-        $scope.updatePaymentAmount = function (scope) {
-            if (scope.payment.Amount > scope.payment.MaxAmount || !scope.payment.Amount) return;
-            OrderCloudSDK.Payments.Patch('outgoing', $scope.order.ID, scope.payment.ID, {
-                    Amount: scope.payment.Amount
-                })
-                .then(function (payment) {
-                    toastr.success('Payment Amount Updated');
-                    calculateMaxTotal();
-                })
-                .catch(function (ex) {
-                    $exceptionHandler(ex);
-                });
-        };
-
-        $rootScope.$on('OC:PaymentsUpdated', function () {
-            calculateMaxTotal();
-        });
-
-
-        function calculateMaxTotal() {
-            var paymentTotal = 0;
-            var estimatedTotal;
-            $scope.excludeOptions = {
-                SpendingAccounts: [],
-                CreditCards: []
+    
+            $scope.addNewPayment = function () {
+                OrderCloudSDK.Me.ListSpendingAccounts()
+                    .then(function(accounts) {
+                        var spendingAccountUsed = _.where($scope.payments.Items, {SpendingAccountID: accounts.Items[0].ID});
+                        var validAccount = _.filter(accounts.Items, function(account) {
+                            return account.Balance > 0;
+                        })
+                        if (!spendingAccountUsed.length && validAccount && !_.isEmpty(validAccount[0])) {
+                            var amount = validAccount[0].Balance >= $scope.order.Total ? $scope.order.Total : validAccount[0].Balance;
+                            var paymentBody = {
+                                Type: 'SpendingAccount',
+                                SpendingAccountID: validAccount[0].ID,
+                                Amount: amount
+                            }
+                            return OrderCloudSDK.Payments.Create('outgoing', $scope.order.ID, paymentBody)
+                                .then(function(payment) {
+                                    if (payment.Amount < $scope.order.Total) {
+                                        $scope.payments.Items.push(payment);
+                                        $scope.addNewPayment();
+                                    } else {
+                                        $scope.payments.Items.push(payment);
+                                        calculateMaxTotal();
+                                    }
+                                })
+                        } else {
+                            var paymentBody = {
+                                Type: 'CreditCard',
+                                Accepted: false
+                            }
+                            return OrderCloudSDK.Payments.Create('outgoing', $scope.order.ID, paymentBody)
+                                .then(function(payment) {
+                                    $scope.payments.Items.push(payment);
+                                    calculateMaxTotal();
+                                })
+                        }
+                    })
+    
             };
-            angular.forEach($scope.payments.Items, function (payment) {
-                var maxAmount;
-                paymentTotal += payment.Amount;
-                if (payment.SpendingAccountID) $scope.excludeOptions.SpendingAccounts.push(payment.SpendingAccountID);
-                if (payment.CreditCardID) $scope.excludeOptions.CreditCards.push(payment.CreditCardID);
-                maxAmount = ($scope.order.Subtotal + $scope.order.ShippingCost + $scope.order.TaxCost - _.reduce(_.pluck($scope.payments.Items, 'Amount'), function (a, b) {
-                    return a + b;
-                }));
-                //round to the nearest 2 decimals
-                payment.MaxAmount = Math.round((payment.Amount + maxAmount) * 100) / 100 ;
-
+    
+            $scope.removePayment = function (scope) {
+                OrderCloudSDK.Payments.Delete('outgoing', $scope.order.ID, scope.payment.ID)
+                    .then(function () {
+                        $scope.payments.Items.splice(scope.$index, 1);
+                        calculateMaxTotal();
+                        toastr.success('Payment Removed');
+                    });
+            };
+    
+    
+            $scope.updatePaymentAmount = function (scope) {
+                if (scope.payment.Amount > scope.payment.MaxAmount || !scope.payment.Amount) return;
+                OrderCloudSDK.Payments.Patch('outgoing', $scope.order.ID, scope.payment.ID, {
+                        Amount: scope.payment.Amount
+                    })
+                    .then(function (payment) {
+                        toastr.success('Payment Amount Updated');
+                        calculateMaxTotal();
+                    })
+                    .catch(function (ex) {
+                        $exceptionHandler(ex);
+                    });
+            };
+    
+            $rootScope.$on('OC:PaymentsUpdated', function () {
+                calculateMaxTotal();
             });
-            estimatedTotal = Math.round(($scope.order.Subtotal + ($scope.order.ShippingCost ? $scope.order.ShippingCost : 0) + $scope.order.TaxCost) * 100) / 100;
-            
-            paymentTotal = Math.round(paymentTotal * 100) / 100;
-            $scope.canAddPayment = paymentTotal < estimatedTotal;
-            if ($scope.OCPayments) $scope.OCPayments.$setValidity('Insufficient_Payment', !$scope.canAddPayment);
-            if ($scope.OCPayments) $scope.OCPayments.$setValidity('AllPaymentsNeedSelection', $scope.payments.Items.length === ($scope.excludeOptions.SpendingAccounts.length + $scope.excludeOptions.CreditCards.length));
+    
+    
+            function calculateMaxTotal() {
+                var paymentTotal = 0;
+                var estimatedTotal;
+                $scope.excludeOptions = {
+                    SpendingAccounts: [],
+                    CreditCards: []
+                };
+                angular.forEach($scope.payments.Items, function (payment) {
+                    var maxAmount;
+                    paymentTotal += payment.Amount;
+                    if (payment.SpendingAccountID) $scope.excludeOptions.SpendingAccounts.push(payment.SpendingAccountID);
+                    if (payment.CreditCardID) $scope.excludeOptions.CreditCards.push(payment.CreditCardID);
+                    maxAmount = ($scope.order.Subtotal + $scope.order.ShippingCost + $scope.order.TaxCost - _.reduce(_.pluck($scope.payments.Items, 'Amount'), function (a, b) {
+                        return a + b;
+                    }));
+                    //round to the nearest 2 decimals
+                    payment.MaxAmount = Math.round((payment.Amount + maxAmount) * 100) / 100 ;
+    
+                });
+                estimatedTotal = Math.round(($scope.order.Subtotal + ($scope.order.ShippingCost ? $scope.order.ShippingCost : 0) + $scope.order.TaxCost) * 100) / 100;
+                
+                paymentTotal = Math.round(paymentTotal * 100) / 100;
+                $scope.canAddPayment = paymentTotal < estimatedTotal;
+                if ($scope.OCPayments) $scope.OCPayments.$setValidity('Insufficient_Payment', !$scope.canAddPayment);
+                if ($scope.OCPayments) $scope.OCPayments.$setValidity('AllPaymentsNeedSelection', $scope.payments.Items.length === ($scope.excludeOptions.SpendingAccounts.length + $scope.excludeOptions.CreditCards.length));
+            }
+        } else {
+            $state.go('productBrowse.products', {
+                categoryID: '',
+                page: '',
+                vendor: ''
+            }, { reload: true });
         }
-    } else {
-        $state.go('productBrowse.products', {
-            categoryID: '',
-            page: '',
-            vendor: ''
-        }, { reload: true });
-    }
+    })
+    
 }
