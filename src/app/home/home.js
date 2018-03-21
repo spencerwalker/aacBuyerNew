@@ -18,6 +18,7 @@ function HomeConfig($stateProvider) {
 	;
 }
 
-function HomeController() {
+function HomeController(vendors) {
 	var vm = this;
+	vm.vendors = vendors;
 }
