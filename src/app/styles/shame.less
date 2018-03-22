@@ -66,6 +66,9 @@ a[disabled] {
 @aac-red: #ef3e44;
 .panel--red {
   .panel-variant(@aac-red; @aac-red; #ffffff; transparent);
+  p {
+    color: @aac-yellow;
+  }
 }
 
 @aac-yellow: #f69f1a;
@@ -78,7 +81,13 @@ a[disabled] {
 
 .cards {}
 
-.cards__card {}
+.cards__card {
+  max-width: 200px;
+  display: inline-block;
+  img {
+    max-width: 100%;
+  }
+}
 
 .card--logo {}
 
@@ -99,3 +108,5 @@ a[disabled] {
   white-space: normal;
   border-radius: @border-radius-large;
 }
+
+.home__well {}
