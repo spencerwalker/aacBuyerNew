@@ -57,6 +57,17 @@ a[disabled] {
 
 .home__jumbotron {
   background-color: transparent;
+  padding-bottom: 0;
+}
+
+.home__arrow-icon {
+  padding: 0 @grid-gutter-width @grid-gutter-width/2;
+  &.rotate-45 {
+    transform: rotate(45deg);
+  }
+  &.rotate-315 {
+    transform: rotate(315deg);
+  }
 }
 
 .home__panel {
@@ -131,4 +142,14 @@ ordercloud-product-search {
   background-color: transparent;
   box-shadow: none;
   border-color: #20B2AA;
+  h2 {
+    text-transform: uppercase;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}
+
+.home__basket-icon {
+  max-width: 100px;
+  margin-right: @grid-gutter-width;
 }
