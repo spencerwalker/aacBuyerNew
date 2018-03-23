@@ -6,7 +6,7 @@
   "catalogid": "AACBuyer",
   "clientsecret": "myclientsecret",
   "environment": "prod",
-  "defaultstate": "productBrowse.products",
+  "defaultstate": "home",
   "anonymous": false,
   "bootswatchtheme": null,
   "punchoutproduct": "AACPunchoutProduct",
