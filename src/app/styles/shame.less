@@ -55,6 +55,10 @@ a[disabled] {
   }
 }
 
+.home__jumbotron {
+  background-color: transparent;
+}
+
 .home__panel {
   border-width: 10px;
   border-radius: 0;
@@ -79,19 +83,33 @@ a[disabled] {
   }
 }
 
-.cards {}
+ordercloud-product-search {
+  display: block;
+  margin-bottom: @grid-gutter-width;
+}
 
-.cards__card {
-  max-width: 200px;
-  display: inline-block;
+.anchor__img {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto; // IE11 image height hack
+  // https://github.com/philipwalton/flexbugs/issues/75
+  min-height: 1%;
+  justify-content: center;
   img {
     max-width: 100%;
+    filter: grayscale(1);
+  }
+  &:hover {
+    img {
+      filter: grayscale(0);
+    }
   }
 }
 
-.card--logo {}
-
-.tags {}
+.tags {
+  line-height: 175%;
+  margin-bottom: @grid-gutter-width;
+}
 
 .tags--inline {
   .tags__tag {
@@ -104,9 +122,13 @@ a[disabled] {
 }
 
 .btn--tile {
-  padding: @grid-gutter-width;
+  padding: @grid-gutter-width*.75;
   white-space: normal;
   border-radius: @border-radius-large;
 }
 
-.home__well {}
+.home__well {
+  background-color: transparent;
+  box-shadow: none;
+  border-color: #20B2AA;
+}
