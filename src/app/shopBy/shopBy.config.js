@@ -24,7 +24,7 @@ function ShopByConfig($stateProvider){
                         page: page,
                         pageSize: 40,
                         // depth: 'all',
-                        // filters: {ID: '!TopStores' }
+                        filters: {ID: '!TopStores' }
                     };
                     categories.Items = [];
                     // TODO: Remove punchout Categories
