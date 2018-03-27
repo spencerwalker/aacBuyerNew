@@ -18,6 +18,18 @@ function HomeConfig($stateProvider) {
 	;
 }
 
-function HomeController() {
+function HomeController(vendors, $state, ocPunchout, CurrentOrder) {
 	var vm = this;
+	vm.vendors = vendors;
+	vm.toPunchOut = function(ID){
+		var punchoutCategory = ocPunchout.IsPunchoutCategory(ID);
+        if (punchoutCategory) {
+            vm.loading = ocPunchout.SetupRequest(punchoutCategory.Name, punchoutCategory.SupplierPartID, CurrentOrder.ID)
+                .then(function(data) {
+                    $state.go('punchout', {link:data.StartURL});
+                });
+        } else {
+            $state.go('home');
+        }
+	}
 }
